@@ -1,0 +1,198 @@
+#include "Lattice.h"
+
+/*
+ * The constructor for the lattice. 
+ *
+ * @param double * popDist      this should be an array describing the probability with which
+ *                              any given cell will be initialized to a certain species.
+ *                              (e.g. if you want each cell to have a 30% chance of being
+ *                              assigned A, B, or C and a 10% chance of being empty, then you
+ *                              would pass {0.3, 0.3, 0.3, 0.1})
+ *
+ * @param string path           the directory where output files will be written.
+ */
+Lattice::Lattice(double * popDist, string path) : rng(std::time(0)), coordDist(0, 255), neighDist(0, 3), actionDist()
+{
+    filePath = path;
+    timestep = 0;
+
+    aPop = bPop = cPop = 0;
+
+    boost::random::discrete_distribution<> pop(popDist);
+
+    for (int x = 0; x < size; x++)
+    {
+        for (int y = 0; y < size; y++)
+        {
+            int spec;
+            spec = pop(rng);
+            latt[x][y].setSpecies(spec);
+            incrementSpeciesCount(spec);
+        }
+    }
+}
+
+void Lattice::incrementSpeciesCount(int spec)
+{
+    switch(spec)
+        {
+            case 0: aPop++; break;
+            case 1: bPop++; break;
+            case 2: cPop++; break;
+        }
+}
+
+void Lattice::decrementSpeciesCount(int spec)
+{
+    switch(spec)
+        {
+            case 0: aPop--; break;
+            case 1: bPop--; break;
+            case 2: cPop--; break;
+        }
+}
+
+void Lattice::reaction(int x, int y)
+{
+    int neigh = neighDist(rng);
+
+    int X = x, Y = y;
+    
+    switch(neigh)
+    {
+        case 0 : //up
+            X = (x - 1) % 256;
+            break;
+        case 1 : //right
+            Y = (y + 1) % 256;
+            break;
+        case 2 : //down
+            X = (x + 1) % 256;
+            break;
+        case 3 : //left
+            Y = (y - 1) % 256;
+            break;
+    }
+
+    Cell curr = latt[x][y];
+    Cell neighbor = latt[X][Y];
+    double rand = actionDist(rng);
+
+    //Empty Neighbor
+    if (neighbor.getSpecies() == 3)
+    {
+        //Breeding Reaction
+        if (rand <= curr.getFertRate() / 2)
+        {
+            neighbor.setSpecies(curr.getSpecies());
+            incrementSpeciesCount(curr.getSpecies());
+        }
+        //Diffusion
+        else if (rand > curr.getFertRate() / 2 && rand <= (curr.getFertRate() + curr.getDifRate()) / 2)
+        {
+            neighbor.setSpecies(curr.getSpecies());
+            curr.setSpecies(3);
+        }          
+    }
+    // Prey Neighbor
+    else if (neighbor.getSpecies() == (curr.getSpecies() + 1) % 3)
+    {
+        //Predation
+        if (rand <= curr.getPredRate() / 2)
+        {
+            decrementSpeciesCount(neighbor.getSpecies());
+            neighbor.setSpecies(3);
+        }
+        //Pair Swapping
+        else if (rand > curr.getPredRate() / 2 && rand <= (curr.getPredRate() + curr.getSwapRate()) / 2)
+        {
+            int tmp = neighbor.getSpecies();
+            neighbor.setSpecies(curr.getSpecies());
+            curr.setSpecies(tmp);
+        }
+    }
+    // Predator Neighbor
+    else if (neighbor.getSpecies() == (curr.getSpecies() - 1) % 3)
+    {
+        //Predation
+        if (rand <= neighbor.getPredRate() / 2)
+        {
+            decrementSpeciesCount(curr.getSpecies());
+            curr.setSpecies(3);
+        }
+        //Pair Swapping
+        else if (rand > neighbor.getPredRate() / 2 && rand <= (neighbor.getPredRate() + neighbor.getSwapRate()) / 2)
+        {
+            int tmp = neighbor.getSpecies();
+            neighbor.setSpecies(curr.getSpecies());
+            curr.setSpecies(tmp);
+        }
+    }
+}
+
+void Lattice::dataOutput()
+{
+    stringstream ss;
+    ss << filePath << "S" << size << "_" << timestep << ".ppm";
+    string fileName;
+    fileName = ss.str();
+
+    fstream data(fileName.c_str(), ofstream::out | ofstream::app | ofstream::in);
+
+    data << "P3\n" << size << " " << size << "\n" << "1" << endl;
+
+    for (int x = 0; x < size; x++)
+    {
+        for (int y = 0; y < size; y++)
+        {
+            int spec = latt[x][y].getSpecies();
+
+            switch(spec)
+            {
+                case 0  :   data << 1 << " " << 0 << " " << 0; break;
+                case 1  :   data << 0 << " " << 1 << " " << 0; break;
+                case 2  :   data << 0 << " " << 0 << " " << 1; break;
+                case 3  :   data << 1 << " " << 1 << " " << 1; break;
+                default :   data << 0 << " " << 0 << " " << 0; break;
+            }
+
+            if (y < size - 1)
+            {
+                data << "  ";
+            }
+        }
+
+        if (x < size - 1)
+        {
+            data << endl;
+        }
+    }
+
+    data.close();
+}
+
+void Lattice::monteCarloRun(int steps, int interval, int starRecord)
+{
+    do
+    {
+        int x = coordDist(rng);
+        int y = coordDist(rng);
+    
+        do 
+        {
+            x = coordDist(rng);
+            y = coordDist(rng);
+        }
+        while (latt[x][y].getSpecies() > 2);
+    
+        reaction(x, y);
+
+        if (timestep >= startRecord && timestep % interval == 0)
+        {
+            dataOutput();
+        }
+
+        timestep++;
+    }
+    while (timestep <= steps);
+}
