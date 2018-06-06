@@ -1,19 +1,12 @@
-#include "Lattice.h"
+#include "Lattice.hpp"
 
-/*
- * The constructor for the lattice. 
- *
- * @param double * popDist      this should be an array describing the probability with which
- *                              any given cell will be initialized to a certain species.
- *                              (e.g. if you want each cell to have a 30% chance of being
- *                              assigned A, B, or C and a 10% chance of being empty, then you
- *                              would pass {0.3, 0.3, 0.3, 0.1})
- *
- * @param string path           the directory where output files will be written.
- */
-Lattice::Lattice(double * popDist, string path) : rng(std::time(0)), coordDist(0, 255), neighDist(0, 3), actionDist()
+using namespace std;
+
+Lattice::Lattice() : rng(std::time(0)), coordDist(0, size - 1), neighDist(0, 3)
 {
-    filePath = path;
+    double popDist[] = {0.3, 0.3, 0.3, 0.1};
+    filePath = "";
+
     timestep = 0;
 
     aPop = bPop = cPop = 0;
@@ -30,6 +23,46 @@ Lattice::Lattice(double * popDist, string path) : rng(std::time(0)), coordDist(0
             incrementSpeciesCount(spec);
         }
     }
+
+    cout << "Lattice Initialized" << endl;
+    cout << "Initial Populatiom: " << "A: " << aPop << " B:" << bPop << " C: " << cPop << endl;
+}
+
+/*
+ * The constructor for the lattice. 
+ *
+ * @param double * popDist      this should be an array describing the probability with which
+ *                              any given cell will be initialized to a certain species.
+ *                              (e.g. if you want each cell to have a 30% chance of being
+ *                              assigned A, B, or C and a 10% chance of being empty, then you
+ *                              would pass {0.3, 0.3, 0.3, 0.1})
+ *
+ * @param string path           the directory where output files will be written.
+ */
+Lattice::Lattice(string path) : rng(std::time(0)), coordDist(0, size - 1), neighDist(0, 3), actionDist()
+{
+    double popDist[] = {0.3, 0.3, 0.3, 0.1};
+
+    timestep = 0;
+    filePath = path;
+
+    aPop = bPop = cPop = 0;
+
+    boost::random::discrete_distribution<> pop(popDist);
+
+    for (int x = 0; x < size; x++)
+    {
+        for (int y = 0; y < size; y++)
+        {
+            int spec;
+            spec = pop(rng);
+            latt[x][y].setSpecies(spec);
+            incrementSpeciesCount(spec);
+        }
+    }
+
+    cout << "Lattice Initialized" << endl;
+    cout << "Initial Populatiom: " << "A: " << aPop << " B:" << bPop << " C: " << cPop << endl;
 }
 
 void Lattice::incrementSpeciesCount(int spec)
@@ -61,21 +94,22 @@ void Lattice::reaction(int x, int y)
     switch(neigh)
     {
         case 0 : //up
-            X = (x - 1) % 256;
+            X = (x - 1) % size;
             break;
         case 1 : //right
-            Y = (y + 1) % 256;
+            Y = (y + 1) % size;
             break;
         case 2 : //down
-            X = (x + 1) % 256;
+            X = (x + 1) % size;
             break;
         case 3 : //left
-            Y = (y - 1) % 256;
+            Y = (y - 1) % size;
             break;
     }
 
-    Cell curr = latt[x][y];
-    Cell neighbor = latt[X][Y];
+    
+    Cell & curr = latt[x][y];
+    Cell & neighbor = latt[X][Y];
     double rand = actionDist(rng);
 
     //Empty Neighbor
@@ -132,6 +166,7 @@ void Lattice::reaction(int x, int y)
 
 void Lattice::dataOutput()
 {
+    using namespace std;
     stringstream ss;
     ss << filePath << "S" << size << "_" << timestep << ".ppm";
     string fileName;
@@ -139,7 +174,10 @@ void Lattice::dataOutput()
 
     fstream data(fileName.c_str(), ofstream::out | ofstream::app | ofstream::in);
 
-    data << "P3\n" << size << " " << size << "\n" << "1" << endl;
+    data << "P3\n" << size << " " << size << endl;
+    data << "#" << fileName << "\n" << "1" << endl;
+
+    cout <<  "writing " << fileName.c_str() << endl;
 
     for (int x = 0; x < size; x++)
     {
@@ -168,28 +206,50 @@ void Lattice::dataOutput()
         }
     }
 
+    cout << "Current Population: " << "A: " << aPop << " B:" << bPop << " C: " << cPop << endl;
     data.close();
 }
 
-void Lattice::monteCarloRun(int steps, int interval, int starRecord)
+void Lattice::reactTest()
 {
+    for (int x = 0; x < size; x++)
+    {
+        for (int y = 0; y < size; y++)
+        {
+            Cell & cell = latt[x][y];
+            cell.setSpecies(0);
+            timestep++;
+            dataOutput();
+        }
+    }
+    
+}
+
+void Lattice::monteCarloRun(int steps, int interval, int startRecord)
+{
+    cout << "Starting Monte Carlo Run" << endl;
     do
     {
         int x = coordDist(rng);
         int y = coordDist(rng);
-    
+
         do 
         {
             x = coordDist(rng);
             y = coordDist(rng);
         }
         while (latt[x][y].getSpecies() > 2);
-    
+ 
         reaction(x, y);
 
-        if (timestep >= startRecord && timestep % interval == 0)
+
+        if (timestep % interval == 0)
         {
-            dataOutput();
+            cout << timestep << endl;
+            if (timestep >= startRecord)
+            {
+                dataOutput();
+            }
         }
 
         timestep++;

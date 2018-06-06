@@ -96,3 +96,13 @@ Thumbs.db
 *.exe
 *.out
 *.app
+
+# Output Data
+*.ppm
+
+
+# Temporary files
+temp
+
+# Data output files 
+**/data
