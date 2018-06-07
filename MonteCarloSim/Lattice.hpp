@@ -16,8 +16,8 @@
 class Lattice
 {
     private:
-        static const int size = 256;
-        Cell latt[size][size];
+        static const int size = 1028;
+        static Cell latt[size][size];
 
         int aPop;
         int bPop;
