@@ -16,8 +16,8 @@
 class Lattice
 {
     private:
-        static const int size = 256;
-        Cell latt[size][size];
+        int size;
+        Cell ** latt;
 
         int aPop;
         int bPop;
@@ -37,8 +37,8 @@ class Lattice
     
     public:
         Lattice();
-        Lattice(string path);
-        ~Lattice() = default;
+        Lattice(string path, int lattSize);
+        ~Lattice();
         void reaction(int x, int y);
         void dataOutput();
         void reactTest();

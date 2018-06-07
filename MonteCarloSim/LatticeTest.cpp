@@ -5,16 +5,16 @@
 
 int main(int argc, char *argv[])
 {
-    string path = "secondMonteCarloRun/";
+    string path = "data/thirdMonteCarloRun/";
 
-    Lattice testLattice(path);
+    Lattice testLattice(path, 256);
     
     cout << "beginning test" << endl;
 
     testLattice.dataOutput();
 
     //testLattice.reactTest();
-    testLattice.monteCarloRun(1000000000, 1000000, 50000000);
+    testLattice.monteCarloRun(800000000, 1000000, 50000000);
 
     cout << "test complete" << endl;
     return 0;
