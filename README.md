@@ -8,3 +8,5 @@ and Michel Pleimling).
 This directory will contain code for a Monte Carlo simulation of the May-Leonard
 model. One of the main goals of the code is to be easily extensible via inheritance
 and polymorphism, enabling fast and efficient testing of various control schema. 
+
+small edit
