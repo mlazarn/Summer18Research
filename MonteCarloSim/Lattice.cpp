@@ -49,7 +49,7 @@ Lattice::Lattice() : rng(std::time(0)), coordDist(0, size - 1), neighDist(0, 3)
  */
 Lattice::Lattice(string path, int lattSize) : rng(std::time(0)), coordDist(0, lattSize - 1), neighDist(0, 3), actionDist()
 {
-    double popDist[] = {0.3, 0.3, 0.3, 0.1};
+    double popDist[] = {0.25, 0.25, 0.25, 0.25};
 
     size = lattSize;
 
