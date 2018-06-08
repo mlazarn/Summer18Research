@@ -189,7 +189,7 @@ void Lattice::reaction(int x, int y)
         }
     }
     // Predator Neighbor
-    else if (neighbor.getSpecies() == (curr.getSpecies() - 1) % 3)
+    else if (neighbor.getSpecies() == (curr.getSpecies() - 1) % 3 || (neighbor.getSpecies() == 2 && curr.getSpecies() == 0) )
     {
         //Predation
         if (rand <= neighbor.getPredRate() / 2)
