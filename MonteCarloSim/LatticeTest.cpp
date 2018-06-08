@@ -5,7 +5,7 @@
 
 int main(int argc, char *argv[])
 {
-    string path = "data/thirdMonteCarloRun/";
+    string path = "data/fourthMonteCarloRun/";
 
     Lattice testLattice(path, 256);
     
