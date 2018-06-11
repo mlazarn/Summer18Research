@@ -84,6 +84,7 @@ Lattice::Lattice(string path, int lattSize) : rng(std::time(0)), coordDist(0, la
 
 Lattice::~Lattice()
 {
+    cout << "~Lattice()" << endl;
     for (int i = 0; i < size; ++i) 
     {
         delete[] latt[i];

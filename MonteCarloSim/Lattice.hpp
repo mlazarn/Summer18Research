@@ -15,7 +15,7 @@
 
 class Lattice
 {
-    private:
+    protected:
         int size;
         Cell ** latt;
 
@@ -38,10 +38,10 @@ class Lattice
     public:
         Lattice();
         Lattice(string path, int lattSize);
-        ~Lattice();
+        virtual ~Lattice();
         void reaction(int x, int y);
         void dataOutput();
         void reactTest();
-        void monteCarloRun(int steps, int interval, int startRecord);
+        virtual void monteCarloRun(int steps, int interval, int startRecord);
 };
 
