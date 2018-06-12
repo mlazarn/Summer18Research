@@ -8,8 +8,6 @@ int main(int argc, char *argv[])
     string path = "data/thirdLargeRun/";
 
     Lattice testLattice(path, 1028);
-    
-    cout << "LatticeSize=" << sizeof(testLattice);
 
     cout << "beginning test" << endl;
 
