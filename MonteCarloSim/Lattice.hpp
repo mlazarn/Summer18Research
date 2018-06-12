@@ -43,5 +43,6 @@ class Lattice
         void dataOutput();
         void reactTest();
         virtual void monteCarloRun(int steps, int interval, int startRecord);
+        void monteCarloRun(int steps, int interval, int startRecord, int wipe, int wipeMin, int wipeMax);
 };
 

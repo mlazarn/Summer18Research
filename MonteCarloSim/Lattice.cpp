@@ -299,3 +299,45 @@ void Lattice::monteCarloRun(int steps, int interval, int startRecord)
     }
     while (timestep <= steps);
 }
+
+void Lattice::monteCarloRun(int steps, int interval, int startRecord, int wipe, int wipeMin, int wipeMax)
+{
+    cout << "Starting Monte Carlo Run" << endl;
+    do
+    {
+        int x = coordDist(rng);
+        int y = coordDist(rng);
+
+        do 
+        {
+            x = coordDist(rng);
+            y = coordDist(rng);
+        }
+        while (latt[x][y].getSpecies() > 2);
+ 
+        if (timestep == wipe)
+        {
+            for (int i = wipeMin; i <= wipeMax; i++)
+            {
+                for (int j = wipeMin; j <= wipeMax; j++)
+                {
+                    latt[i][j].setSpecies(3);
+                }
+            }
+        }
+
+        reaction(x, y);
+
+        if (timestep % interval == 0)
+        {
+            cout << timestep << endl;
+            if (timestep >= startRecord)
+            {
+                dataOutput();
+            }
+        }
+
+        timestep++;
+    }
+    while (timestep <= steps);
+}
