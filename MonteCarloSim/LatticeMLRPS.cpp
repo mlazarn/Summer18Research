@@ -73,14 +73,7 @@ void LatticeMLRPS::RPSReaction(int x, int y)
     //Empty Neighbor
     if (neighbor.getSpecies() == 3)
     {
-        //Breeding Reaction
-        if (rand <= curr.getFertRate() / 2)
-        {
-            neighbor.setSpecies(curr.getSpecies());
-            incrementSpeciesCount(curr.getSpecies());
-        }
-        //Diffusion
-        else if (rand > curr.getFertRate() / 2 && rand <= (curr.getFertRate() + curr.getDifRate()) / 2)
+        if (rand <= curr.getDifRate())
         {
             neighbor.setSpecies(curr.getSpecies());
             curr.setSpecies(3);
@@ -156,6 +149,54 @@ void LatticeMLRPS::monteCarloRun(int steps, int interval, int startRecord)
                 dataOutput();
             }
         }
+
+        timestep++;
+    }
+    while (timestep <= steps);
+}
+
+void LatticeMLRPS::monteCarloRun(int steps, int interval, int startRecord, int swapTime, int postSwapInterval)
+{
+    cout << "Starting Monte Carlo Run" << endl;
+    do
+    {
+        int x = coordDist(rng);
+        int y = coordDist(rng);
+
+        do 
+        {
+            x = coordDist(rng);
+            y = coordDist(rng);
+        }
+        while (latt[x][y].getSpecies() > 2);
+ 
+        if (timestep < swapTime)
+        {
+            reaction(x, y);
+
+            if (timestep % interval == 0)
+            {
+                cout << timestep << endl;
+                if (timestep >= startRecord)
+                {
+                    dataOutput();
+                }
+            }
+        }
+        else
+        {
+            RPSReaction(x, y);
+
+            if (timestep % postSwapInterval == 0)
+            {
+                cout << timestep << endl;
+                if (timestep >= startRecord)
+                {
+                    dataOutput();
+                }
+            }
+        }
+
 
         timestep++;
     }
