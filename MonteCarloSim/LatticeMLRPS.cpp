@@ -170,6 +170,44 @@ void LatticeMLRPS::monteCarloRun(int steps, int interval, int startRecord, int s
         }
         while (latt[x][y].getSpecies() > 2);
  
+        if ( (x >= RPSMin && x <= RPSMax) && (y >= RPSMin && y <= RPSMax) && timestep >= swapTime) 
+        {
+            RPSReaction(x, y);
+        }
+        else
+        {
+            reaction(x, y);
+        }
+
+        if (timestep < swapTime && timestep % interval == 0)
+        {
+            cout << timestep << endl;
+            if (timestep >= startRecord)
+            {
+                dataOutput();
+            }
+        }
+        else if (timestep % postSwapInterval == 0)
+        {
+            cout << timestep << endl;
+            dataOutput();
+        }
+        timestep++;
+    }
+    while (timestep <= steps);
+    /*cout << "Starting Monte Carlo Run" << endl;
+    do
+    {
+        int x = coordDist(rng);
+        int y = coordDist(rng);
+
+        do 
+        {
+            x = coordDist(rng);
+            y = coordDist(rng);
+        }
+        while (latt[x][y].getSpecies() > 2);
+ 
         if (timestep < swapTime)
         {
             reaction(x, y);
@@ -201,4 +239,5 @@ void LatticeMLRPS::monteCarloRun(int steps, int interval, int startRecord, int s
         timestep++;
     }
     while (timestep <= steps);
+    */
 }
