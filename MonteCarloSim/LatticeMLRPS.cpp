@@ -187,7 +187,7 @@ void LatticeMLRPS::monteCarloRun(int steps, int interval, int startRecord, int s
                 dataOutput();
             }
         }
-        else if (timestep % postSwapInterval == 0)
+        else if (timestep >= swapTime && timestep % postSwapInterval == 0)
         {
             cout << timestep << endl;
             dataOutput();
