@@ -27,4 +27,5 @@ class LatticeMLRPS : public Lattice
 
         void RPSReaction(int x, int y);
         virtual void monteCarloRun(int steps, int interval, int startRecord);
+        virtual void monteCarloRun(int steps, int interval, int startRecord, int swapTime, int postSwapInterval);
 };
