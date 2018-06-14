@@ -42,6 +42,8 @@ class Lattice
         void reaction(int x, int y);
         void dataOutput();
         void reactTest();
+        void setControlRow(int row);
+        void setControlCol(int col);
         virtual void monteCarloRun(int steps, int interval, int startRecord);
         void monteCarloRun(int steps, int interval, int startRecord, int wipe, int wipeMin, int wipeMax);
 };

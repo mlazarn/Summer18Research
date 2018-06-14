@@ -73,7 +73,7 @@ void LatticeMLRPS::RPSReaction(int x, int y)
     //Empty Neighbor
     if (neighbor.getSpecies() == 3)
     {
-        if (rand <= curr.getDifRate())
+        if (rand <= curr.getDifRate() / 2)
         {
             neighbor.setSpecies(curr.getSpecies());
             curr.setSpecies(3);
