@@ -317,13 +317,13 @@ void Lattice::monteCarloRun(int steps, int interval, int startRecord, int wipe, 
  
         if (timestep == wipe)
         {
-            for (int i = 0; i < size; i++)
+            for (int i = 0; i <= size; i++)
             {
-                for (int j = 0; j < size; j++)
+                for (int j = 0; j <= size; j++)
                 {
-                    if ((i < wipeMin || i > wipeMax) && (j < wipeMin || j > wipeMax))
+                    if ( (j >= wipeMin) && (j <= wipeMax))
                     {
-                        latt[i][j].setSpecies(3);
+                        latt[i][j].setSwapRate(0.0);
                     }
                 }
             }

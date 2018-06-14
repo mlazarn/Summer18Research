@@ -7,14 +7,14 @@ int main(int argc, char *argv[])
 {
     string path = "data/fourthWipeTest/";
 
-    Lattice testLattice(path, 1028);
+    Lattice testLattice(path, 1024);
 
     cout << "beginning test" << endl;
 
     testLattice.dataOutput();
 
     //testLattice.reactTest();
-    testLattice.monteCarloRun(2000000000, 1000000, 100000000, 300000000, 256, 768);
+    testLattice.monteCarloRun(1600000000, 1000000, 500000000, 900000000, 509, 516);
 
     cout << "test complete" << endl;
     return 0;

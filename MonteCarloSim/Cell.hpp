@@ -20,10 +20,17 @@ class Cell
         void set(int param, double value, int spec);
         //note: n is the number of neighbors.
 
-        double getPredRate() const   {return predation;}
-        double getFertRate() const   {return fertility;}
-        double getDifRate() const    {return diffusion;}
-        double getSwapRate() const   {return pairSwap;}
+        double getPredRate() const      {return predation;}
+        void setPredRate(double rate)   {predation = rate;}
+
+        double getFertRate() const      {return fertility;}
+        void setFertRate(double rate)   {fertility = rate;}
+
+        double getDifRate() const       {return diffusion;}
+        void setDifRate(double rate)    {diffusion = rate;}
+
+        double getSwapRate() const      {return pairSwap;}
+        void setSwapRate(double rate)   {pairSwap = rate;}
 
         int getSpecies() const       {return species;}
         void setSpecies(int newSpec);
