@@ -172,11 +172,11 @@ void LatticeMLRPS::monteCarloRun(int steps, int interval, int startRecord, int s
  
         if ( (x >= RPSMin && x <= RPSMax) && (y >= RPSMin && y <= RPSMax) && timestep >= swapTime) 
         {
-            RPSReaction(x, y);
+            reaction(x, y);
         }
         else
         {
-            reaction(x, y);
+            RPSReaction(x, y);
         }
 
         if (timestep < swapTime && timestep % interval == 0)

@@ -5,7 +5,7 @@
 
 int main(int argc, char *argv[])
 {
-    string path = "data/thirdSwapTest/";
+    string path = "data/fourthSwapTest/";
 
     LatticeMLRPS testLattice(path, 1028, 256, 772);
     
