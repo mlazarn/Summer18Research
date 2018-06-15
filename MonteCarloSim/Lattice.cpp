@@ -29,6 +29,7 @@ Lattice::Lattice() : rng(std::time(0)), coordDist(0, size - 1), neighDist(0, 3)
             spec = pop(rng);
             latt[x][y].setSpecies(spec);
             incrementSpeciesCount(spec);
+            latt[x][y].setSwapRate(1.25);
         }
     }
 
@@ -47,7 +48,7 @@ Lattice::Lattice() : rng(std::time(0)), coordDist(0, size - 1), neighDist(0, 3)
  *
  * @param string path           the directory where output files will be written.
  */
-Lattice::Lattice(string path, int lattSize) : rng(std::time(0)), coordDist(0, lattSize - 1), neighDist(0, 3), actionDist()
+Lattice::Lattice(string path, int lattSize, double mobility) : rng(std::time(0)), coordDist(0, lattSize - 1), neighDist(0, 3), actionDist()
 {
     double popDist[] = {0.25, 0.25, 0.25, 0.25};
 
@@ -75,6 +76,7 @@ Lattice::Lattice(string path, int lattSize) : rng(std::time(0)), coordDist(0, la
             spec = pop(rng);
             latt[x][y].setSpecies(spec);
             incrementSpeciesCount(spec);
+            latt[x][y].setSwapRate(mobility);
         }
     }
 

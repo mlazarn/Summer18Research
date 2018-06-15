@@ -22,7 +22,7 @@ class LatticeMLRPS : public Lattice
 
     public:
         LatticeMLRPS();
-        LatticeMLRPS(string path, int lattSize, int min, int max);
+        LatticeMLRPS(string path, int lattSize, double mobility, int min, int max);
         ~LatticeMLRPS() = default;
 
         void RPSReaction(int x, int y);

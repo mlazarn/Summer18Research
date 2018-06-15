@@ -37,7 +37,7 @@ class Lattice
     
     public:
         Lattice();
-        Lattice(string path, int lattSize);
+        Lattice(string path, int lattSize, double mobility);
         virtual ~Lattice();
         void reaction(int x, int y);
         void dataOutput();
