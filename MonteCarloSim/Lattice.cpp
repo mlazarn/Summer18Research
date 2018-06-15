@@ -74,6 +74,8 @@ Lattice::Lattice(string path, int lattSize) : rng(std::time(0)), coordDist(0, la
             int spec;
             spec = pop(rng);
             latt[x][y].setSpecies(spec);
+            latt[x][y].setSwapRate(0.8);
+            latt[x][y].setDifRate(0.8);
             incrementSpeciesCount(spec);
         }
     }

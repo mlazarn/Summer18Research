@@ -5,7 +5,7 @@
 
 int main(int argc, char *argv[])
 {
-    string path = "data/fourthWipeTest/";
+    string path = "data/secondWallTest/";
 
     Lattice testLattice(path, 1024);
 
@@ -14,7 +14,7 @@ int main(int argc, char *argv[])
     testLattice.dataOutput();
 
     //testLattice.reactTest();
-    testLattice.monteCarloRun(1600000000, 1000000, 500000000, 900000000, 509, 516);
+    testLattice.monteCarloRun(1600000000, 1000000, 500000000, 900000000, 505, 520);
 
     cout << "test complete" << endl;
     return 0;
