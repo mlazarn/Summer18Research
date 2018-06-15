@@ -151,59 +151,35 @@ void Lattice::reaction(int x, int y)
 
     
     Cell & curr = latt[x][y];
-    Cell & neighbor = latt[X][Y];
+
+    double norm = curr.getPredRate() + curr.getFertRate() + curr.getSwapRate();
+    double swapProb = curr.getSwapRate() / norm;
+    double predProb = curr.getPredRate() / norm;
+
     double rand = actionDist(rng);
 
-    //cout << "(" << x << "," << y << ")" << "(" << X << "," << Y << ")" << endl;
+    Cell & neighbor = latt[X][Y];
 
-    //Empty Neighbor
-    if (neighbor.getSpecies() == 3)
+    if (rand < swapProb) //Pair Swapping
     {
-        //Breeding Reaction
-        if (rand <= curr.getFertRate() / 2)
-        {
-            neighbor.setSpecies(curr.getSpecies());
-            incrementSpeciesCount(curr.getSpecies());
-        }
-        //Diffusion
-        else if (rand > curr.getFertRate() / 2 && rand <= (curr.getFertRate() + curr.getDifRate()) / 2)
-        {
-            neighbor.setSpecies(curr.getSpecies());
-            curr.setSpecies(3);
-        }          
+        int tmp = neighbor.getSpecies();
+        neighbor.setSpecies(curr.getSpecies());
+        curr.setSpecies(tmp);
     }
-    // Prey Neighbor
-    else if (neighbor.getSpecies() == (curr.getSpecies() + 1) % 3)
+    else if (rand >= swapProb && rand < swapProb + predProb) //Predation
     {
-        //Predation
-        if (rand <= curr.getPredRate() / 2)
+        if (neighbor.getSpecies() == (curr.getSpecies() + 1) % 3)
         {
             decrementSpeciesCount(neighbor.getSpecies());
             neighbor.setSpecies(3);
         }
-        //Pair Swapping
-        else if (rand > curr.getPredRate() / 2 && rand <= (curr.getPredRate() + curr.getSwapRate()) / 2)
-        {
-            int tmp = neighbor.getSpecies();
-            neighbor.setSpecies(curr.getSpecies());
-            curr.setSpecies(tmp);
-        }
     }
-    // Predator Neighbor
-    else if (neighbor.getSpecies() == (curr.getSpecies() - 1) % 3 || (neighbor.getSpecies() == 2 && curr.getSpecies() == 0) )
+    else if (rand >= swapProb + predProb) //Reproduction
     {
-        //Predation
-        if (rand <= neighbor.getPredRate() / 2)
+        if (neighbor.getSpecies() == 3)
         {
-            decrementSpeciesCount(curr.getSpecies());
-            curr.setSpecies(3);
-        }
-        //Pair Swapping
-        else if (rand > neighbor.getPredRate() / 2 && rand <= (neighbor.getPredRate() + neighbor.getSwapRate()) / 2)
-        {
-            int tmp = neighbor.getSpecies();
             neighbor.setSpecies(curr.getSpecies());
-            curr.setSpecies(tmp);
+            incrementSpeciesCount(curr.getSpecies());
         }
     }
 }

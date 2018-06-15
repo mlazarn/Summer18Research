@@ -3,10 +3,10 @@
 
 Cell::Cell()
 {
-    predation = 0.5;
-    fertility = 0.5;
-    diffusion = 0.5;
-    pairSwap = 0.5;
+    predation = 1.0;
+    fertility = 1.0;
+    diffusion = 5.0;
+    pairSwap = 5.0;
 
     species = 3;
 }
