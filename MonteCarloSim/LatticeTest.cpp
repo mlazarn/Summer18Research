@@ -7,7 +7,7 @@ int main(int argc, char *argv[])
 {
     string path = "data/newAlgTest/";
 
-    Lattice testLattice(path, 512);
+    Lattice testLattice(path, 512, 5.0);
 
     cout << "beginning test" << endl;
 

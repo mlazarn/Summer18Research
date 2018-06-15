@@ -7,7 +7,7 @@ int main(int argc, char *argv[])
 {
     string path = "data/thirdSwapTest/";
 
-    LatticeMLRPS testLattice(path, 1028, 256, 772);
+    LatticeMLRPS testLattice(path, 1028, 20.0, 256, 772);
     
     cout << "beginning test" << endl;
 
