@@ -19,6 +19,8 @@ class Lattice
         int size;
         Cell ** latt;
 
+        double mobilityRate;
+
         int aPop;
         int bPop;
         int cPop;
@@ -34,6 +36,7 @@ class Lattice
 
         void incrementSpeciesCount(int spec);
         void decrementSpeciesCount(int spec);
+        virtual void metadata(int start, int interval, int stop);
     
     public:
         Lattice();
@@ -44,7 +47,7 @@ class Lattice
         void reactTest();
         void setControlRow(int row);
         void setControlCol(int col);
-        virtual void monteCarloRun(int steps, int interval, int startRecord);
-        void monteCarloRun(int steps, int interval, int startRecord, int wipe, int wipeMin, int wipeMax);
+        virtual void monteCarloRun(int steps, int interval, int start);
+        void monteCarloRun(int steps, int interval, int start, int change, int interfaceDistance);
 };
 

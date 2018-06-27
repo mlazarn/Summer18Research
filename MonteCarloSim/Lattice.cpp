@@ -8,6 +8,8 @@ Lattice::Lattice() : rng(std::time(0)), coordDist(0, size - 1), neighDist(0, 3)
     double popDist[] = {0.3, 0.3, 0.3, 0.1};
     filePath = "";
 
+    mobilityRate = 1.25;
+
     latt = new Cell*[size];
 
     for (int i = 0; i < size; i++)
@@ -29,7 +31,7 @@ Lattice::Lattice() : rng(std::time(0)), coordDist(0, size - 1), neighDist(0, 3)
             spec = pop(rng);
             latt[x][y].setSpecies(spec);
             incrementSpeciesCount(spec);
-            latt[x][y].setSwapRate(1.25);
+            latt[x][y].setSwapRate(mobilityRate);
         }
     }
 
@@ -53,6 +55,7 @@ Lattice::Lattice(string path, int lattSize, double mobility) : rng(std::time(0))
     double popDist[] = {0.25, 0.25, 0.25, 0.25};
 
     size = lattSize;
+    mobilityRate = mobility;
 
     timestep = 0;
     filePath = path;
@@ -113,6 +116,20 @@ void Lattice::decrementSpeciesCount(int spec)
             case 1: bPop--; break;
             case 2: cPop--; break;
         }
+}
+
+void Lattice::metadata(int start, int interval, int stop)
+{
+    using namespace std;
+    fstream data("metadata.txt", ofstream::out | ofstream::app | ofstream::in);
+
+    data << "Size: " << size << endl;
+    data << "Mobility: " << mobilityRate << endl;
+    data << "Start: " << start << endl;
+    data << "Interval: " << interval << endl;
+    data << "Stop: " << stop << endl;
+
+    data.close();
 }
 
 void Lattice::reaction(int x, int y)
@@ -190,14 +207,15 @@ void Lattice::dataOutput()
 {
     using namespace std;
     stringstream ss;
-    ss << filePath << "S" << size << "_" << timestep << ".ppm";
+    ss << filePath << "S" << size << "_" << timestep << ".csv";
+    //ss << filePath << "S" << size << "_" << timestep << ".ppm";
     string fileName;
     fileName = ss.str();
 
     fstream data(fileName.c_str(), ofstream::out | ofstream::app | ofstream::in);
 
-    data << "P3\n" << size << " " << size << endl;
-    data << "#" << fileName << "\n" << "1" << endl;
+    //data << "P3\n" << size << " " << size << endl;
+    //data << "#" << fileName << "\n" << "1" << endl;
 
     cout <<  "writing " << fileName.c_str() << endl;
 
@@ -207,18 +225,19 @@ void Lattice::dataOutput()
         {
             int spec = latt[x][y].getSpecies();
 
-            switch(spec)
+            data << spec;
+            /*switch(spec)
             {
-                case 0  :   data << 1 << " " << 0 << " " << 0; break;
-                case 1  :   data << 0 << " " << 1 << " " << 0; break;
-                case 2  :   data << 0 << " " << 0 << " " << 1; break;
-                case 3  :   data << 1 << " " << 1 << " " << 1; break;
-                default :   data << 0 << " " << 0 << " " << 0; break;
-            }
+                case 0  :   data << "r" ; break;
+                case 1  :   data << "g" ; break;
+                case 2  :   data << "b" ; break;
+                case 3  :   data << "k" ; break;
+                default :   data << "y" ; break;
+            }*/
 
             if (y < size - 1)
             {
-                data << "  ";
+                data << ",";
             }
         }
 
@@ -247,7 +266,7 @@ void Lattice::reactTest()
     
 }
 
-void Lattice::monteCarloRun(int steps, int interval, int startRecord)
+void Lattice::monteCarloRun(int steps, int interval, int start)
 {
     cout << "Starting Monte Carlo Run" << endl;
     do
@@ -267,7 +286,7 @@ void Lattice::monteCarloRun(int steps, int interval, int startRecord)
         if (timestep % interval == 0)
         {
             cout << timestep << endl;
-            if (timestep >= startRecord)
+            if (timestep >= start)
             {
                 dataOutput();
             }
@@ -278,8 +297,11 @@ void Lattice::monteCarloRun(int steps, int interval, int startRecord)
     while (timestep <= steps);
 }
 
-void Lattice::monteCarloRun(int steps, int interval, int startRecord, int wipe, int wipeMin, int wipeMax)
+void Lattice::monteCarloRun(int steps, int interval, int start, int change, int interfaceDistance)
 {
+    int changeMin = interfaceDistance;
+    int changeMax = size - 1 - interfaceDistance;
+
     cout << "Starting Monte Carlo Run" << endl;
     do
     {
@@ -293,13 +315,13 @@ void Lattice::monteCarloRun(int steps, int interval, int startRecord, int wipe, 
         }
         while (latt[x][y].getSpecies() > 2);
  
-        if (timestep == wipe)
+        if (timestep == change)
         {
             for (int i = 0; i < size; i++)
             {
                 for (int j = 0; j < size; j++)
                 {
-                    if ( (j >= wipeMin) && (j <= wipeMax))
+                    if ( (j >= changeMin) && (j <= changeMax))
                     {
                         latt[i][j].setSwapRate(0.0);
                     }
@@ -312,7 +334,7 @@ void Lattice::monteCarloRun(int steps, int interval, int startRecord, int wipe, 
         if (timestep % interval == 0)
         {
             cout << timestep << endl;
-            if (timestep >= startRecord)
+            if (timestep >= start)
             {
                 dataOutput();
             }

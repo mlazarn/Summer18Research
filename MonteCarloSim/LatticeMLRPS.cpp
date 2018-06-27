@@ -6,12 +6,21 @@ LatticeMLRPS::LatticeMLRPS() : Lattice()
 {
     RPSMin = 64;
     RPSMax = 192;
+    orientation = 1;
+    interfaceDistance = 64;
 }
 
-LatticeMLRPS::LatticeMLRPS(string path, int latticeSize, double mobility, int min, int max) : Lattice(path, latticeSize, mobility)
+LatticeMLRPS::LatticeMLRPS(string path, int orientation, int latticeSize, double mobility, int interfaceDistance) : Lattice(path, latticeSize, mobility)
 {
-    RPSMin = min;
-    RPSMax = max;
+    if (interfaceDistance >= latticeSize / 2) 
+    {
+        throw "InvalidArgumentError: interfaceDistance must be less than or equal to latticeSize/2";
+    }
+
+    RPSMin = interfaceDistance;
+    RPSMax = latticeSize - 1 - interfaceDistance;
+    orientation = orientation;
+    interfaceDistance = interfaceDistance;
 }
 
 /*
@@ -26,6 +35,40 @@ LatticeMLRPS::~LatticeMLRPS()
     delete[] latt;
 }
 */
+
+void LatticeMLRPS::metadata(int start, int interval, int stop)
+{
+    using namespace std;
+    fstream data("metadata.txt", ofstream::out | ofstream::app | ofstream::in);
+
+    data << "Size: " << size << endl;
+    data << "Mobility: " << mobilityRate << endl;
+    data << "Interface Distance: " << interfaceDistance << endl;
+    data << "Orientation: " << orientation << endl;
+    data << "Start: " << start << endl;
+    data << "Interval: " << interval << endl;
+    data << "Stop: " << stop << endl;
+
+    data.close();
+}
+
+void LatticeMLRPS::metadata(int start, int interval, int stop, int swap, int swapInterval)
+{
+    using namespace std;
+    fstream data("metadata.txt", ofstream::out | ofstream::app | ofstream::in);
+
+    data << "Size: " << size << endl;
+    data << "Mobility: " << mobilityRate << endl;
+    data << "Interface Distance: " << interfaceDistance << endl;
+    data << "Orientation: " << orientation << endl;
+    data << "Start: " << start << endl;
+    data << "Interval: " << interval << endl;
+    data << "Stop: " << stop << endl;
+    data << "Swap Time: " << swap << endl;
+    data << "Swap Interval: " << swapInterval << endl;
+
+    data.close();
+}
 
 void LatticeMLRPS::RPSReaction(int x, int y)
 {
@@ -179,6 +222,9 @@ void LatticeMLRPS::RPSReaction(int x, int y)
 
 void LatticeMLRPS::monteCarloRun(int steps, int interval, int startRecord)
 {
+    cout << "Writing metadata" << endl;
+    metadata(startRecord, interval, steps);
+
     cout << "Starting Monte Carlo Run" << endl;
     do
     {
@@ -194,11 +240,21 @@ void LatticeMLRPS::monteCarloRun(int steps, int interval, int startRecord)
  
         if ( (x >= RPSMin && x <= RPSMax) && (y >= RPSMin && y <= RPSMax)) 
         {
-            RPSReaction(x, y);
+            switch(orientation)
+            {
+                case 1  :   RPSReaction(x, y); break;
+                case 0  :   reaction(x, y); break;
+                default :   RPSReaction(x, y); break;
+            }
         }
         else
         {
-            reaction(x, y);
+            switch(orientation)
+            {
+                case 1  :   reaction(x, y); break;
+                case 0  :   RPSReaction(x, y); break;
+                default :   reaction(x, y); break;
+            }
         }
 
         if (timestep % interval == 0)
@@ -215,8 +271,11 @@ void LatticeMLRPS::monteCarloRun(int steps, int interval, int startRecord)
     while (timestep <= steps);
 }
 
-void LatticeMLRPS::monteCarloRun(int steps, int interval, int startRecord, int swapTime, int postSwapInterval)
+void LatticeMLRPS::monteCarloRun(int steps, int interval, int startRecord, int swapTime, int swapInterval)
 {
+    cout << "Writing metadata" << endl;
+    metadata(startRecord, interval, steps, swapTime, swapInterval);
+
     cout << "Starting Monte Carlo Run" << endl;
     do
     {
@@ -232,11 +291,21 @@ void LatticeMLRPS::monteCarloRun(int steps, int interval, int startRecord, int s
  
         if ( (x >= RPSMin && x <= RPSMax) && (y >= RPSMin && y <= RPSMax) && timestep >= swapTime) 
         {
-            RPSReaction(x, y);
+            switch(orientation)
+            {
+                case 1  :   RPSReaction(x, y); break;
+                case 0  :   reaction(x, y); break;
+                default :   RPSReaction(x, y); break;
+            }
         }
         else
         {
-            reaction(x, y);
+            switch(orientation)
+            {
+                case 1  :   reaction(x, y); break;
+                case 0  :   RPSReaction(x, y); break;
+                default :   reaction(x, y); break;
+            }
         }
 
         if (timestep < swapTime && timestep % interval == 0)
@@ -247,7 +316,7 @@ void LatticeMLRPS::monteCarloRun(int steps, int interval, int startRecord, int s
                 dataOutput();
             }
         }
-        else if (timestep >= swapTime && timestep % postSwapInterval == 0)
+        else if (timestep >= swapTime && timestep % swapInterval == 0)
         {
             cout << timestep << endl;
             dataOutput();
@@ -285,7 +354,7 @@ void LatticeMLRPS::monteCarloRun(int steps, int interval, int startRecord, int s
         {
             RPSReaction(x, y);
 
-            if (timestep % postSwapInterval == 0)
+            if (timestep % swapInterval == 0)
             {
                 cout << timestep << endl;
                 if (timestep >= startRecord)
