@@ -8,7 +8,7 @@ int main(int argc, char *argv[])
 {
     string path = "data/densityTest/";
 
-    LatticeMLRPS testLattice(path, 256, 5.0, 64);
+    LatticeMLRPS testLattice(path, 1, 256, 5.0, 64);
 
     cout << "beginning test" << endl;
 
