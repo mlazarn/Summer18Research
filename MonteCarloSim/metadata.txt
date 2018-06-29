@@ -1,0 +1,9 @@
+Size: 256
+Mobility: 5
+Interface Distance: 0
+Orientation: 4
+Start: 100000000
+Interval: 1000000
+Stop: 700000000
+Swap Time: 400000000
+Swap Interval: 1000000

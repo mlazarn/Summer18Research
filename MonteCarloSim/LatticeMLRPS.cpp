@@ -39,7 +39,13 @@ LatticeMLRPS::~LatticeMLRPS()
 void LatticeMLRPS::metadata(int start, int interval, int stop)
 {
     using namespace std;
-    fstream data("metadata.txt", ofstream::out | ofstream::app | ofstream::in);
+    stringstream ss;
+    ss << filePath << "metadata.txt";
+    //ss << filePath << "S" << size << "_" << timestep << ".ppm";
+    string fileName;
+    fileName = ss.str();
+
+    fstream data(fileName.c_str(), ofstream::out | ofstream::app | ofstream::in);
 
     data << "Size: " << size << endl;
     data << "Mobility: " << mobilityRate << endl;
@@ -55,7 +61,13 @@ void LatticeMLRPS::metadata(int start, int interval, int stop)
 void LatticeMLRPS::metadata(int start, int interval, int stop, int swap, int swapInterval)
 {
     using namespace std;
-    fstream data("metadata.txt", ofstream::out | ofstream::app | ofstream::in);
+    stringstream ss;
+    ss << filePath << "metadata.txt";
+    //ss << filePath << "S" << size << "_" << timestep << ".ppm";
+    string fileName;
+    fileName = ss.str();
+
+    fstream data(fileName.c_str(), ofstream::out | ofstream::app | ofstream::in);
 
     data << "Size: " << size << endl;
     data << "Mobility: " << mobilityRate << endl;
@@ -259,7 +271,10 @@ void LatticeMLRPS::monteCarloRun(int steps, int interval, int startRecord)
 
         if (timestep % interval == 0)
         {
-            cout << timestep << endl;
+            float progress = (1.0 * timestep) / steps;
+            progressBar(progress);
+
+            //cout << timestep << endl;
             if (timestep >= startRecord)
             {
                 dataOutput();
@@ -310,7 +325,10 @@ void LatticeMLRPS::monteCarloRun(int steps, int interval, int startRecord, int s
 
         if (timestep < swapTime && timestep % interval == 0)
         {
-            cout << timestep << endl;
+            float progress = (1.0 * timestep) / steps;
+            progressBar(progress);
+
+            //cout << timestep << endl;
             if (timestep >= startRecord)
             {
                 dataOutput();
@@ -318,55 +336,14 @@ void LatticeMLRPS::monteCarloRun(int steps, int interval, int startRecord, int s
         }
         else if (timestep >= swapTime && timestep % swapInterval == 0)
         {
-            cout << timestep << endl;
+            float progress = (1.0 * timestep) / steps;
+            progressBar(progress);
+
+            //cout << timestep << endl;
             dataOutput();
         }
         timestep++;
     }
     while (timestep <= steps);
-    /*cout << "Starting Monte Carlo Run" << endl;
-    do
-    {
-        int x = coordDist(rng);
-        int y = coordDist(rng);
-
-        do 
-        {
-            x = coordDist(rng);
-            y = coordDist(rng);
-        }
-        while (latt[x][y].getSpecies() > 2);
- 
-        if (timestep < swapTime)
-        {
-            reaction(x, y);
-
-            if (timestep % interval == 0)
-            {
-                cout << timestep << endl;
-                if (timestep >= startRecord)
-                {
-                    dataOutput();
-                }
-            }
-        }
-        else
-        {
-            RPSReaction(x, y);
-
-            if (timestep % swapInterval == 0)
-            {
-                cout << timestep << endl;
-                if (timestep >= startRecord)
-                {
-                    dataOutput();
-                }
-            }
-        }
-
-
-        timestep++;
-    }
-    while (timestep <= steps);
-    */
+    cout << endl << "Simulation Complete" << endl;
 }

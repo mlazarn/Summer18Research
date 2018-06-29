@@ -85,6 +85,24 @@ def plot_args_check(args):
     if args.dest_csv[-4:] != '.csv':
         raise ValueError('--dest_csv must end in .csv')
 
+#def update_progress(progress):
+    #barLength = 50;
+    #status = ""
+    #if isinstance(progress, int):
+        #progress = float(progress)
+    #if not isinstance(progress, float):
+        #progress = 0
+        #status = "error: progress var must be float\r\n"
+    #if progress < 0:
+        #progress = 0
+        #status = "Halt...\r\n"
+    #if progress >= 1:
+        #progress = 1
+        #status = "Done...\r\n"
+        #block = int(round(barLength*progress))
+        #text = "\rPercent: [{0}] {1}% {2}".format( "#"*block + "-"*(barLength-block), progress*100, status)
+        #sys.stdout.write(text)
+        #sys.stdout.flush()
 
 parser = ap.ArgumentParser()
 parser.add_argument('mode', choices=['s', 'm'])
@@ -163,7 +181,7 @@ elif args.mode == 'm':
     os.chdir(args.target)
     print(os.getcwd())
 
-    filename = args.prefix + '0.csv'
+    filename = args.prefix + str(args.start) + '.csv'
 
     r, d = plotDensities(filename, args.interface_distance, args.species)
     #r = data[0]
@@ -179,12 +197,13 @@ elif args.mode == 'm':
     ttl = ax.set_title(r'Density at $t = 0$', loc='left')
     #ax.autoscale()
 
+    print("Writing {}. Please wait".format(args.dest_movie))
     with writer.saving(fig, args.dest_movie, args.dpi):
-        print('writing frame 0')
+        #print('writing frame 0')
         writer.grab_frame()
 
-        if args.swap < 1 or args.swap >= args.swap:
-            for t in range(args.start, args.stop + 1, args.interval):
+        if args.swap < 1 or args.swap >= args.stop:
+            for t in range(args.start + args.interval, args.stop + 1, args.interval):
                 try:
                     filename = args.prefix + str(t) + '.csv'
                     #print('calculating frame from {0}'.format(filename))
@@ -192,15 +211,17 @@ elif args.mode == 'm':
                     #print('setting data')
                     l.set_data(data)
                     ttl.set_text(r'Density at $t = {}$'.format(str(t)))
-                    print('drawing frame {0}'.format(str(t)))
+                    #print('drawing frame {0}'.format(str(t)))
                     writer.grab_frame()
+                    prog = (1.0 * (t / args.interval)) / ((args.stop - args.start) / args.interval)
+                    #update_progress(prog)
                 except OSError:
                     pass
                 except:
                     print("Unexpected error:", sys.exc_info()[0])
                     raise
         else:
-            for t in range(args.start, args.swap, args.interval):
+            for t in range(args.start + args.interval, args.swap, args.interval):
                 try:
                     filename = args.prefix + str(t) + '.csv'
                     #print('calculating frame {0}'.format(str(t)))
@@ -208,14 +229,16 @@ elif args.mode == 'm':
                     #print('setting data')
                     l.set_data(data)
                     ttl.set_text(r'Density at $t = {}$'.format(str(t)))
-                    print('drawing frame {0}'.format(str(t)))
+                    #print('drawing frame {0}'.format(str(t)))
                     writer.grab_frame()
+                    prog = (1.0 * (t / args.swap_interval)) / ((args.stop - args.start) / args.swap_interval)
+                    #update_progress(prog)
                 except OSError:
                     pass
                 except:
                     print("Unexpected error:", sys.exc_info()[0])
                     raise
-            for t in range(args.swap, args.stop + 1, swapint):
+            for t in range(args.swap, args.stop + 1, args.swap_interval):
                 try:
                     filename = args.prefix + str(t) + '.csv'
                     #print('calculating frame {0}'.format(str(t)))
@@ -223,10 +246,13 @@ elif args.mode == 'm':
                     #print('setting data')
                     l.set_data(data)
                     ttl.set_text(r'Density at $t = {}$'.format(str(t)))
-                    print('drawing frame {0}'.format(str(t)))
+                    #print('drawing frame {0}'.format(str(t)))
                     writer.grab_frame()
+                    prog = (1.0 * (t / args.swap_interval)) / ((args.stop - args.start) / args.swap_interval)
+                    #update_progress(prog)
                 except OSError:
                     pass
                 except:
                     print("Unexpected error:", sys.exc_info()[0])
                     raise
+    print("Done")

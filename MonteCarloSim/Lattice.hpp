@@ -37,6 +37,7 @@ class Lattice
         void incrementSpeciesCount(int spec);
         void decrementSpeciesCount(int spec);
         virtual void metadata(int start, int interval, int stop);
+        virtual void progressBar(float progress);
     
     public:
         Lattice();

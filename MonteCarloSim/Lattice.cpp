@@ -121,7 +121,13 @@ void Lattice::decrementSpeciesCount(int spec)
 void Lattice::metadata(int start, int interval, int stop)
 {
     using namespace std;
-    fstream data("metadata.txt", ofstream::out | ofstream::app | ofstream::in);
+    stringstream ss;
+    ss << filePath << "metadata.txt";
+    //ss << filePath << "S" << size << "_" << timestep << ".ppm";
+    string fileName;
+    fileName = ss.str();
+
+    fstream data(fileName.c_str(), ofstream::out | ofstream::app | ofstream::in);
 
     data << "Size: " << size << endl;
     data << "Mobility: " << mobilityRate << endl;
@@ -130,6 +136,26 @@ void Lattice::metadata(int start, int interval, int stop)
     data << "Stop: " << stop << endl;
 
     data.close();
+}
+
+void Lattice::progressBar(float progress)
+{
+    if (progress >= 0.0 && progress <= 1.0)
+    {
+        int barWidth = 70;
+
+        cout << "[";
+        int pos = barWidth * progress;
+        for (int i = 0; i < barWidth; i++)
+        {
+            if (i < pos) cout << "=";
+            else if (i == pos) cout << ">";
+            else cout << " ";
+
+        }
+        cout << "] " << int(progress * 100.0) << " %\r";
+        cout.flush();
+    }
 }
 
 void Lattice::reaction(int x, int y)
@@ -217,7 +243,7 @@ void Lattice::dataOutput()
     //data << "P3\n" << size << " " << size << endl;
     //data << "#" << fileName << "\n" << "1" << endl;
 
-    cout <<  "writing " << fileName.c_str() << endl;
+    //cout <<  "writing " << fileName.c_str() << endl;
 
     for (int x = 0; x < size; x++)
     {
@@ -247,7 +273,7 @@ void Lattice::dataOutput()
         }
     }
 
-    cout << "Current Population: " << "A: " << aPop << " B:" << bPop << " C: " << cPop << endl;
+    //cout << "Current Population: " << "A: " << aPop << " B:" << bPop << " C: " << cPop << endl;
     data.close();
 }
 
@@ -285,7 +311,7 @@ void Lattice::monteCarloRun(int steps, int interval, int start)
 
         if (timestep % interval == 0)
         {
-            cout << timestep << endl;
+            //cout << timestep << endl;
             if (timestep >= start)
             {
                 dataOutput();
@@ -333,7 +359,10 @@ void Lattice::monteCarloRun(int steps, int interval, int start, int change, int 
 
         if (timestep % interval == 0)
         {
-            cout << timestep << endl;
+            float progress = (1.0 * timestep) / steps;
+            progressBar(progress);
+
+            //cout << timestep << endl;
             if (timestep >= start)
             {
                 dataOutput();
