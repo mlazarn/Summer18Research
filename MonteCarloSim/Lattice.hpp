@@ -16,7 +16,8 @@
 class Lattice
 {
     protected:
-        int size;
+        int sizeX;
+        int sizeY;
         Cell ** latt;
 
         double mobilityRate;
@@ -41,6 +42,8 @@ class Lattice
     public:
         Lattice();
         Lattice(string path, int lattSize, double mobility);
+        Lattice(string path, int xSize, int ySize, double mobility);
+
         virtual ~Lattice();
         void reaction(int x, int y);
         void dataOutput();
@@ -48,6 +51,5 @@ class Lattice
         void setControlRow(int row);
         void setControlCol(int col);
         virtual void monteCarloRun(int steps, int interval, int start);
-        void monteCarloRun(int steps, int interval, int start, int change, int interfaceDistance);
 };
 

@@ -21,6 +21,7 @@ class LatticeMLRPS : public Lattice
         int RPSMax;
         int interfaceDistance;
         int orientation;
+        int topology;
 
         virtual void metadata(int start, int interval, int stop);
         void metadata(int start, int stop, int interval, int swap, int swapInterval);
@@ -28,6 +29,7 @@ class LatticeMLRPS : public Lattice
     public:
         LatticeMLRPS();
         LatticeMLRPS(string path, int orientation, int lattSize, double mobility, int interfaceDistance);
+        LatticeMLRPS(string path, int orientation, int topology, int xSize, int ySize, double mobility, int interfaceDistance);
         ~LatticeMLRPS() = default;
 
         void RPSReaction(int x, int y);

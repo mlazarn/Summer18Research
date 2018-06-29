@@ -2,19 +2,21 @@
 
 using namespace std;
 
-Lattice::Lattice() : rng(std::time(0)), coordDist(0, size - 1), neighDist(0, 3)
+Lattice::Lattice() : rng(std::time(0)), coordDist(0, 256), neighDist(0, 3)
 {
-    size = 256;
+    sizeX = 256;
+    sizeY = 256;
+
     double popDist[] = {0.3, 0.3, 0.3, 0.1};
     filePath = "";
 
     mobilityRate = 1.25;
 
-    latt = new Cell*[size];
+    latt = new Cell*[sizeX];
 
-    for (int i = 0; i < size; i++)
+    for (int i = 0; i < sizeX; i++)
     {
-        latt[i] = new Cell[size];
+        latt[i] = new Cell[sizeY];
     }
 
     timestep = 0;
@@ -23,9 +25,9 @@ Lattice::Lattice() : rng(std::time(0)), coordDist(0, size - 1), neighDist(0, 3)
 
     boost::random::discrete_distribution<> pop(popDist);
 
-    for (int x = 0; x < size; x++)
+    for (int x = 0; x < sizeX; x++)
     {
-        for (int y = 0; y < size; y++)
+        for (int y = 0; y < sizeY; y++)
         {
             int spec;
             spec = pop(rng);
@@ -54,26 +56,28 @@ Lattice::Lattice(string path, int lattSize, double mobility) : rng(std::time(0))
 {
     double popDist[] = {0.25, 0.25, 0.25, 0.25};
 
-    size = lattSize;
+    sizeX = lattSize;
+    sizeY = lattSize;
+
     mobilityRate = mobility;
 
     timestep = 0;
     filePath = path;
 
-    latt = new Cell*[size];
+    latt = new Cell*[sizeX];
 
-    for (int i = 0; i < size; i++)
+    for (int i = 0; i < sizeY; i++)
     {
-        latt[i] = new Cell[size];
+        latt[i] = new Cell[sizeY];
     }
 
     aPop = bPop = cPop = 0;
 
     boost::random::discrete_distribution<> pop(popDist);
 
-    for (int x = 0; x < size; x++)
+    for (int x = 0; x < sizeX; x++)
     {
-        for (int y = 0; y < size; y++)
+        for (int y = 0; y < sizeY; y++)
         {
             int spec;
             spec = pop(rng);
@@ -90,7 +94,7 @@ Lattice::Lattice(string path, int lattSize, double mobility) : rng(std::time(0))
 Lattice::~Lattice()
 {
     cout << "~Lattice()" << endl;
-    for (int i = 0; i < size; ++i) 
+    for (int i = 0; i < sizeX; ++i) 
     {
         delete[] latt[i];
     }
@@ -123,7 +127,8 @@ void Lattice::metadata(int start, int interval, int stop)
     using namespace std;
     fstream data("metadata.txt", ofstream::out | ofstream::app | ofstream::in);
 
-    data << "Size: " << size << endl;
+    data << "X Size: " << sizeX << endl;
+    data << "Y Size: " << sizeY << endl;
     data << "Mobility: " << mobilityRate << endl;
     data << "Start: " << start << endl;
     data << "Interval: " << interval << endl;
@@ -143,27 +148,27 @@ void Lattice::reaction(int x, int y)
         case 0 : //up
             if (x == 0)
             {
-                X = size - 1;
+                X = sizeX - 1;
             }
             else
             {
-                X = (x - 1) % size;
+                X = (x - 1) % sizeX;
             }
             break;
         case 1 : //right
-            Y = (y + 1) % size;
+            Y = (y + 1) % sizeY;
             break;
         case 2 : //down
-            X = (x + 1) % size;
+            X = (x + 1) % sizeX;
             break;
         case 3 : //left
             if (y == 0)
             {
-                Y = size - 1;
+                Y = sizeY - 1;
             }
             else
             {
-                Y = (y - 1) % size;
+                Y = (y - 1) % sizeY;
             }
             break;
     }
@@ -207,7 +212,7 @@ void Lattice::dataOutput()
 {
     using namespace std;
     stringstream ss;
-    ss << filePath << "S" << size << "_" << timestep << ".csv";
+    ss << filePath << "MLStep" << "_" << timestep << ".csv";
     //ss << filePath << "S" << size << "_" << timestep << ".ppm";
     string fileName;
     fileName = ss.str();
@@ -219,9 +224,9 @@ void Lattice::dataOutput()
 
     cout <<  "writing " << fileName.c_str() << endl;
 
-    for (int x = 0; x < size; x++)
+    for (int x = 0; x < sizeX; x++)
     {
-        for (int y = 0; y < size; y++)
+        for (int y = 0; y < sizeY; y++)
         {
             int spec = latt[x][y].getSpecies();
 
@@ -235,13 +240,13 @@ void Lattice::dataOutput()
                 default :   data << "y" ; break;
             }*/
 
-            if (y < size - 1)
+            if (y < sizeY - 1)
             {
                 data << ",";
             }
         }
 
-        if (x < size - 1)
+        if (x < sizeX - 1)
         {
             data << endl;
         }
@@ -253,9 +258,9 @@ void Lattice::dataOutput()
 
 void Lattice::reactTest()
 {
-    for (int x = 0; x < size; x++)
+    for (int x = 0; x < sizeX; x++)
     {
-        for (int y = 0; y < size; y++)
+        for (int y = 0; y < sizeY; y++)
         {
             Cell & cell = latt[x][y];
             cell.setSpecies(0);
@@ -297,50 +302,3 @@ void Lattice::monteCarloRun(int steps, int interval, int start)
     while (timestep <= steps);
 }
 
-void Lattice::monteCarloRun(int steps, int interval, int start, int change, int interfaceDistance)
-{
-    int changeMin = interfaceDistance;
-    int changeMax = size - 1 - interfaceDistance;
-
-    cout << "Starting Monte Carlo Run" << endl;
-    do
-    {
-        int x = coordDist(rng);
-        int y = coordDist(rng);
-
-        do 
-        {
-            x = coordDist(rng);
-            y = coordDist(rng);
-        }
-        while (latt[x][y].getSpecies() > 2);
- 
-        if (timestep == change)
-        {
-            for (int i = 0; i < size; i++)
-            {
-                for (int j = 0; j < size; j++)
-                {
-                    if ( (j >= changeMin) && (j <= changeMax))
-                    {
-                        latt[i][j].setSwapRate(0.0);
-                    }
-                }
-            }
-        }
-
-        reaction(x, y);
-
-        if (timestep % interval == 0)
-        {
-            cout << timestep << endl;
-            if (timestep >= start)
-            {
-                dataOutput();
-            }
-        }
-
-        timestep++;
-    }
-    while (timestep <= steps);
-}
