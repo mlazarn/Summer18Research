@@ -5,6 +5,7 @@ from matplotlib import colors
 import matplotlib.animation as manimation
 import numpy as np
 import argparse as ap
+import sys
 
 def update(ttl, im, latt, title='t=0'):
     im.set_data(latt)
@@ -19,6 +20,24 @@ def new_frame(pfx, ttl, im, t):
     except OSError:
         print("Could not open file \"{0}\"".format(filename))
         raise
+#def update_progress(progress):
+    #barLength = 50;
+    #status = ""
+    #if isinstance(progress, int):
+        #progress = float(progress)
+    #if not isinstance(progress, float):
+        #progress = 0
+        #status = "error: progress var must be float\r\n"
+    #if progress < 0:
+        #progress = 0
+        #status = "Halt...\r\n"
+    #if progress >= 1:
+        #progress = 1
+        #status = "Done...\r\n"
+        #block = int(round(barLength*progress))
+        #text = "\rPercent: [{0}] {1}% {2}".format( "#"*block + "-"*(barLength-block), progress*100, status)
+        #sys.stdout.write(text)
+        #sys.stdout.flush()
 
 parser = ap.ArgumentParser()
 parser.add_argument('path')
@@ -54,44 +73,58 @@ fig.set_tight_layout(True)
 
 os.chdir(args.path)
 
-lattice = np.genfromtxt(args.prefix + '0.csv', dtype=int, delimiter=',')
+lattice = np.genfromtxt(args.prefix + str(args.start) + '.csv', dtype=int, delimiter=',')
 
 im = ax.imshow(lattice, interpolation='nearest', cmap=cmap, norm=norm)
 ttl = ax.set_title('t=0', loc='left')
 
+print("writing {}. Please wait.".format(args.output))
 with writer.saving(fig, args.output, args.dpi):
-    print("writing frame 0")
+
+    #print("writing frame 0")
     writer.grab_frame()
     
     if args.swap < 1 or args.swap > args.stop:
-        for t in range(args.start, args.stop + 1, args.interval):
+        for t in range(args.start + args.interval, args.stop + 1, args.interval):
             try:
                 new_frame(args.prefix, ttl, im, t)
-                print("writing frame {0}".format(str(t)))
+                #print("writing frame {0}".format(str(t)))
                 writer.grab_frame()
+                prog = (1.0 * (t / args.interval)) / ((args.stop - args.start) / args.interval)
+                #update_progress(prog)
             except OSError:
                 pass
             except:
                 print("Unexpected error:", sys.exc_info()[0])
                 raise
     else:
-        for t in range(args.start, args.swap, args.interval):
+        swap_interval = args.swap_interval
+        if args.swap_interval == -1:
+            swap_interval = args.interval
+
+        for t in range(args.start + args.interval, args.swap, args.interval):
             try:
                 new_frame(args.prefix, ttl, im, t)
-                print("writing frame {0}".format(str(t)))
+                #print("writing frame {0}".format(str(t)))
                 writer.grab_frame()
+                #prog = (1.0 * (t / args.swap_interval)) / ((args.stop - args.start) / args.swap_interval)
+                #update_progress(prog)
             except OSError:
                 pass
             except:
                 print("Unexpected error:", sys.exc_info()[0])
                 raise
-        for t in range(args.swap, args.stop + 1, args.swap_interval):
+        for t in range(args.swap, args.stop + 1, swap_interval):
             try:
                 new_frame(args.prefix, ttl, im, t)
-                print("writing frame {0}".format(str(t)))
+                #print("writing frame {0}".format(str(t)))
                 writer.grab_frame()
+                #prog = (1.0 * (t / args.swap_interval)) / ((args.stop - args.start) / args.swap_interval)
+                #update_progress(prog)
             except OSError:
                 pass
             except:
-                print("Unexpected error:", sys.exc_info()[0])
+                #print("Unexpected error:", sys.exc_info()[0])
                 raise
+
+print("done")

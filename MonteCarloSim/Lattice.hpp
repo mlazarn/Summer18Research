@@ -27,17 +27,20 @@ class Lattice
         int cPop;
 
         int timestep;
+        int monteCarloStep;
 
         string filePath;
 
         boost::random::mt19937 rng;
-        boost::random::uniform_int_distribution<> coordDist;
+        boost::random::uniform_int_distribution<> xCoordDist;
+        boost::random::uniform_int_distribution<> yCoordDist;
         boost::random::uniform_int_distribution<> neighDist;
         boost::random::uniform_01<> actionDist;
 
         void incrementSpeciesCount(int spec);
         void decrementSpeciesCount(int spec);
         virtual void metadata(int start, int interval, int stop);
+        virtual void progressBar(float progress);
     
     public:
         Lattice();

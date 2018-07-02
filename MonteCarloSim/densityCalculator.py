@@ -6,7 +6,7 @@ import argparse as ap
 import matplotlib.animation as manimation
 import sys
 
-def density(species, lattice, w_0, w, r):
+def density(species, lattice, w_0, w, r, topology=0):
     w_1 = w_0 + w
 
     count = 0
@@ -25,7 +25,17 @@ def density(species, lattice, w_0, w, r):
 
     return density
 
-def plotDensities(filename, interfaceDistance, species):
+def density_annular(species, lattice, lattice_width, y):
+    count = 0
+
+    for x in range(lattice_width):
+        if lattice[x, y] == species : count = count + 1
+
+    density = count / (1.0 * lattice_width)
+
+    return density
+
+def plot_densities(filename, interfaceDistance, species):
     try:
         lattice = np.genfromtxt(filename, dtype=int, delimiter=',')
         #print(lattice)
@@ -35,17 +45,38 @@ def plotDensities(filename, interfaceDistance, species):
 
         outputData = np.zeros((2, interfaceDistance))
 
-        for r in range(1, interfaceDistance):
-            d = density(species, lattice, interfaceDistance, w, r)
+        for r in range(interfaceDistance):
+            d = density(species, lattice, interfaceDistance, w, r + 1)
+
             #print('[{}, {}]'.format(str(r), str(d)))
             outputData[0, r - 1] = r  
-            outputData[1, r - 1] = density(species, lattice, interfaceDistance, w, r)
+            outputData[1, r - 1] = d
     except OSError:
         print("Could not open file \"{0}\"".format(filename))
         raise
 
     return outputData
 
+def plot_densities_annular(filename, interface_distance, max_radius, species):
+    try:
+        lattice = np.genfromtxt(filename, dtype=int, delimiter=',')
+    
+        lattice_width = lattice.shape[0]
+
+        outputData = np.zeros((2, max_radius))
+
+        for r in range(max_radius):
+            y = interface_distance + r
+            d = density_annular(species, lattice, lattice_width, y)
+            #print('[{}, {}]'.format(str(r), str(d)))
+            outputData[0, r - 1] = r + 1 
+            outputData[1, r - 1] = d
+    except OSError:
+        print("Could not open file \"{0}\"".format(filename))
+        raise
+
+    return outputData
+    
 def movie_args_check(args):
     suffx = 'is a required argument when running in movie mode'
 
@@ -85,18 +116,40 @@ def plot_args_check(args):
     if args.dest_csv[-4:] != '.csv':
         raise ValueError('--dest_csv must end in .csv')
 
+#def update_progress(progress):
+    #barLength = 50;
+    #status = ""
+    #if isinstance(progress, int):
+        #progress = float(progress)
+    #if not isinstance(progress, float):
+        #progress = 0
+        #status = "error: progress var must be float\r\n"
+    #if progress < 0:
+        #progress = 0
+        #status = "Halt...\r\n"
+    #if progress >= 1:
+        #progress = 1
+        #status = "Done...\r\n"
+        #block = int(round(barLength*progress))
+        #text = "\rPercent: [{0}] {1}% {2}".format( "#"*block + "-"*(barLength-block), progress*100, status)
+        #sys.stdout.write(text)
+        #sys.stdout.flush()
 
 parser = ap.ArgumentParser()
 parser.add_argument('mode', choices=['s', 'm'])
 parser.add_argument('target')
 parser.add_argument('interface_distance', type=int)
+
 parser.add_argument('--dest_plot', '-d', default='density.png')
 parser.add_argument('--dest_csv', '-D', default='density.csv')
 parser.add_argument('--dest_movie', '-m', default='density.mp4')
 
+parser.add_argument('--prefix', '-p')
+
 parser.add_argument('--species', '-c', type=int, default=0)
 
-parser.add_argument('--prefix', '-p')
+parser.add_argument('--topology', '-t', type=int, default=0)
+parser.add_argument('--max_radius', '-r', type=int, default=-1)
 
 parser.add_argument('--start', '-s', type=int)
 parser.add_argument('--interval', '-i', type=int)
@@ -119,10 +172,18 @@ plt.rc('font', family='serif')
 marks = ['ro', 'gs', 'b^']
 spec=['a', 'b', 'c']
 
+max_radius = args.max_radius
+if args.topology == 1 and args.max_radius == -1:
+    max_radius = args.interface_distance
+
 if args.mode == 's':
     print('calculating...')
     try:
-        data = plotDensities(args.target, args.interface_distance, args.species)
+        data = np.array([])
+        if args.topology == 1:
+            data = plot_densities_annular(args.target, args.interface_distance, max_radius, args.species)
+        else:
+            data = plot_densities(args.target, args.interface_distance, args.species)
     except OSError:
         quit()
 
@@ -163,11 +224,17 @@ elif args.mode == 'm':
     os.chdir(args.target)
     print(os.getcwd())
 
-    filename = args.prefix + '0.csv'
+    filename = args.prefix + str(args.start) + '.csv'
 
-    r, d = plotDensities(filename, args.interface_distance, args.species)
-    #r = data[0]
-    #d = data[1]
+    data = np.array([])
+    if args.topology == 1:
+        data = plot_densities_annular(filename, args.interface_distance, max_radius, args.species)
+    else:
+        data = plot_densities(filename, args.interface_distance, args.species)
+
+    #r, d = plot_densities(filename, args.interface_distance, args.species)
+    r = data[0]
+    d = data[1]
 
     fig, ax = plt.subplots()
     l, = ax.plot(r, d, marks[args.species])
@@ -179,54 +246,78 @@ elif args.mode == 'm':
     ttl = ax.set_title(r'Density at $t = 0$', loc='left')
     #ax.autoscale()
 
+    print("Writing {}. Please wait".format(args.dest_movie))
     with writer.saving(fig, args.dest_movie, args.dpi):
-        print('writing frame 0')
+        #print('writing frame 0')
         writer.grab_frame()
 
-        if args.swap < 1 or args.swap >= args.swap:
-            for t in range(args.start, args.stop + 1, args.interval):
+        if args.swap < 1 or args.swap >= args.stop:
+            for t in range(args.start + args.interval, args.stop + 1, args.interval):
                 try:
                     filename = args.prefix + str(t) + '.csv'
                     #print('calculating frame from {0}'.format(filename))
-                    data = plotDensities(filename, args.interface_distance, args.species)
+                    if args.topology == 1:
+                        data = plot_densities_annular(filename, args.interface_distance, max_radius, args.species)
+                    else:
+                        data = plot_densities(filename, args.interface_distance, args.species)
                     #print('setting data')
                     l.set_data(data)
                     ttl.set_text(r'Density at $t = {}$'.format(str(t)))
-                    print('drawing frame {0}'.format(str(t)))
+                    #print('drawing frame {0}'.format(str(t)))
                     writer.grab_frame()
+                    prog = (1.0 * (t / args.interval)) / ((args.stop - args.start) / args.interval)
+                    #update_progress(prog)
                 except OSError:
                     pass
                 except:
                     print("Unexpected error:", sys.exc_info()[0])
                     raise
         else:
-            for t in range(args.start, args.swap, args.interval):
+            swap_interval = args.swap_interval
+            if args.swap_interval == -1:
+                swap_interval = args.interval
+
+            for t in range(args.start + args.interval, args.swap, args.interval):
                 try:
                     filename = args.prefix + str(t) + '.csv'
                     #print('calculating frame {0}'.format(str(t)))
-                    data = plotDensities(filename, args.interface_distance, args.species)
+                    data = np.array([])
+                    if args.topology == 1:
+                        data = plot_densities_annular(filename, args.interface_distance, max_radius, args.species)
+                    else:
+                        data = plot_densities(filename, args.interface_distance, args.species)
                     #print('setting data')
                     l.set_data(data)
                     ttl.set_text(r'Density at $t = {}$'.format(str(t)))
-                    print('drawing frame {0}'.format(str(t)))
+                    #print('drawing frame {0}'.format(str(t)))
                     writer.grab_frame()
+                    #prog = (1.0 * (t / args.swap_interval)) / ((args.stop - args.start) / args.swap_interval)
+                    #update_progress(prog)
                 except OSError:
                     pass
                 except:
                     print("Unexpected error:", sys.exc_info()[0])
                     raise
-            for t in range(args.swap, args.stop + 1, swapint):
+            for t in range(args.swap, args.stop + 1, swap_interval):
                 try:
                     filename = args.prefix + str(t) + '.csv'
                     #print('calculating frame {0}'.format(str(t)))
-                    data = plotDensities(filename, args.interface_distance, args.species)
+
+                    data = np.array([])
+                    if args.topology == 1:
+                        data = plot_densities_annular(filename, args.interface_distance, max_radius, args.species)
+                    else:
+                        data = plot_densities(filename, args.interface_distance, args.species)
                     #print('setting data')
                     l.set_data(data)
                     ttl.set_text(r'Density at $t = {}$'.format(str(t)))
-                    print('drawing frame {0}'.format(str(t)))
+                    #print('drawing frame {0}'.format(str(t)))
                     writer.grab_frame()
+                    #prog = (1.0 * (t / args.swap_interval)) / ((args.stop - args.start) / args.swap_interval)
+                    #update_progress(prog)
                 except OSError:
                     pass
                 except:
                     print("Unexpected error:", sys.exc_info()[0])
                     raise
+    print("Done")
