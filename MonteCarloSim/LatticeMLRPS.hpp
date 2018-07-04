@@ -21,6 +21,7 @@ class LatticeMLRPS : public Lattice
         int RPSMax;
         int interfaceDistance;
         int orientation;
+        double mobilityRateRPS;
         int topology; // Indicates the topology of the RPS Patch.
                       // 0 indicates a square patch on the face of the torus.
                       //   The edge of which is interfaceDistance away from the
@@ -53,9 +54,9 @@ class LatticeMLRPS : public Lattice
 
     public:
         LatticeMLRPS();
-        LatticeMLRPS(string path, int orr, int lattSize, double mobility, int intDist);
-        LatticeMLRPS(string path, int orr, int patchTop, int xSize, int ySize, double mobility, int intDist);
-        ~LatticeMLRPS();
+        LatticeMLRPS(string path, int orr, int lattSize, double mobility, double mobilityRPS, int intDist);
+        LatticeMLRPS(string path, int orr, int patchTop, int xSize, int ySize, double mobility, double mobilityRPS, int intDist);
+        //~LatticeMLRPS();
 
         void RPSReaction(int x, int y);
         virtual void monteCarloRun(int steps, int interval, int start);

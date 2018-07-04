@@ -71,7 +71,7 @@ Lattice::Lattice(string path, int lattSize, double mobility) : rng(std::time(0))
 
     for (int i = 0; i < sizeX; i++)
     {
-        latt[i] = new Cell[sizeX];
+        latt[i] = new Cell[sizeY];
     }
 
     aPop = bPop = cPop = 0;
@@ -104,6 +104,8 @@ Lattice::Lattice(string path, int xSize, int ySize, double mobility) : rng(std::
     mobilityRate = mobility;
 
     timestep = 0;
+    monteCarloStep = 0;
+
     filePath = path;
 
     latt = new Cell*[sizeX];

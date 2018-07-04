@@ -4,6 +4,7 @@ import os
 import csv
 import argparse as ap
 import matplotlib.animation as manimation
+from tqdm import tqdm
 import sys
 
 def density(species, lattice, w_0, w, r, topology=0):
@@ -212,9 +213,6 @@ if args.mode == 's':
     np.savetxt(args.dest_csv, data, delimiter=",")
 
 elif args.mode == 'm':
-    if args.swap_interval is None:
-        setattr(args, 'swap_interval', args.interval)
-
     FFMpegWriter = manimation.writers['ffmpeg']
     metadata = dict(title=args.dest_movie, artist=args.author, comment=args.comment)
     writer = FFMpegWriter(fps=args.framerate, metadata=metadata)
@@ -252,6 +250,10 @@ elif args.mode == 'm':
         writer.grab_frame()
 
         if args.swap < 1 or args.swap >= args.stop:
+
+            frames = int( (args.stop - args.start) / args.interval )
+            pbar = tqdm(total=frames)
+
             for t in range(args.start + args.interval, args.stop + 1, args.interval):
                 try:
                     filename = args.prefix + str(t) + '.csv'
@@ -265,17 +267,23 @@ elif args.mode == 'm':
                     ttl.set_text(r'Density at $t = {}$'.format(str(t)))
                     #print('drawing frame {0}'.format(str(t)))
                     writer.grab_frame()
-                    prog = (1.0 * (t / args.interval)) / ((args.stop - args.start) / args.interval)
+                    pbar.update()
+                    #prog = (1.0 * (t / args.interval)) / ((args.stop - args.start) / args.interval)
                     #update_progress(prog)
                 except OSError:
+                    pbar.update()
                     pass
                 except:
                     print("Unexpected error:", sys.exc_info()[0])
                     raise
+
+            pbar.close()
         else:
-            swap_interval = args.swap_interval
-            if args.swap_interval == -1:
-                swap_interval = args.interval
+            if args.swap_interval is None:
+                setattr(args, 'swap_interval', args.interval)
+
+            frames = int( ((args.swap - args.start) / args.interval) + ((args.stop - args.swap) / args.swap_interval))
+            pbar = tqdm(total=frames)
 
             for t in range(args.start + args.interval, args.swap, args.interval):
                 try:
@@ -291,14 +299,16 @@ elif args.mode == 'm':
                     ttl.set_text(r'Density at $t = {}$'.format(str(t)))
                     #print('drawing frame {0}'.format(str(t)))
                     writer.grab_frame()
+                    pbar.update()
                     #prog = (1.0 * (t / args.swap_interval)) / ((args.stop - args.start) / args.swap_interval)
                     #update_progress(prog)
                 except OSError:
+                    pbar.update()
                     pass
                 except:
                     print("Unexpected error:", sys.exc_info()[0])
                     raise
-            for t in range(args.swap, args.stop + 1, swap_interval):
+            for t in range(args.swap, args.stop + 1, args.swap_interval):
                 try:
                     filename = args.prefix + str(t) + '.csv'
                     #print('calculating frame {0}'.format(str(t)))
@@ -313,11 +323,14 @@ elif args.mode == 'm':
                     ttl.set_text(r'Density at $t = {}$'.format(str(t)))
                     #print('drawing frame {0}'.format(str(t)))
                     writer.grab_frame()
+                    pbar.update()
                     #prog = (1.0 * (t / args.swap_interval)) / ((args.stop - args.start) / args.swap_interval)
                     #update_progress(prog)
                 except OSError:
+                    pbar.update()
                     pass
                 except:
                     print("Unexpected error:", sys.exc_info()[0])
                     raise
+            pbar.close()
     print("Done")

@@ -8,9 +8,18 @@ LatticeMLRPS::LatticeMLRPS() : Lattice()
     RPSMax = 192;
     orientation = 1;
     interfaceDistance = 64;
+    mobilityRateRPS = 0.1;
+
+    for (int x = 0; x < sizeX; x++)
+    {
+        for (int y = 0; y < sizeY; y++)
+        {
+            latt[x][y].setRPSDiffusion(mobilityRateRPS);
+        }
+    }
 }
 
-LatticeMLRPS::LatticeMLRPS(string path, int orr, int latticeSize, double mobility, int intDist) : Lattice(path, latticeSize, mobility)
+LatticeMLRPS::LatticeMLRPS(string path, int orr, int latticeSize, double mobility, double mobilityRPS, int intDist) : Lattice(path, latticeSize, mobility)
 {
     if (interfaceDistance >= latticeSize / 2) 
     {
@@ -22,13 +31,23 @@ LatticeMLRPS::LatticeMLRPS(string path, int orr, int latticeSize, double mobilit
     RPSMax = latticeSize - 1 - interfaceDistance;
     orientation = orr;
     topology = 0;
+    mobilityRateRPS = mobilityRPS;
+
+    for (int x = 0; x < sizeX; x++)
+    {
+        for (int y = 0; y < sizeY; y++)
+        {
+            latt[x][y].setRPSDiffusion(mobilityRateRPS);
+        }
+    }
 }
 
-LatticeMLRPS::LatticeMLRPS(string path, int orr, int patchTopology, int xSize, int ySize, double mobility, int intDist) : Lattice(path, xSize, ySize, mobility)
+LatticeMLRPS::LatticeMLRPS(string path, int orr, int patchTopology, int xSize, int ySize, double mobility, double mobilityRPS, int intDist) : Lattice(path, xSize, ySize, mobility)
 {
     orientation = orr;
     topology = patchTopology;
     interfaceDistance = intDist;
+    mobilityRateRPS = mobilityRPS;
 
     if (topology == 1)
     {
@@ -47,9 +66,17 @@ LatticeMLRPS::LatticeMLRPS(string path, int orr, int patchTopology, int xSize, i
             throw "InvalidArgumentError: interfaceDistance must be less than or equal to half the lattice Size in either Axis";
         }
     }
+
+    for (int x = 0; x < sizeX; x++)
+    {
+        for (int y = 0; y < sizeY; y++)
+        {
+            latt[x][y].setRPSDiffusion(mobilityRateRPS);
+        }
+    }
 }
 
-LatticeMLRPS::~LatticeMLRPS()
+/*(LatticeMLRPS::~LatticeMLRPS()
 {
     cout << "~LatticeMLRPS()" << endl;
     for (int i = 0; i < sizeX; ++i) 
@@ -60,7 +87,7 @@ LatticeMLRPS::~LatticeMLRPS()
     delete[] latt;
 }
 
-/*
+
 LatticeMLRPS::~LatticeMLRPS()
 {
     cout << "~LatticeMLRPS()" << endl;
@@ -87,6 +114,7 @@ void LatticeMLRPS::metadata(int start, int interval, int stop)
     data << "X Size: " << sizeX << endl;
     data << "Y Size: " << sizeY << endl;
     data << "Mobility: " << mobilityRate << endl;
+    data << "RPS Mobility: " << mobilityRateRPS << endl;
     data << "Interface Distance: " << interfaceDistance << endl;
     data << "Orientation: " << orientation << endl;
     data << "Patch Topology: ";
@@ -119,6 +147,7 @@ void LatticeMLRPS::metadata(int start, int interval, int stop, int swap, int swa
     data << "X Size: " << sizeX << endl;
     data << "Y Size: " << sizeY << endl;
     data << "Mobility: " << mobilityRate << endl;
+    data << "RPS Mobility: " << mobilityRateRPS << endl;
     data << "Interface Distance: " << interfaceDistance << endl;
     data << "Orientation: " << orientation << endl;
     data << "Patch Topology: ";
@@ -153,6 +182,7 @@ void LatticeMLRPS::metadata(int start, int interval, int stop, int startDrive, i
     data << "X Size: " << sizeX << endl;
     data << "Y Size: " << sizeY << endl;
     data << "Mobility: " << mobilityRate << endl;
+    data << "RPS Mobility: " << mobilityRateRPS << endl;
     data << "Interface Distance: " << interfaceDistance << endl;
     data << "Orientation: " << orientation << endl;
     data << "Patch Topology: ";
@@ -213,8 +243,8 @@ void LatticeMLRPS::RPSReaction(int x, int y)
     
     Cell & curr = latt[x][y];
 
-    double norm = curr.getPredRate() + curr.getSwapRate();
-    double swapProb = curr.getSwapRate() / norm;
+    double norm = curr.getRPSPredation() + curr.getRPSDiffusion();
+    double swapProb = curr.getRPSDiffusion() / norm;
 
     double rand = actionDist(rng);
 
@@ -301,26 +331,28 @@ void LatticeMLRPS::monteCarloRun(int steps, int interval, int startRecord)
             }
         }
 
-        if (timestep >= p)
+        if (timestep >= p) 
         {
             timestep = 0;
-            monteCarloStep++;
-        }
 
-        if (monteCarloStep % interval == 0)
-        {
-            float progress = (1.0 * monteCarloStep) / steps;
-            progressBar(progress);
-
-            //cout << timestep << endl;
-            if (monteCarloStep >= startRecord)
+            if (monteCarloStep % interval == 0)
             {
-                dataOutput();
+                float progress = (1.0 * monteCarloStep) / steps;
+                progressBar(progress);
+    
+                //cout << timestep << endl;
+                if (monteCarloStep >= startRecord)
+                {
+                    dataOutput();
+                }
             }
+        
+            monteCarloStep++;
         }
 
     }
     while (monteCarloStep <= steps);
+    cout << endl << "Simulation Complete" << endl;
 }
 
 void LatticeMLRPS::monteCarloRun(int steps, int interval, int startRecord, int swapTime, int swapInterval)
@@ -388,28 +420,30 @@ void LatticeMLRPS::monteCarloRun(int steps, int interval, int startRecord, int s
         if (timestep >= p) 
         {
             timestep = 0;
+
+            if (monteCarloStep < swapTime && monteCarloStep % interval == 0)
+            {
+                float progress = (1.0 * monteCarloStep) / steps;
+                progressBar(progress);
+    
+                //cout << timestep << endl;
+                if (monteCarloStep >= startRecord)
+                {
+                    dataOutput();
+                }
+            }
+            else if (monteCarloStep >= swapTime && monteCarloStep % swapInterval == 0)
+            {
+                float progress = (1.0 * monteCarloStep) / steps;
+                progressBar(progress);
+
+                //cout << timestep << endl;
+                dataOutput();
+            }
+
             monteCarloStep++;
         }
 
-        if (monteCarloStep < swapTime && monteCarloStep % interval == 0)
-        {
-            float progress = (1.0 * monteCarloStep) / steps;
-            progressBar(progress);
-
-            //cout << timestep << endl;
-            if (monteCarloStep >= startRecord)
-            {
-                dataOutput();
-            }
-        }
-        else if (monteCarloStep >= swapTime && monteCarloStep % swapInterval == 0)
-        {
-            float progress = (1.0 * monteCarloStep) / steps;
-            progressBar(progress);
-
-            //cout << timestep << endl;
-            dataOutput();
-        }
     }
     while (monteCarloStep <= steps);
     cout << endl << "Simulation Complete" << endl;
