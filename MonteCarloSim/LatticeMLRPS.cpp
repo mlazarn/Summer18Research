@@ -377,13 +377,6 @@ void LatticeMLRPS::monteCarloRun(int steps, int interval, int startRecord, int s
  
         if ( (y >= RPSMin && y <= RPSMax) && monteCarloStep >= swapTime) 
         {
-<<<<<<< HEAD
-            reaction(x, y);
-        }
-        else
-        {
-            RPSReaction(x, y);
-=======
             if (topology == 1)
             {
                 RPSReaction(x, y);
@@ -422,7 +415,6 @@ void LatticeMLRPS::monteCarloRun(int steps, int interval, int startRecord, int s
                     default :   reaction(x, y); break;
                 }
             }
->>>>>>> new_algorithm
         }
 
         if (timestep >= p) 
