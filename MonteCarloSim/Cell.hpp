@@ -10,8 +10,10 @@ class Cell
         double fertility;
         double diffusion;
         double pairSwap;
+        double predationRPS;
+        double diffusionRPS;
 
-        enum Parameters{PRED, FERT, DIFF, PSWP};
+        enum Parameters{PRED, FERT, DIFF, PSWP, PRED_RPS, DIFF_RPS};
 
         int species;
 
@@ -31,6 +33,12 @@ class Cell
 
         double getSwapRate() const      {return pairSwap;}
         void setSwapRate(double rate)   {pairSwap = rate;}
+
+        double getRPSPredation() const  {return predationRPS;}
+        void setRPSPredation(double pred) {predationRPS = pred;}
+
+        double getRPSDiffusion() const {return diffusionRPS;}
+        void setRPSDiffusion(double diff) {diffusionRPS = diff;}
 
         int getSpecies() const       {return species;}
         void setSpecies(int newSpec);
