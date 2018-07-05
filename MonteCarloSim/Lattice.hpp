@@ -25,6 +25,8 @@ class Lattice
         int aPop;
         int bPop;
         int cPop;
+        
+        int *current[3];
 
         int timestep;
         int monteCarloStep;
@@ -39,6 +41,10 @@ class Lattice
 
         void incrementSpeciesCount(int spec);
         void decrementSpeciesCount(int spec);
+
+        void updateCurrent(int spec, int x, int current);
+        void clearCurrent();
+        
         virtual void metadata(int start, int interval, int stop);
         virtual void progressBar(float progress);
     

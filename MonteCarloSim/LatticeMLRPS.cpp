@@ -209,6 +209,9 @@ void LatticeMLRPS::RPSReaction(int x, int y)
     int neigh = neighDist(rng);
 
     int X = x, Y = y;
+
+    int direction = 0;
+    int boundary = y;
     
     switch(neigh)
     {
@@ -253,9 +256,16 @@ void LatticeMLRPS::RPSReaction(int x, int y)
     if (rand < swapProb) //Pair Swapping
     {
         int tmp = neighbor.getSpecies();
+
+        updateCurrent(curr.getSpecies(), boundary, direction);
+        if (tmp != 3) 
+        {
+            updateCurrent(tmp, boundary, direction * -1);
+        }
+
         neighbor.setSpecies(curr.getSpecies());
         curr.setSpecies(tmp);
-        timestep++;
+        //timestep++;
     }
     else if (rand >= swapProb) //Predation
     {
@@ -263,7 +273,8 @@ void LatticeMLRPS::RPSReaction(int x, int y)
         {
             decrementSpeciesCount(neighbor.getSpecies());
             neighbor.setSpecies(curr.getSpecies());
-            timestep++;
+            updateCurrent(curr.getSpecies(), boundary, direction);
+            //timestep++;
         }
     }
 
@@ -281,13 +292,17 @@ void LatticeMLRPS::monteCarloRun(int steps, int interval, int startRecord)
     {
         int x = xCoordDist(rng);
         int y = yCoordDist(rng);
+        //timestep ++;
 
         do 
         {
             x = xCoordDist(rng);
             y = yCoordDist(rng);
+            //timestep++;
         }
         while (latt[x][y].getSpecies() > 2);
+
+        timestep++;
  
         if ( (y >= RPSMin && y <= RPSMax) ) 
         {
@@ -347,6 +362,7 @@ void LatticeMLRPS::monteCarloRun(int steps, int interval, int startRecord)
                 }
             }
         
+            clearCurrent();
             monteCarloStep++;
         }
 
@@ -367,13 +383,17 @@ void LatticeMLRPS::monteCarloRun(int steps, int interval, int startRecord, int s
     {
         int x = xCoordDist(rng);
         int y = yCoordDist(rng);
+        //timestep++;
 
         do 
         {
             x = xCoordDist(rng);
             y = yCoordDist(rng);
+            //timestep++;
         }
         while (latt[x][y].getSpecies() > 2);
+        
+        timestep++;
  
         if ( (y >= RPSMin && y <= RPSMax) && monteCarloStep >= swapTime) 
         {
@@ -441,6 +461,7 @@ void LatticeMLRPS::monteCarloRun(int steps, int interval, int startRecord, int s
                 dataOutput();
             }
 
+            clearCurrent();
             monteCarloStep++;
         }
 
@@ -461,13 +482,17 @@ void LatticeMLRPS::drivenMonteCarloRun(int steps, int interval, int startRecord,
     {
         int x = xCoordDist(rng);
         int y = yCoordDist(rng);
+        //timestep++;
 
         do 
         {
             x = xCoordDist(rng);
             y = yCoordDist(rng);
+            //timestep++;
         }
         while (latt[x][y].getSpecies() > 2);
+
+        timestep++;
  
         if ( (y >= RPSMin && y <= RPSMax) && (monteCarloStep >= startDrive) && ((monteCarloStep - startDrive) % driveFrequency <= pulseWidth)) 
         {
@@ -527,7 +552,8 @@ void LatticeMLRPS::drivenMonteCarloRun(int steps, int interval, int startRecord,
                 }
             }
         
-                monteCarloStep++;
+            clearCurrent();
+            monteCarloStep++;
         }
 
     }

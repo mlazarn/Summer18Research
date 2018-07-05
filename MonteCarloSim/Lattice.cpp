@@ -25,6 +25,15 @@ Lattice::Lattice() : rng(std::time(0)), xCoordDist(0, 256), yCoordDist(0, 256), 
     aPop = bPop = cPop = 0;
 
     boost::random::discrete_distribution<> pop(popDist);
+    
+    for (int i = 0; i < 3; i++)
+    {
+        current[i] = new int[sizeY - 1];
+        for (int y = 0; y < sizeY - 1; y++)
+        {
+            current[i][y] = 0;
+        }
+    }
 
     for (int x = 0; x < sizeX; x++)
     {
@@ -77,6 +86,15 @@ Lattice::Lattice(string path, int lattSize, double mobility) : rng(std::time(0))
     aPop = bPop = cPop = 0;
 
     boost::random::discrete_distribution<> pop(popDist);
+    
+    for (int i = 0; i < 3; i++)
+    {
+        current[i] = new int[sizeY - 1];
+        for (int y = 0; y < sizeY - 1; y++)
+        {
+            current[i][y] = 0;
+        }
+    }
 
     for (int x = 0; x < sizeX; x++)
     {
@@ -120,6 +138,15 @@ Lattice::Lattice(string path, int xSize, int ySize, double mobility) : rng(std::
     aPop = bPop = cPop = 0;
 
     boost::random::discrete_distribution<> pop(popDist);
+    
+    for (int i = 0; i < 3; i++)
+    {
+        current[i] = new int[sizeY - 1];
+        for (int y = 0; y < sizeY; y++)
+        {
+            current[i][y] = 0;
+        }
+    }
 
     for (int x = 0; x < sizeX; x++)
     {
@@ -168,6 +195,22 @@ void Lattice::decrementSpeciesCount(int spec)
         }
 }
 
+void Lattice::updateCurrent(int spec, int y, int direction)
+{
+    current[spec][y] += direction;
+}
+
+void Lattice::clearCurrent()
+{
+    for (int i = 0; i < 3; i++) 
+    {
+        for (int y = 0; y < sizeY - 1; y++) 
+        {
+            current[i][y] = 0;
+        }
+    }
+}
+
 void Lattice::metadata(int start, int interval, int stop)
 {
     using namespace std;
@@ -214,6 +257,9 @@ void Lattice::reaction(int x, int y)
     int neigh = neighDist(rng);
 
     int X = x, Y = y;
+
+    int direction = 0;
+    int boundary = y;
     
     switch(neigh)
     {
@@ -229,6 +275,8 @@ void Lattice::reaction(int x, int y)
             break;
         case 1 : //right
             Y = (y + 1) % sizeY;
+            boundary = Y;
+            direction = 1;
             break;
         case 2 : //down
             X = (x + 1) % sizeX;
@@ -242,6 +290,7 @@ void Lattice::reaction(int x, int y)
             {
                 Y = (y - 1) % sizeY;
             }
+            direction = -1;
             break;
     }
 
@@ -256,12 +305,19 @@ void Lattice::reaction(int x, int y)
 
     Cell & neighbor = latt[X][Y];
 
-    if (rand < swapProb) //Pair Swapping
+    if (rand < swapProb && neighbor.getSpecies() != curr.getSpecies()) //Pair Swapping
     {
         int tmp = neighbor.getSpecies();
+
+        updateCurrent(curr.getSpecies(), boundary, direction);
+        if (tmp != 3) 
+        {
+            updateCurrent(tmp, boundary, direction * -1);
+        }
+
         neighbor.setSpecies(curr.getSpecies());
         curr.setSpecies(tmp);
-        timestep++;
+        //timestep++;
     }
     else if (rand >= swapProb && rand < swapProb + predProb) //Predation
     {
@@ -269,7 +325,7 @@ void Lattice::reaction(int x, int y)
         {
             decrementSpeciesCount(neighbor.getSpecies());
             neighbor.setSpecies(3);
-            timestep++;
+            //timestep++;
         }
     }
     else if (rand >= swapProb + predProb) //Reproduction
@@ -278,7 +334,8 @@ void Lattice::reaction(int x, int y)
         {
             neighbor.setSpecies(curr.getSpecies());
             incrementSpeciesCount(curr.getSpecies());
-            timestep++;
+            updateCurrent(curr.getSpecies(), boundary, direction);
+            //timestep++;
         }
     }
 }
@@ -287,7 +344,7 @@ void Lattice::dataOutput()
 {
     using namespace std;
     stringstream ss;
-    ss << filePath << "MCStep" << "_" << monteCarloStep << ".csv";
+    ss << filePath << "latt" << "_" << monteCarloStep << ".csv";
     //ss << filePath << "S" << size << "_" << timestep << ".ppm";
     string fileName;
     fileName = ss.str();
@@ -327,8 +384,33 @@ void Lattice::dataOutput()
         }
     }
 
-    //cout << "Current Population: " << "A: " << aPop << " B:" << bPop << " C: " << cPop << endl;
     data.close();
+
+    ss << filePath << "curr" << "_" << monteCarloStep << ".csv";
+    fileName = ss.str();
+
+    fstream dataCurrent(fileName.c_str(), ofstream::out | ofstream::app | ofstream::in);
+
+    for (int i = 0; i < 3; i++)
+    {
+        for (int y = 0; y < sizeY - 1; y++)
+        {
+            int curr = current[i][y];
+
+            dataCurrent << curr;
+
+            if (y < sizeY - 2)
+            {
+                dataCurrent << ",";
+            }
+        }
+
+        if (i < 2)
+        {
+            dataCurrent << endl;
+        }
+    }
+
 }
 
 void Lattice::reactTest()
@@ -363,6 +445,7 @@ void Lattice::monteCarloRun(int steps, int interval, int start)
         while (latt[x][y].getSpecies() > 2);
  
         reaction(x, y);
+        timestep++;
 
         if (timestep >= p)
         {
