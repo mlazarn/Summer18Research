@@ -43,8 +43,9 @@
 #done
 
 
-target="data/RPSDiffRateWaveTests/Testx"
-prefix="MCStep_"
+target="data/currentTest/Testx"
+prefix="latt_"
+curr_prefix="curr_"
 xSize="256"
 ySize="512"
 intDist="64"
@@ -61,9 +62,11 @@ for n in {0..3}; do
     ./LatticeMLRPSTest $targ 0 1 $xSize $ySize $mobility ${RPSMobilities[$n]} $intDist $steps $interval $start_t
 
     python3 videoConverter.py $targ $prefix $start_t $interval $steps -o animation.mp4 -a $author
-
+    python3 densityCalculator.py cm $targ $intDist net_current.mp4 -c -1 -t 1 -r $xSize -p $prefix -s $start_t -i $interval -S $steps -a $author
     for s in {0..2}; do
         destination="--dest_movie density_${species[$s]}.mp4"
-        python3 densityCalculator.py m $targ $intDist $destination -c $s -t 1 -r 256 -p $prefix -s $start_t -i $interval -S $steps -a $author
+        curr_destination="--dest_movie current_${species[$s]}.mp4"
+        python3 densityCalculator.py m $targ $intDist $destination -c $s -t 1 -r $xSize -p $prefix -s $start_t -i $interval -S $steps -a $author
+        python3 densityCalculator.py cm $targ $intDist $curr_destination -c $s -t 1 -r $xSize -p $curr_prefix -s $start_t -i $interval -S $steps -a $author
     done
 done
