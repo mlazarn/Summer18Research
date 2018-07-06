@@ -80,15 +80,16 @@ def plot_densities_annular(filename, interface_distance, max_radius, species):
 
 def plot_current(filename, species):
     try:
+        array = np.genfromtxt(filename, dtype=int, delimiter=',')
         if species == -1:
-            array = np.genfromtxt(filename, dtype=int, delimiter=',')[0]
             current = array[0] + array[1] + array[2]
         else:
-            current = np.genfromtxt(filename, dtype=int, delimiter=',')[species]
-        return current
+            current = array[species]
     except OSError:
         print("Could not open file \"{0}\"".format(filename))
         raise
+    #print(current)
+    return current
     
 def movie_args_check(args):
     suffx = 'is a required argument when running in movie mode'
@@ -346,6 +347,7 @@ elif args.mode == 'm':
                     raise
             pbar.close()
     print("Done")
+
 elif args.mode == 'cm':
     FFMpegWriter = manimation.writers['ffmpeg']
     metadata = dict(title=args.dest_movie, artist=args.author, comment=args.comment)
@@ -361,23 +363,24 @@ elif args.mode == 'cm':
     data = plot_current(filename, args.species)
 
     #r, d = plot_densities(filename, args.interface_distance, args.species)
-    r = data[0]
-    d = data[1]
 
     fig, ax = plt.subplots()
-    l, = ax.plot(r, d, marks[args.species])
+    l, = ax.plot(data, marks[args.species])
     fig.set_tight_layout(True)
     
     ax.set_xlabel(r'$x$')
-    ax.set_ylabel(r'$\J_{0} (x) $'.format(spec[args.species]))
+    ax.set_ylabel(r'$J_{0} (x) $'.format(spec[args.species]))
     ax.set_ylim(-args.max_radius, args.max_radius )
     ttl = ax.set_title(r'Current at $t = 0$', loc='left')
     #ax.autoscale()
+    #fig.savefig('foo.png')
 
     print("Writing {}. Please wait".format(args.dest_movie))
     with writer.saving(fig, args.dest_movie, args.dpi):
         #print('writing frame 0')
+        #print(data)
         writer.grab_frame()
+        #print('frame 0 written')
 
         if args.swap < 1 or args.swap >= args.stop:
 
@@ -390,7 +393,7 @@ elif args.mode == 'cm':
                     #print('calculating frame from {0}'.format(filename))
                     data = plot_current(filename, args.species)
                     #print('setting data')
-                    l.set_data(data)
+                    l.set_ydata(data)
                     ttl.set_text(r'Current at $t = {}$'.format(str(t)))
                     #print('drawing frame {0}'.format(str(t)))
                     writer.grab_frame()
@@ -403,7 +406,6 @@ elif args.mode == 'cm':
                 except:
                     print("Unexpected error:", sys.exc_info()[0])
                     raise
-
             pbar.close()
         else:
             if args.swap_interval is None:
@@ -419,7 +421,7 @@ elif args.mode == 'cm':
                     data = np.array([])
                     data = plot_current(filename, args.species)
                     #print('setting data')
-                    l.set_data(data)
+                    l.set_ydata(data)
                     ttl.set_text(r'Current at $t = {}$'.format(str(t)))
                     #print('drawing frame {0}'.format(str(t)))
                     writer.grab_frame()
@@ -440,7 +442,7 @@ elif args.mode == 'cm':
                     data = np.array([])
                     data = plot_current(filename, args.species)
                     #print('setting data')
-                    l.set_data(data)
+                    l.set_ydata(data)
                     ttl.set_text(r'Current at $t = {}$'.format(str(t)))
                     #print('drawing frame {0}'.format(str(t)))
                     writer.grab_frame()

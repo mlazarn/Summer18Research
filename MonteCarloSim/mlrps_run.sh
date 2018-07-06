@@ -59,10 +59,13 @@ species=('a' 'b' 'c')
 
 for n in {0..3}; do
     targ=${target/%x/$n}
+    mkdir -p -v $targ
+
     ./LatticeMLRPSTest $targ 0 1 $xSize $ySize $mobility ${RPSMobilities[$n]} $intDist $steps $interval $start_t
 
     python3 videoConverter.py $targ $prefix $start_t $interval $steps -o animation.mp4 -a $author
-    python3 densityCalculator.py cm $targ $intDist net_current.mp4 -c -1 -t 1 -r $xSize -p $prefix -s $start_t -i $interval -S $steps -a $author
+    python3 densityCalculator.py cm $targ $intDist --dest_movie net_current.mp4 -c -1 -t 1 -r $xSize -p $prefix -s $start_t -i $interval -S $steps -a $author
+    
     for s in {0..2}; do
         destination="--dest_movie density_${species[$s]}.mp4"
         curr_destination="--dest_movie current_${species[$s]}.mp4"

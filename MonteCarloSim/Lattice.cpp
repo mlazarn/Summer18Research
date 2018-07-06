@@ -386,6 +386,7 @@ void Lattice::dataOutput()
 
     data.close();
 
+    ss.str("");
     ss << filePath << "curr" << "_" << monteCarloStep << ".csv";
     fileName = ss.str();
 
