@@ -411,6 +411,7 @@ void Lattice::dataOutput()
         }
     }
 
+    dataCurrent.close();
 }
 
 void Lattice::reactTest()
