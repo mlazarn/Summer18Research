@@ -227,6 +227,8 @@ void LatticeMLRPS::RPSReaction(int x, int y)
             break;
         case 1 : //right
             Y = (y + 1) % sizeY;
+            boundary = Y;
+            direction = 1;
             break;
         case 2 : //down
             X = (x + 1) % sizeX;
@@ -240,6 +242,7 @@ void LatticeMLRPS::RPSReaction(int x, int y)
             {
                 Y = (y - 1) % sizeY;
             }
+            direction = -1;
             break;
     }
 
@@ -253,7 +256,7 @@ void LatticeMLRPS::RPSReaction(int x, int y)
 
     Cell & neighbor = latt[X][Y];
 
-    if (rand < swapProb) //Pair Swapping
+    if (rand < swapProb && neighbor.getSpecies() != curr.getSpecies()) //Pair Swapping
     {
         int tmp = neighbor.getSpecies();
 
