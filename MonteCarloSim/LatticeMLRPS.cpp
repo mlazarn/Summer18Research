@@ -23,7 +23,9 @@ LatticeMLRPS::LatticeMLRPS(string path, int orr, int latticeSize, double mobilit
 {
     if (interfaceDistance >= latticeSize / 2) 
     {
-        throw "InvalidArgumentError: interfaceDistance must be less than or equal to latticeSize/2";
+        char err[] = "InvalidArgumentError: interfaceDistance must be less than or equal to latticeSize/2";
+        cout << err << endl;
+        throw err;
     }
 
     interfaceDistance = intDist;
@@ -53,7 +55,9 @@ LatticeMLRPS::LatticeMLRPS(string path, int orr, int patchTopology, int xSize, i
     {
         if (interfaceDistance >= sizeY)
         {
-            throw "Invalid Argument Error: interfaceDistance must be less than or equal to ySize";
+            char err[] = "InvalidArgumentError: interfaceDistance must be less than or equal to latticeSize/2";
+            cout << err << endl;
+            throw err;
         }
         RPSMin = 0;
         RPSMax = interfaceDistance;

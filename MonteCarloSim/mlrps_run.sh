@@ -86,11 +86,11 @@ ySize="768"
 ylims="0 $ySize"
 intDist="128"
 mobilities=('1.25' '2.5' '5.0')
-RPSMobilities=('0.1' '1.0' '2.5' '5.0' '10.0') 
-steps="5000"
-interval="5"
-start_t="5"
-fps="120"
+RPSMobilities=('0.1' '1.0' '5.0' '10.0') 
+steps="10000"
+interval="1"
+start_t="5000"
+fps="60"
 author="micarn"
 species=('a' 'b' 'c')
 
@@ -102,23 +102,23 @@ for mobility in "${mobilities[@]}"; do
 
         mkdir -p -v $target
 
-        #                  targ    o t xSize  ySize  mob       rps_mob      intDist  steps  interval  start_t
-        #                  1       2 3 4      5      6         7            8        9      10        11
-        ./LatticeMLRPSTest $target 0 1 $xSize $ySize $mobility $RPSMobility $intDist $steps $interval $start_t
+        #                  targ    o t xSize  ySize  mob       rps_mob       intDist  steps  interval  start_t
+        #                  1       2 3 4      5      6         7             8        9      10        11
+        ./LatticeMLRPSTest $target 0 1 $xSize $ySize $mobility $rps_mobility $intDist $steps $interval $start_t
 
-        python3 videoConverter.py $target $prefix $start_t $interval $steps -o animation.mp4 -a $author
+        python3 videoConverter.py $target $prefix $start_t $interval $steps -v $vlines -o animation.mp4 -a $author -f $fps
 
         #flux A
-        python3 densityCalculator.py a $target flux_lims_test_a.mp4 f 0 $ySize -c 0 -p $flux_pfx -v $vlines -s $start_t -i $interval -S $steps -a $author
+        python3 densityCalculator.py a $target flux_lims_test_a.mp4 f 0 $ySize -c 0 -p $flux_pfx -v $vlines -s $start_t -i $interval -S $steps -a $author -f $fps
 
         #flux net
-        python3 densityCalculator.py a $target flux_lims_test_net.mp4 f 0 $ySize -c -1 -p $flux_pfx -l $lims -v $vlines -s $start_t -i $interval -S $steps -a $author
+        python3 densityCalculator.py a $target flux_lims_test_net.mp4 f 0 $ySize -c -1 -p $flux_pfx -l $lims -v $vlines -s $start_t -i $interval -S $steps -a $author -f $fps
 
         #density A
-        python3 densityCalculator.py a $target density_a.mp4 p 0 $ySize -c 0 -p $density_pfx -v $vlines -s $start_t -i $interval -S $steps -a $author
+        python3 densityCalculator.py a $target density_a.mp4 p 0 $ySize -c 0 -p $density_pfx -v $vlines -s $start_t -i $interval -S $steps -a $author -f $fps
 
         #density net
-        python3 densityCalculator.py a $target density_net.mp4 p 0 $ySize -c -1 -p $density_pfx -v $vlines -s $start_t -i $interval -S $steps -a $author
+        python3 densityCalculator.py a $target density_net.mp4 p 0 $ySize -c -1 -p $density_pfx -v $vlines -s $start_t -i $interval -S $steps -a $author -f $fps
 
     done
 done
