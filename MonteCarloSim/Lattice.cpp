@@ -14,11 +14,6 @@ Lattice::Lattice() : rng(std::time(0)), xCoordDist(0, 256), yCoordDist(0, 256), 
 
     latt = new Cell*[sizeX];
 
-    for (int i = 0; i < sizeX; i++)
-    {
-        latt[i] = new Cell[sizeY];
-    }
-
     monteCarloStep = 0;
     timestep = 0;
 
@@ -26,26 +21,48 @@ Lattice::Lattice() : rng(std::time(0)), xCoordDist(0, 256), yCoordDist(0, 256), 
 
     boost::random::discrete_distribution<> pop(popDist);
     
+    flux = new double*[3];
+    density0 = new double*[3];
+    density1 = new double*[3];
+    
     for (int i = 0; i < 3; i++)
     {
-        current[i] = new int[sizeY - 1];
-        for (int y = 0; y < sizeY - 1; y++)
+        //cout << "inititalizing row #" << i << endl;
+        flux[i] = new double[sizeY];
+        density0[i] = new double[sizeY];
+        density1[i] = new double[sizeY];
+        for (int y = 0; y < sizeY; y++)
+        {
+            //cout << "inititalizing column #" << y << endl;
+            density0[i][y] = 0.0;
+            density1[i][y] = 0.0;
+            flux[i][y] = 0.0;
+        }
+
+        /*
+        current[i] = new int[sizeY];
+        for (int y = 0; y < sizeY; y++)
         {
             current[i][y] = 0;
         }
+        */
     }
 
     for (int x = 0; x < sizeX; x++)
     {
+        latt[x] = new Cell[sizeY];
         for (int y = 0; y < sizeY; y++)
         {
             int spec;
             spec = pop(rng);
             latt[x][y].setSpecies(spec);
-            incrementSpeciesCount(spec);
             latt[x][y].setSwapRate(mobilityRate);
+            latt[x][y].setDifRate(mobilityRate);
+            incrementSpeciesCount(spec);
         }
     }
+
+    updateDensity();
 
     cout << "Lattice Initialized" << endl;
     cout << "Initial Populatiom: " << "A: " << aPop << " B:" << bPop << " C: " << cPop << endl;
@@ -78,26 +95,39 @@ Lattice::Lattice(string path, int lattSize, double mobility) : rng(std::time(0))
 
     latt = new Cell*[sizeX];
 
-    for (int i = 0; i < sizeX; i++)
-    {
-        latt[i] = new Cell[sizeY];
-    }
-
     aPop = bPop = cPop = 0;
 
     boost::random::discrete_distribution<> pop(popDist);
     
+    flux = new double*[3];
+    density0 = new double*[3];
+    density1 = new double*[3];
+    
     for (int i = 0; i < 3; i++)
     {
-        current[i] = new int[sizeY - 1];
+        //cout << "inititalizing arrays" << endl;
+        flux[i] = new double[sizeY];
+        density0[i] = new double[sizeY];
+        density1[i] = new double[sizeY];
+        for (int y = 0; y < sizeY; y++)
+        {
+            density0[i][y] = 0.0;
+            density1[i][y] = 0.0;
+            flux[i][y] = 0.0;
+        }
+
+        /*
+        current[i] = new double[sizeY - 1];
         for (int y = 0; y < sizeY - 1; y++)
         {
             current[i][y] = 0;
         }
+        */
     }
 
     for (int x = 0; x < sizeX; x++)
     {
+        latt[x] = new Cell[sizeY];
         for (int y = 0; y < sizeY; y++)
         {
             int spec;
@@ -109,6 +139,8 @@ Lattice::Lattice(string path, int lattSize, double mobility) : rng(std::time(0))
             latt[x][y].setSwapRate(mobility);
         }
     }
+    
+    updateDensity();
 
     cout << "Lattice Initialized" << endl;
     cout << "Initial Populatiom: " << "A: " << aPop << " B:" << bPop << " C: " << cPop << endl;
@@ -130,35 +162,51 @@ Lattice::Lattice(string path, int xSize, int ySize, double mobility) : rng(std::
 
     latt = new Cell*[sizeX];
 
-    for (int i = 0; i < sizeX; i++)
-    {
-        latt[i] = new Cell[sizeY];
-    }
-
     aPop = bPop = cPop = 0;
 
     boost::random::discrete_distribution<> pop(popDist);
     
+    flux = new double*[3];
+    density0 = new double*[3];
+    density1 = new double*[3];
+
     for (int i = 0; i < 3; i++)
     {
+        //cout << "inititalizing arrays" << endl;
+        flux[i] = new double[sizeY];
+        density0[i] = new double[sizeY];
+        density1[i] = new double[sizeY];
+        for (int y = 0; y < sizeY; y++)
+        {
+            density0[i][y] = 0.0;
+            density1[i][y] = 0.0;
+            flux[i][y] = 0.0;
+        }
+
+        /*
         current[i] = new int[sizeY - 1];
         for (int y = 0; y < sizeY; y++)
         {
             current[i][y] = 0;
         }
+        */
     }
 
     for (int x = 0; x < sizeX; x++)
     {
+        latt[x] = new Cell[sizeY];
         for (int y = 0; y < sizeY; y++)
         {
             int spec;
             spec = pop(rng);
             latt[x][y].setSpecies(spec);
+            latt[x][y].setSwapRate(mobilityRate);
+            latt[x][y].setDifRate(mobilityRate);
             incrementSpeciesCount(spec);
-            latt[x][y].setSwapRate(mobility);
         }
     }
+    
+    updateDensity();
 
     cout << "Lattice Initialized" << endl;
     cout << "Initial Populatiom: " << "A: " << aPop << " B:" << bPop << " C: " << cPop << endl;
@@ -166,10 +214,15 @@ Lattice::Lattice(string path, int xSize, int ySize, double mobility) : rng(std::
 
 Lattice::~Lattice()
 {
-    cout << "~Lattice()" << endl;
-    for (int i = 0; i < sizeX; ++i) 
+    for (int i = 0; i < 3; i++)
     {
-        delete[] latt[i];
+        delete[] flux[i];
+        delete[] density0[i];
+        delete[] density1[i];
+    }
+    for (int x = 0; x < sizeX; ++x) 
+    {
+        delete[] latt[x];
     }
 
     delete[] latt;
@@ -195,10 +248,48 @@ void Lattice::decrementSpeciesCount(int spec)
         }
 }
 
+void Lattice::updateDensity()
+{
+    //cout << "updating density" << endl;
+    for (int y = 0; y < sizeY; y++) 
+    {
+        int count[3] = {0, 0, 0};
+        for (int x = 0; x < sizeX; x++) 
+        {
+            int spec = latt[x][y].getSpecies();
+            if (spec < 3)
+            {
+                count[spec]++;
+            }
+        }
+        for (int i = 0; i < 3; i++)
+        {
+            density0[i][y] = density1[i][y];
+            density1[i][y] = (1.0 * count[i]) / sizeX;
+        }
+    }
+    //cout << "density updated" << endl;
+}
+
+void Lattice::updateFlux()
+{
+    //cout << "updating flux" << endl;
+    for (int i = 0; i < 3; i++)
+    {
+        for (int y = 0; y < sizeY; y++)
+        {
+            flux[i][y] = density1[i][y] - density0[i][y];
+        }
+    }
+    //cout << "flux updated" << endl;
+}
+
+/*
 void Lattice::updateCurrent(int spec, int y, int direction)
 {
     current[spec][y] += direction;
 }
+
 
 void Lattice::clearCurrent()
 {
@@ -210,6 +301,7 @@ void Lattice::clearCurrent()
         }
     }
 }
+*/
 
 void Lattice::metadata(int start, int interval, int stop)
 {
@@ -258,8 +350,8 @@ void Lattice::reaction(int x, int y)
 
     int X = x, Y = y;
 
-    int direction = 0;
-    int boundary = y;
+    //int direction = 0;
+    //int boundary = y;
     
     switch(neigh)
     {
@@ -275,8 +367,8 @@ void Lattice::reaction(int x, int y)
             break;
         case 1 : //right
             Y = (y + 1) % sizeY;
-            boundary = Y;
-            direction = 1;
+            //boundary = Y;
+            //direction = 1;
             break;
         case 2 : //down
             X = (x + 1) % sizeX;
@@ -290,7 +382,7 @@ void Lattice::reaction(int x, int y)
             {
                 Y = (y - 1) % sizeY;
             }
-            direction = -1;
+            //direction = -1;
             break;
     }
 
@@ -309,11 +401,11 @@ void Lattice::reaction(int x, int y)
     {
         int tmp = neighbor.getSpecies();
 
-        updateCurrent(curr.getSpecies(), boundary, direction);
-        if (tmp != 3) 
-        {
-            updateCurrent(tmp, boundary, direction * -1);
-        }
+        //updateCurrent(curr.getSpecies(), boundary, direction);
+        //if (tmp != 3) 
+        //{
+            //updateCurrent(tmp, boundary, direction * -1);
+        //}
 
         neighbor.setSpecies(curr.getSpecies());
         curr.setSpecies(tmp);
@@ -334,7 +426,7 @@ void Lattice::reaction(int x, int y)
         {
             neighbor.setSpecies(curr.getSpecies());
             incrementSpeciesCount(curr.getSpecies());
-            updateCurrent(curr.getSpecies(), boundary, direction);
+            //updateCurrent(curr.getSpecies(), boundary, direction);
             //timestep++;
         }
     }
@@ -387,47 +479,43 @@ void Lattice::dataOutput()
     data.close();
 
     ss.str("");
-    ss << filePath << "curr" << "_" << monteCarloStep << ".csv";
+    ss << filePath << "density" << "_" << monteCarloStep << ".csv";
     fileName = ss.str();
 
-    fstream dataCurrent(fileName.c_str(), ofstream::out | ofstream::app | ofstream::in);
+    fstream dataDensity(fileName.c_str(), ofstream::out | ofstream::app | ofstream::in);
+
+    ss.str("");
+    ss << filePath << "flux" << "_" << monteCarloStep << ".csv";
+    fileName = ss.str();
+
+    fstream dataFlux(fileName.c_str(), ofstream::out | ofstream::app | ofstream::in);
 
     for (int i = 0; i < 3; i++)
     {
-        for (int y = 0; y < sizeY - 1; y++)
+        for (int y = 0; y < sizeY; y++)
         {
-            int curr = current[i][y];
+            double dns = density1[i][y];
+            double flx = flux[i][y];
 
-            dataCurrent << curr;
+            dataDensity << dns;
+            dataFlux << flx;
 
-            if (y < sizeY - 2)
+            if (y < sizeY - 1)
             {
-                dataCurrent << ",";
+                dataDensity << ",";
+                dataFlux << ",";
             }
         }
 
         if (i < 2)
         {
-            dataCurrent << endl;
+            dataDensity << endl;
+            dataFlux << endl;
         }
     }
 
-    dataCurrent.close();
-}
-
-void Lattice::reactTest()
-{
-    for (int x = 0; x < sizeX; x++)
-    {
-        for (int y = 0; y < sizeY; y++)
-        {
-            Cell & cell = latt[x][y];
-            cell.setSpecies(0);
-            timestep++;
-            dataOutput();
-        }
-    }
-    
+    dataDensity.close();
+    dataFlux.close();
 }
 
 void Lattice::monteCarloRun(int steps, int interval, int start)

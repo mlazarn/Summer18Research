@@ -6,9 +6,9 @@
 
 int main(int argc, char *argv[])
 {
-    cout << argc << endl;
+    //cout << argc << endl;
     //cout << "argv[1]=" << argv[1] << ", argv[2]=" << argv[2] << ", argv[3]=" << argv[3] << ", argv[4]=" << argv[4] << ", argv[5]=" << argv[5];
-    //cout << ", argv[6]=" << argv[6] << ", argv[7]=" << argv[7] << ", argv[8]=" << argv[8] << ", argv[9]=" << argv[9] << ", argv[10]=" << argv[10] << endl;
+    //cout << ", argv[6]=" << argv[6] << ", argv[7]=" << argv[7] << ", argv[8]=" << argv[8] << ", argv[9]=" << argv[9] << ", argv[10]=" << argv[10] << ", argv[11]=" << argv[11]<< endl;
 
     //cout << "\n\n Now testing converting the arguments";
 
@@ -33,6 +33,7 @@ int main(int argc, char *argv[])
     
 
     //LatticeMLRPS testLattice(path, orientation, xSize, mobility, mobilityRPS, interfaceDistance);
+    //cout << "initializing lattice" << endl;
     LatticeMLRPS testLattice(path, orientation, topology, xSize, ySize, mobility, mobilityRPS, interfaceDistance);
 
     cout << "beginning test" << endl;
@@ -68,6 +69,7 @@ int main(int argc, char *argv[])
     //cout << path << ", " << orientation << "< " << topology << "< " << xSize;
     //cout << "< " << ySize << "< " << mobility << "< " << mobilityRPS << "< ";
     //cout << interfaceDistance << "< " << steps << "< " << interval << "< " << start << endl;
+    cout << "starting run" << endl;
     testLattice.monteCarloRun(steps, interval, start);
     //testLattice.monteCarloRun(steps, interval, start, swapTime, swapInterval);
     //testLattice.drivenMonteCarloRun(steps, interval, start, startDrive, driveFrequency, pulseWidth);
