@@ -50,6 +50,8 @@ parser.add_argument('stop', type=int)
 
 parser.add_argument('--output', '-o', default='movie.mp4')
 
+parser.add_argument('--vlines', '-v', type=int, nargs='+')
+
 parser.add_argument('--swap', '-w', type=int, default=-1)
 parser.add_argument('--swap_interval', '-W', type=int)
 
@@ -70,13 +72,17 @@ bounds = [0, 1, 2, 3, 4]
 norm = colors.BoundaryNorm(bounds, cmap.N)
 
 fig, ax = plt.subplots()
-fig.set_tight_layout(True)
 
 os.chdir(args.path)
 
 lattice = np.genfromtxt(args.prefix + str(args.start) + '.csv', dtype=int, delimiter=',')
 
-im = ax.imshow(lattice, interpolation='nearest', cmap=cmap, norm=norm)
+im = ax.imshow(lattice, interpolation='nearest', cmap=cmap, norm=norm, zorder=1)
+lims = ax.get_ylim()
+if len(args.vlines) > 0:
+    ax.vlines(args.vlines, lims[0], lims[1], zorder=2)
+fig.set_tight_layout(True)
+
 ttl = ax.set_title('t=0', loc='left')
 
 print("writing {}. Please wait.".format(args.output))

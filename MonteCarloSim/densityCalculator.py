@@ -174,7 +174,8 @@ def render_data(args):
 
     fig, ax = plt.subplots()
     l, = ax.plot(r, data, marks[args.species], zorder=1)
-    ax.vlines(args.vlines, axis_range[0], axis_range[1], zorder=2)
+    if len(args.vlines) > 0:
+        ax.vlines(args.vlines, axis_range[0], axis_range[1], zorder=2)
     fig.set_tight_layout(True)
 
     ttl = ax.set_title(title.format(str(args.start)), loc='left')
@@ -258,7 +259,7 @@ parser.add_argument('--species', '-c', type=int, default=0)
 parser.add_argument('--prefix', '-p')
 
 parser.add_argument('--lims', '-l', type=float, nargs=2)
-parser.add_argument('--vlines', '-v', type=int, nargs='*', default=[])
+parser.add_argument('--vlines', '-v', type=int, nargs='+')
 
 parser.add_argument('--start', '-s', type=int)
 parser.add_argument('--interval', '-i', type=int)

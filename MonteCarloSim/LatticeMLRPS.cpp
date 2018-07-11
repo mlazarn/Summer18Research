@@ -293,7 +293,7 @@ void LatticeMLRPS::monteCarloRun(int steps, int interval, int startRecord)
     cout << "Starting Monte Carlo Run" << endl;
     do
     {
-        if (monteCarloStep % interval == 0)
+        if (monteCarloStep % interval == 0 && timestep == 0)
         {
             float progress = (1.0 * monteCarloStep) / steps;
             progressBar(progress);
@@ -400,7 +400,7 @@ void LatticeMLRPS::monteCarloRun(int steps, int interval, int startRecord, int s
     cout << "Starting Monte Carlo Run" << endl;
     do
     {
-        if (monteCarloStep < swapTime && monteCarloStep % interval == 0)
+        if (monteCarloStep < swapTime && monteCarloStep % interval == 0 && timestep == 0)
         {
             float progress = (1.0 * monteCarloStep) / steps;
             progressBar(progress);
@@ -412,7 +412,7 @@ void LatticeMLRPS::monteCarloRun(int steps, int interval, int startRecord, int s
                 dataOutput();
             }
         }
-        else if (monteCarloStep >= swapTime && monteCarloStep % swapInterval == 0)
+        else if (monteCarloStep >= swapTime && monteCarloStep % swapInterval == 0 && timestep == 0)
         {
             float progress = (1.0 * monteCarloStep) / steps;
             progressBar(progress);
@@ -422,19 +422,6 @@ void LatticeMLRPS::monteCarloRun(int steps, int interval, int startRecord, int s
             dataOutput();
         }
 
-        if (monteCarloStep % interval == 0)
-        {
-            float progress = (1.0 * monteCarloStep) / steps;
-            progressBar(progress);
-
-            //cout << timestep << endl;
-            if (monteCarloStep >= startRecord)
-            {
-                updateFlux();
-                dataOutput();
-            }
-        }
-        
         int x = xCoordDist(rng);
         int y = yCoordDist(rng);
         timestep++;
@@ -515,7 +502,7 @@ void LatticeMLRPS::drivenMonteCarloRun(int steps, int interval, int startRecord,
     cout << "Starting Monte Carlo Run" << endl;
     do
     {
-        if (monteCarloStep % interval == 0)
+        if (monteCarloStep % interval == 0 && timestep == 0)
         {
             float progress = (1.0 * monteCarloStep) / steps;
             progressBar(progress);
