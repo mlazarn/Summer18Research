@@ -26,7 +26,10 @@ class Lattice
         int bPop;
         int cPop;
         
-        int *current[3];
+        int **current;
+        double **flux;
+        double **density0;
+        double **density1;
 
         int timestep;
         int monteCarloStep;
@@ -42,8 +45,10 @@ class Lattice
         void incrementSpeciesCount(int spec);
         void decrementSpeciesCount(int spec);
 
-        void updateCurrent(int spec, int x, int current);
-        void clearCurrent();
+        void updateDensity();
+        void updateFlux();
+        //void updateCurrent(int spec, int x, int current);
+        //void clearCurrent();
         
         virtual void metadata(int start, int interval, int stop);
         virtual void progressBar(float progress);
@@ -56,7 +61,6 @@ class Lattice
         virtual ~Lattice();
         void reaction(int x, int y);
         void dataOutput();
-        void reactTest();
         void setControlRow(int row);
         void setControlCol(int col);
         virtual void monteCarloRun(int steps, int interval, int start);

@@ -210,8 +210,8 @@ void LatticeMLRPS::RPSReaction(int x, int y)
 
     int X = x, Y = y;
 
-    int direction = 0;
-    int boundary = y;
+    //int direction = 0;
+    //int boundary = y;
     
     switch(neigh)
     {
@@ -227,8 +227,8 @@ void LatticeMLRPS::RPSReaction(int x, int y)
             break;
         case 1 : //right
             Y = (y + 1) % sizeY;
-            boundary = Y;
-            direction = 1;
+            //boundary = Y;
+            //direction = 1;
             break;
         case 2 : //down
             X = (x + 1) % sizeX;
@@ -242,7 +242,7 @@ void LatticeMLRPS::RPSReaction(int x, int y)
             {
                 Y = (y - 1) % sizeY;
             }
-            direction = -1;
+            //direction = -1;
             break;
     }
 
@@ -260,11 +260,11 @@ void LatticeMLRPS::RPSReaction(int x, int y)
     {
         int tmp = neighbor.getSpecies();
 
-        updateCurrent(curr.getSpecies(), boundary, direction);
-        if (tmp != 3) 
-        {
-            updateCurrent(tmp, boundary, direction * -1);
-        }
+        //updateCurrent(curr.getSpecies(), boundary, direction);
+        //if (tmp != 3) 
+        //{
+            //updateCurrent(tmp, boundary, direction * -1);
+        //}
 
         neighbor.setSpecies(curr.getSpecies());
         curr.setSpecies(tmp);
@@ -276,7 +276,7 @@ void LatticeMLRPS::RPSReaction(int x, int y)
         {
             decrementSpeciesCount(neighbor.getSpecies());
             neighbor.setSpecies(curr.getSpecies());
-            updateCurrent(curr.getSpecies(), boundary, direction);
+            //updateCurrent(curr.getSpecies(), boundary, direction);
             //timestep++;
         }
     }
@@ -293,19 +293,32 @@ void LatticeMLRPS::monteCarloRun(int steps, int interval, int startRecord)
     cout << "Starting Monte Carlo Run" << endl;
     do
     {
+        if (monteCarloStep % interval == 0)
+        {
+            float progress = (1.0 * monteCarloStep) / steps;
+            progressBar(progress);
+
+            //cout << timestep << endl;
+            if (monteCarloStep >= startRecord)
+            {
+                updateFlux();
+                dataOutput();
+            }
+        }
+        
         int x = xCoordDist(rng);
         int y = yCoordDist(rng);
-        //timestep ++;
+        timestep ++;
 
         do 
         {
             x = xCoordDist(rng);
             y = yCoordDist(rng);
-            //timestep++;
+            timestep++;
         }
         while (latt[x][y].getSpecies() > 2);
 
-        timestep++;
+        //timestep++;
  
         if ( (y >= RPSMin && y <= RPSMax) ) 
         {
@@ -353,6 +366,8 @@ void LatticeMLRPS::monteCarloRun(int steps, int interval, int startRecord)
         {
             timestep = 0;
 
+            updateDensity();
+
             if (monteCarloStep % interval == 0)
             {
                 float progress = (1.0 * monteCarloStep) / steps;
@@ -361,11 +376,12 @@ void LatticeMLRPS::monteCarloRun(int steps, int interval, int startRecord)
                 //cout << timestep << endl;
                 if (monteCarloStep >= startRecord)
                 {
+                    updateFlux();
                     dataOutput();
                 }
             }
         
-            clearCurrent();
+            //clearCurrent();
             monteCarloStep++;
         }
 
@@ -384,19 +400,54 @@ void LatticeMLRPS::monteCarloRun(int steps, int interval, int startRecord, int s
     cout << "Starting Monte Carlo Run" << endl;
     do
     {
+        if (monteCarloStep < swapTime && monteCarloStep % interval == 0)
+        {
+            float progress = (1.0 * monteCarloStep) / steps;
+            progressBar(progress);
+
+            //cout << timestep << endl;
+            if (monteCarloStep >= startRecord)
+            {
+                updateFlux();
+                dataOutput();
+            }
+        }
+        else if (monteCarloStep >= swapTime && monteCarloStep % swapInterval == 0)
+        {
+            float progress = (1.0 * monteCarloStep) / steps;
+            progressBar(progress);
+
+            //cout << timestep << endl;
+            updateFlux();
+            dataOutput();
+        }
+
+        if (monteCarloStep % interval == 0)
+        {
+            float progress = (1.0 * monteCarloStep) / steps;
+            progressBar(progress);
+
+            //cout << timestep << endl;
+            if (monteCarloStep >= startRecord)
+            {
+                updateFlux();
+                dataOutput();
+            }
+        }
+        
         int x = xCoordDist(rng);
         int y = yCoordDist(rng);
-        //timestep++;
+        timestep++;
 
         do 
         {
             x = xCoordDist(rng);
             y = yCoordDist(rng);
-            //timestep++;
+            timestep++;
         }
         while (latt[x][y].getSpecies() > 2);
         
-        timestep++;
+        //timestep++;
  
         if ( (y >= RPSMin && y <= RPSMax) && monteCarloStep >= swapTime) 
         {
@@ -443,28 +494,9 @@ void LatticeMLRPS::monteCarloRun(int steps, int interval, int startRecord, int s
         if (timestep >= p) 
         {
             timestep = 0;
+            updateDensity();
 
-            if (monteCarloStep < swapTime && monteCarloStep % interval == 0)
-            {
-                float progress = (1.0 * monteCarloStep) / steps;
-                progressBar(progress);
-    
-                //cout << timestep << endl;
-                if (monteCarloStep >= startRecord)
-                {
-                    dataOutput();
-                }
-            }
-            else if (monteCarloStep >= swapTime && monteCarloStep % swapInterval == 0)
-            {
-                float progress = (1.0 * monteCarloStep) / steps;
-                progressBar(progress);
-
-                //cout << timestep << endl;
-                dataOutput();
-            }
-
-            clearCurrent();
+            //clearCurrent();
             monteCarloStep++;
         }
 
@@ -483,19 +515,32 @@ void LatticeMLRPS::drivenMonteCarloRun(int steps, int interval, int startRecord,
     cout << "Starting Monte Carlo Run" << endl;
     do
     {
+        if (monteCarloStep % interval == 0)
+        {
+            float progress = (1.0 * monteCarloStep) / steps;
+            progressBar(progress);
+
+            //cout << timestep << endl;
+            if (monteCarloStep >= startRecord)
+            {
+                updateFlux();
+                dataOutput();
+            }
+        }
+        
         int x = xCoordDist(rng);
         int y = yCoordDist(rng);
-        //timestep++;
+        timestep++;
 
         do 
         {
             x = xCoordDist(rng);
             y = yCoordDist(rng);
-            //timestep++;
+            timestep++;
         }
         while (latt[x][y].getSpecies() > 2);
 
-        timestep++;
+        //timestep++;
  
         if ( (y >= RPSMin && y <= RPSMax) && (monteCarloStep >= startDrive) && ((monteCarloStep - startDrive) % driveFrequency <= pulseWidth)) 
         {
@@ -543,19 +588,9 @@ void LatticeMLRPS::drivenMonteCarloRun(int steps, int interval, int startRecord,
         {
             timestep = 0;
 
-            if (monteCarloStep % interval == 0)
-            {
-                float progress = (1.0 * monteCarloStep) / steps;
-                progressBar(progress);
-    
-                //cout << timestep << endl;
-                if (monteCarloStep >= startRecord)
-                {
-                    dataOutput();
-                }
-            }
-        
-            clearCurrent();
+            updateDensity();
+
+            //clearCurrent();
             monteCarloStep++;
         }
 

@@ -42,34 +42,62 @@
     #done
 #done
 
-
-target="data/currentTest/Testx"
+target="data/animTest"
 prefix="latt_"
-curr_prefix="curr_"
+density_pfx="density_"
+flux_pfx="flux_"
 xSize="256"
 ySize="512"
 intDist="64"
 mobility="5.0"
-RPSMobilities=('0.1' '1.0' '5.0' '10.0') 
-steps="5000"
+RPSMobility="0.1"
+steps="2000"
 interval="5"
-start_t="5"
+start_t="1000"
 author="micarn"
 species=('a' 'b' 'c')
 
-for n in {0..3}; do
-    targ=${target/%x/$n}
-    mkdir -p -v $targ
+#mkdir -p -v $target
+#./LatticeMLRPSTest $target 0 1 $xSize $ySize $mobility $RPSMobility $intDist $steps $interval $start_t
 
-    ./LatticeMLRPSTest $targ 0 1 $xSize $ySize $mobility ${RPSMobilities[$n]} $intDist $steps $interval $start_t
+#python3 videoConverter.py $target $prefix $start_t $interval $steps -o animation.mp4 -a $author
 
-    python3 videoConverter.py $targ $prefix $start_t $interval $steps -o animation.mp4 -a $author
-    python3 densityCalculator.py cm $targ $intDist --dest_movie net_current.mp4 -c -1 -t 1 -r $xSize -p $prefix -s $start_t -i $interval -S $steps -a $author
-    
-    for s in {0..2}; do
-        destination="--dest_movie density_${species[$s]}.mp4"
-        curr_destination="--dest_movie current_${species[$s]}.mp4"
-        python3 densityCalculator.py m $targ $intDist $destination -c $s -t 1 -r $xSize -p $prefix -s $start_t -i $interval -S $steps -a $author
-        python3 densityCalculator.py cm $targ $intDist $curr_destination -c $s -t 1 -r $xSize -p $curr_prefix -s $start_t -i $interval -S $steps -a $author
-    done
-done
+#flux A
+python3 densityCalculator.py a $target flux_lims_test_a.mp4 f 0 $ySize -c 0 -p $flux_pfx -v 64 -s $start_t -i $interval -S $steps -a $author
+
+#flux net
+python3 densityCalculator.py a $target flux_lims_test_net.mp4 f 0 $ySize -c -1 -p $flux_pfx -l -0.05 0.05 -v 32 64 96 -s $start_t -i $interval -S $steps -a $author
+
+#density A
+#python3 densityCalculator.py a $target density_a.mp4 p 0 $ySize -c 0 -p $density_pfx -s $start_t -i $interval -S $steps -a $author
+
+#density net
+#python3 densityCalculator.py a $target density_net.mp4 p 0 $ySize -c -1 -p $density_pfx -s $start_t -i $interval -S $steps -a $author
+
+#target="data/currentTest/Testx"
+#prefix="latt_"
+#curr_prefix="curr_"
+#xSize="256"
+#ySize="512"
+#intDist="64"
+#mobility="5.0"
+#RPSMobilities=('0.1' '1.0' '5.0' '10.0') 
+#steps="5000"
+#interval="5"
+#start_t="5"
+#author="micarn"
+#species=('a' 'b' 'c')
+#
+#for n in {0..3}; do
+#    targ=${target/%x/$n}
+#    ./LatticeMLRPSTest $targ 0 1 $xSize $ySize $mobility ${RPSMobilities[$n]} $intDist $steps $interval $start_t
+#
+#    python3 videoConverter.py $targ $prefix $start_t $interval $steps -o animation.mp4 -a $author
+#    python3 densityCalculator.py cm $targ $intDist net_current.mp4 -c -1 -t 1 -r $xSize -p $prefix -s $start_t -i $interval -S $steps -a $author
+#    for s in {0..2}; do
+#        destination="--dest_movie density_${species[$s]}.mp4"
+#        curr_destination="--dest_movie current_${species[$s]}.mp4"
+#        python3 densityCalculator.py m $targ $intDist $destination -c $s -t 1 -r $xSize -p $prefix -s $start_t -i $interval -S $steps -a $author
+#        python3 densityCalculator.py cm $targ $intDist $curr_destination -c $s -t 1 -r $xSize -p $curr_prefix -s $start_t -i $interval -S $steps -a $author
+#    done
+#done
