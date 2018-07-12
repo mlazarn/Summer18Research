@@ -371,19 +371,6 @@ void LatticeMLRPS::monteCarloRun(int steps, int interval, int startRecord)
             timestep = 0;
 
             updateDensity();
-
-            if (monteCarloStep % interval == 0)
-            {
-                float progress = (1.0 * monteCarloStep) / steps;
-                progressBar(progress);
-    
-                //cout << timestep << endl;
-                if (monteCarloStep >= startRecord)
-                {
-                    updateFlux();
-                    dataOutput();
-                }
-            }
         
             //clearCurrent();
             monteCarloStep++;

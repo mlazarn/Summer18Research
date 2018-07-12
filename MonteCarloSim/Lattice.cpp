@@ -81,7 +81,7 @@ Lattice::Lattice() : rng(std::time(0)), xCoordDist(0, 256), yCoordDist(0, 256), 
  */
 Lattice::Lattice(string path, int lattSize, double mobility) : rng(std::time(0)), xCoordDist(0, lattSize - 1), yCoordDist(0, lattSize - 1), neighDist(0, 3), actionDist()
 {
-    double popDist[] = {0.25, 0.25, 0.25, 0.25};
+    double popDist[] = {0.3, 0.3, 0.3, 0.1};
 
     sizeX = lattSize;
     sizeY = lattSize;
@@ -148,7 +148,7 @@ Lattice::Lattice(string path, int lattSize, double mobility) : rng(std::time(0))
 
 Lattice::Lattice(string path, int xSize, int ySize, double mobility) : rng(std::time(0)), xCoordDist(0, xSize - 1), yCoordDist(0, ySize - 1), neighDist(0, 3), actionDist()
 {
-    double popDist[] = {0.25, 0.25, 0.25, 0.25};
+    double popDist[] = {0.3, 0.3, 0.3, 0.1};
 
     sizeX = xSize;
     sizeY = ySize;
@@ -470,10 +470,7 @@ void Lattice::dataOutput()
             }
         }
 
-        if (x < sizeX - 1)
-        {
-            data << endl;
-        }
+        data << endl;
     }
 
     data.close();
@@ -507,11 +504,8 @@ void Lattice::dataOutput()
             }
         }
 
-        if (i < 2)
-        {
-            dataDensity << endl;
-            dataFlux << endl;
-        }
+        dataDensity << endl;
+        dataFlux << endl;
     }
 
     dataDensity.close();

@@ -148,7 +148,7 @@ def open_data(prefix, species, t, y_min, y_max):
 
 def render_data(args):
     species_names = [r'a', r'b', r'c', r'{net}']
-    marks = ['ro', 'gs', 'b^', 'kv']
+    marks = ['r.', 'g.', 'b.', 'k.']
 
     if args.unit == 'f':
         title = r'Flux at $t={0}$'
