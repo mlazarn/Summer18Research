@@ -27,6 +27,7 @@ int main(int argc, char *argv[])
     double mobility = atof(argv[6]);
     double mobilityRPS = atof(argv[7]);
     int interfaceDistance = atoi(argv[8]);
+    int binSize = atoi(argv[9]);
    
 
     //cout << "," << path << "," << orientation << "," << size << ", " << mobility << ", " << interfaceDistance << endl; // ", " << steps << ", " << interval << ", " << start << ", " << swapTime << ", " << swapInterval << endl;
@@ -34,7 +35,7 @@ int main(int argc, char *argv[])
 
     //LatticeMLRPS testLattice(path, orientation, xSize, mobility, mobilityRPS, interfaceDistance);
     //cout << "initializing lattice" << endl;
-    LatticeMLRPS testLattice(path, orientation, topology, xSize, ySize, mobility, mobilityRPS, interfaceDistance);
+    LatticeMLRPS testLattice(path, orientation, topology, xSize, ySize, mobility, mobilityRPS, interfaceDistance, binSize);
 
     cout << "beginning test" << endl;
 
@@ -47,9 +48,9 @@ int main(int argc, char *argv[])
     */
     
     
-    int steps = atoi(argv[9]);
-    int interval = atoi(argv[10]);
-    int start = atoi(argv[11]);
+    int steps = atoi(argv[10]);
+    int interval = atoi(argv[11]);
+    int start = atoi(argv[12]);
     /*
     int startDrive = atoi(argv[12]);
     int driveFrequency = atoi(argv[13]);

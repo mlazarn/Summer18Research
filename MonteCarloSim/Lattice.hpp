@@ -26,10 +26,20 @@ class Lattice
         int bPop;
         int cPop;
         
-        int **current;
         double **flux;
         double **density0;
         double **density1;
+
+        int binWidth;
+        int binnedArraySize;
+        double *binMidpoints;
+        int **binnedDeathCounts;
+        int **binnedBirthCounts;
+        int **binnedDiffusionCounts;
+        double **binnedFluxA;
+        double **binnedFluxB;
+        double **binnedDensity0;
+        double **binnedDensity1;
 
         int timestep;
         int monteCarloStep;
@@ -47,19 +57,27 @@ class Lattice
 
         void updateDensity();
         void updateFlux();
+        void updateBinnedReactionCount(int reaction, int species, int y);
+        void clearBinnedReactionCount();
+        void updateBinnedDensity();
+        void updateBinnedFlux();
         //void updateCurrent(int spec, int x, int current);
         //void clearCurrent();
+        
+        void initializeArrays();
+        void initializeLattice();
         
         virtual void metadata(int start, int interval, int stop);
         virtual void progressBar(float progress);
     
     public:
         Lattice();
-        Lattice(string path, int lattSize, double mobility);
-        Lattice(string path, int xSize, int ySize, double mobility);
+        Lattice(string path, int lattSize, double mobility, int binSize);
+        Lattice(string path, int xSize, int ySize, double mobility, int binSize);
 
         virtual ~Lattice();
         void reaction(int x, int y);
+        void binMidpointsOutput();
         void dataOutput();
         void setControlRow(int row);
         void setControlCol(int col);

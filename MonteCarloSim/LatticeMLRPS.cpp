@@ -19,7 +19,7 @@ LatticeMLRPS::LatticeMLRPS() : Lattice()
     }
 }
 
-LatticeMLRPS::LatticeMLRPS(string path, int orr, int latticeSize, double mobility, double mobilityRPS, int intDist) : Lattice(path, latticeSize, mobility)
+LatticeMLRPS::LatticeMLRPS(string path, int orr, int latticeSize, double mobility, double mobilityRPS, int intDist, int binSize) : Lattice(path, latticeSize, mobility, binSize)
 {
     if (interfaceDistance >= latticeSize / 2) 
     {
@@ -44,7 +44,7 @@ LatticeMLRPS::LatticeMLRPS(string path, int orr, int latticeSize, double mobilit
     }
 }
 
-LatticeMLRPS::LatticeMLRPS(string path, int orr, int patchTopology, int xSize, int ySize, double mobility, double mobilityRPS, int intDist) : Lattice(path, xSize, ySize, mobility)
+LatticeMLRPS::LatticeMLRPS(string path, int orr, int patchTopology, int xSize, int ySize, double mobility, double mobilityRPS, int intDist, int binSize) : Lattice(path, xSize, ySize, mobility, binSize)
 {
     orientation = orr;
     topology = patchTopology;
@@ -117,6 +117,7 @@ void LatticeMLRPS::metadata(int start, int interval, int stop)
 
     data << "X Size: " << sizeX << endl;
     data << "Y Size: " << sizeY << endl;
+    data << "Bin Width: " << binWidth << endl;
     data << "Mobility: " << mobilityRate << endl;
     data << "RPS Mobility: " << mobilityRateRPS << endl;
     data << "Interface Distance: " << interfaceDistance << endl;
@@ -150,6 +151,7 @@ void LatticeMLRPS::metadata(int start, int interval, int stop, int swap, int swa
 
     data << "X Size: " << sizeX << endl;
     data << "Y Size: " << sizeY << endl;
+    data << "Bin Width: " << binWidth << endl;
     data << "Mobility: " << mobilityRate << endl;
     data << "RPS Mobility: " << mobilityRateRPS << endl;
     data << "Interface Distance: " << interfaceDistance << endl;
@@ -185,6 +187,7 @@ void LatticeMLRPS::metadata(int start, int interval, int stop, int startDrive, i
 
     data << "X Size: " << sizeX << endl;
     data << "Y Size: " << sizeY << endl;
+    data << "Bin Width: " << binWidth << endl;
     data << "Mobility: " << mobilityRate << endl;
     data << "RPS Mobility: " << mobilityRateRPS << endl;
     data << "Interface Distance: " << interfaceDistance << endl;
@@ -260,18 +263,24 @@ void LatticeMLRPS::RPSReaction(int x, int y)
 
     Cell & neighbor = latt[X][Y];
 
-    if (rand < swapProb && neighbor.getSpecies() != curr.getSpecies()) //Pair Swapping
+    int currSpec = curr.getSpecies();
+    int neighSpec = neighbor.getSpecies();
+    if (rand < swapProb && neighSpec != currSpec) //Pair Swapping
     {
-        int tmp = neighbor.getSpecies();
-
         //updateCurrent(curr.getSpecies(), boundary, direction);
         //if (tmp != 3) 
         //{
             //updateCurrent(tmp, boundary, direction * -1);
         //}
 
-        neighbor.setSpecies(curr.getSpecies());
-        curr.setSpecies(tmp);
+        neighbor.setSpecies(currSpec);
+        curr.setSpecies(neighSpec);
+
+        updateBinnedReactionCount(2, currSpec, y);
+        if (neighSpec != 3)
+        {
+            updateBinnedReactionCount(2, neighSpec, Y);
+        }
         //timestep++;
     }
     else if (rand >= swapProb) //Predation
@@ -280,6 +289,8 @@ void LatticeMLRPS::RPSReaction(int x, int y)
         {
             decrementSpeciesCount(neighbor.getSpecies());
             neighbor.setSpecies(curr.getSpecies());
+            updateBinnedReactionCount(0, neighSpec, Y);
+            updateBinnedReactionCount(1, neighSpec, Y);
             //updateCurrent(curr.getSpecies(), boundary, direction);
             //timestep++;
         }
@@ -306,7 +317,9 @@ void LatticeMLRPS::monteCarloRun(int steps, int interval, int startRecord)
             if (monteCarloStep >= startRecord)
             {
                 updateFlux();
+                updateBinnedFlux();
                 dataOutput();
+                clearBinnedReactionCount();
             }
         }
         
@@ -371,6 +384,7 @@ void LatticeMLRPS::monteCarloRun(int steps, int interval, int startRecord)
             timestep = 0;
 
             updateDensity();
+            updateBinnedDensity();
         
             //clearCurrent();
             monteCarloStep++;
@@ -400,6 +414,7 @@ void LatticeMLRPS::monteCarloRun(int steps, int interval, int startRecord, int s
             if (monteCarloStep >= startRecord)
             {
                 updateFlux();
+                updateBinnedFlux();
                 dataOutput();
             }
         }
@@ -473,6 +488,7 @@ void LatticeMLRPS::monteCarloRun(int steps, int interval, int startRecord, int s
         {
             timestep = 0;
             updateDensity();
+            updateBinnedDensity();
 
             //clearCurrent();
             monteCarloStep++;
@@ -502,6 +518,7 @@ void LatticeMLRPS::drivenMonteCarloRun(int steps, int interval, int startRecord,
             if (monteCarloStep >= startRecord)
             {
                 updateFlux();
+                updateBinnedFlux();
                 dataOutput();
             }
         }
@@ -567,6 +584,7 @@ void LatticeMLRPS::drivenMonteCarloRun(int steps, int interval, int startRecord,
             timestep = 0;
 
             updateDensity();
+            updateBinnedDensity();
 
             //clearCurrent();
             monteCarloStep++;

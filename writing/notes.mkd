@@ -1,0 +1,6 @@
++Hierarchical vs cyclic motives. 
++May Leonard model as a good analogy.
++Difference between the two models.
++The rules represent a microscopic set of rules
+++When iumplemented on scale we see unexpected behavior.
++

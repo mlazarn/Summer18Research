@@ -54,8 +54,8 @@ class LatticeMLRPS : public Lattice
 
     public:
         LatticeMLRPS();
-        LatticeMLRPS(string path, int orr, int lattSize, double mobility, double mobilityRPS, int intDist);
-        LatticeMLRPS(string path, int orr, int patchTop, int xSize, int ySize, double mobility, double mobilityRPS, int intDist);
+        LatticeMLRPS(string path, int orr, int lattSize, double mobility, double mobilityRPS, int intDist, int binSize);
+        LatticeMLRPS(string path, int orr, int patchTop, int xSize, int ySize, double mobility, double mobilityRPS, int intDist, int binSize);
         //~LatticeMLRPS();
 
         void RPSReaction(int x, int y);

@@ -147,7 +147,7 @@ def open_data(prefix, species, t, y_min, y_max):
     #return data
 
 def render_data(args):
-    species_names = [r'a', r'b', r'c', r'{net}']
+    species_names = [r'a', r'b', r'c', r'/text{net}']
     marks = ['r.', 'g.', 'b.', 'k.']
 
     if args.unit == 'f':
@@ -160,6 +160,11 @@ def render_data(args):
         axis_title = r'$\langle \rho_{0} \rangle (r)$'.format(species_names[args.species])
         if args.lims is None:
             axis_range = [0.0, 1.0]
+    elif args.unit == 'r':
+        title = r'Reactions at $t={0}'
+        axis_title = r'$n$'
+        if args.lims is None:
+            axis_range = [0, 64]
 
     if args.lims is not None:
         axis_range = args.lims
@@ -170,10 +175,16 @@ def render_data(args):
     print(os.getcwd())
 
     data = open_data(args.prefix, args.species, args.start, args.y_min, args.y_max)
-    r = np.arange(args.y_min, args.y_max)
+
+    if args.binned:
+        r = np.genfromtxt("bin_midpoints.csv", dtype=float, delimiter=',')[args.y_min:args.y_max]
+    else:
+        r = np.arange(args.y_min, args.y_max)
 
     fig, ax = plt.subplots()
     l, = ax.plot(r, data, marks[args.species], zorder=1)
+    if args.binned:
+        l.set_linestyle('--')
     if len(args.vlines) > 0:
         ax.vlines(args.vlines, axis_range[0], axis_range[1], zorder=2)
     fig.set_tight_layout(True)
@@ -260,6 +271,8 @@ parser.add_argument('--prefix', '-p')
 
 parser.add_argument('--lims', '-l', type=float, nargs=2)
 parser.add_argument('--vlines', '-v', type=int, nargs='+')
+
+parser.add_argument('--binned', '-b', action='store_true')
 
 parser.add_argument('--start', '-s', type=int)
 parser.add_argument('--interval', '-i', type=int)
