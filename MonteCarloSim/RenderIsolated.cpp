@@ -18,7 +18,7 @@ int main(int argc, char *argv[])
     int binSize = 8;
    
     int intDistML = 0;
-    //int intDistRPS = size - 1;
+    int intDistRPS = size - 1;
 
     //cout << "," << path << "," << orientation << "," << size << ", " << mobility << ", " << interfaceDistance << endl; // ", " << steps << ", " << interval << ", " << start << ", " << swapTime << ", " << swapInterval << endl;
     
@@ -26,7 +26,7 @@ int main(int argc, char *argv[])
     //LatticeMLRPS testLattice(path, orientation, xSize, mobility, mobilityRPS, interfaceDistance);
     //cout << "initializing lattice" << endl;
     LatticeMLRPS latticeML(pathML, orientation, topology, sizeX, sizeY, mobility, mobilityRPS, intDistML, binSize);
-    //LatticeMLRPS latticeRPS(pathRPS, orientation, topology, sizeX, sizeY, mobility, mobilityRPS, intDistRPS, binSize);
+    LatticeMLRPS latticeRPS(pathRPS, orientation, topology, sizeX, sizeY, mobility, mobilityRPS, intDistRPS, binSize);
 
     cout << "beginning test" << endl;
     
@@ -37,7 +37,7 @@ int main(int argc, char *argv[])
     cout << "starting run" << endl;
 
     latticeML.monteCarloRun(steps, interval, start);
-    //latticeRPS.monteCarloRun(steps, interval, start);
+    latticeRPS.monteCarloRun(steps, interval, start);
 
     cout << "test complete" << endl;
     

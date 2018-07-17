@@ -19,11 +19,11 @@ for n in {0..3}; do
     mkdir -p -v $targ_ml $targ_rps
     mobility="${mobilities[$n]}"
 
-    ./RenderIsolated $targ_ml $targ_rps 0 $size $mobility $steps $interval $start_t
+    #./RenderIsolated $targ_ml $targ_rps 0 $size $mobility $steps $interval $start_t
 
     python3 videoConverter.py $targ_ml $prefix $start_t $interval $steps -d 200 -o ani_ml.mp4
     python3 videoConverter.py $targ_ml $prefix $start_t $interval $steps -d 200 -o ani_ml_frameless.mp4 -F
 
-    #python3 videoConverter.py $targ_rps $prefix $start_t $interval $steps -d 200 -o ani_rps.mp4
+    python3 videoConverter.py $targ_rps $prefix $start_t $interval $steps -d 200 -o ani_rps.mp4
     python3 videoConverter.py $targ_rps $prefix $start_t $interval $steps -d 200 -o ani_rps_frameless.mp4 -F
 done
