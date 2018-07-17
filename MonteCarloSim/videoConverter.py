@@ -50,6 +50,7 @@ parser.add_argument('stop', type=int)
 
 parser.add_argument('--output', '-o', default='movie.mp4')
 
+parser.add_argument('--frameless', '-F', action='store_true')
 parser.add_argument('--vlines', '-v', type=int, nargs='+')
 
 parser.add_argument('--swap', '-w', type=int, default=-1)
@@ -79,8 +80,10 @@ lattice = np.genfromtxt(args.prefix + str(args.start) + '.csv', dtype=int, delim
 
 im = ax.imshow(lattice, interpolation='nearest', cmap=cmap, norm=norm, zorder=1)
 lims = ax.get_ylim()
-if len(args.vlines) > 0:
+if args.vlines is not None:
     ax.vlines(args.vlines, lims[0], lims[1], zorder=2)
+if args.frameless:
+    ax.axis('off')
 fig.set_tight_layout(True)
 
 ttl = ax.set_title('t=0', loc='left')

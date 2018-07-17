@@ -24,71 +24,6 @@ Lattice::Lattice() : rng(std::time(0)), xCoordDist(0, 256), yCoordDist(0, 256), 
     initializeArrays();
     initializeLattice();
 
-//    boost::random::discrete_distribution<> pop(popDist);
-
-//    binWidth = 8;
-//    binnedArraySize = sizeY / binWidth;
-//    binMidpoints = new double[binnedArraySize];
-//    binnedDeathCounts = new int*[3];
-//    binnedBirthCounts = new int*[3];
-//    binnedDiffusionCounts = new int*[3];
-//    binnedFluxA = new double*[3];
-//    binnedFluxB = new double*[3];
-//    binnedDensity0 = new double*[3];
-//    binnedDensity1 = new double*[3];
-//    
-//    flux = new double*[3];
-//    density0 = new double*[3];
-//    density1 = new double*[3];
-    
-//    for (int i = 0; i < 3; i++)
-//    {
-//        //cout << "inititalizing row #" << i << endl;
-//        flux[i] = new double[sizeY];
-//        density0[i] = new double[sizeY];
-//        density1[i] = new double[sizeY];
-//    
-//        binnedDeathCounts[i] = new int[binnedArraySize];
-//        binnedBirthCounts[i] = new int[binnedArraySize];
-//        binnedDiffusionCounts[i] = new int[binnedArraySize];
-//        binnedFluxA[i] = new double[binnedArraySize];
-//        binnedFluxB[i] = new double[binnedArraySize];
-//        binnedDensity0[i] = new double[binnedArraySize];
-//        binnedDensity1[i] = new double[binnedArraySize];
-//        for (int y = 0; y < sizeY; y++)
-//        {
-//            density0[i][y] = 0.0;
-//            density1[i][y] = 0.0;
-//            flux[i][y] = 0.0;
-//    
-//            int binY = y / binWidth;
-//            if (i == 0)
-//            {
-//                binMidpoints[binY] = (((2.0 * binY) + 1.0) * (binWidth)) / 2.0;
-//            }
-//            binnedDeathCounts[i][binY] = 0;
-//            binnedBirthCounts[i][binY] = 0;
-//            binnedDiffusionCounts[i][binY] = 0;
-//            binnedFluxA[i][binY] = 0.0;
-//            binnedFluxB[i][binY] = 0.0;
-//            binnedDensity0[i][binY] = 0.0;
-//            binnedDensity1[i][binY] = 0.0;
-//        }
-//    }
-
-//    for (int x = 0; x < sizeX; x++)
-//    {
-//        latt[x] = new Cell[sizeY];
-//        for (int y = 0; y < sizeY; y++)
-//        {
-//            int spec;
-//            spec = pop(rng);
-//            latt[x][y].setSpecies(spec);
-//            latt[x][y].setSwapRate(mobilityRate);
-//            latt[x][y].setDifRate(mobilityRate);
-//            incrementSpeciesCount(spec);
-//        }
-//    }
 
     binMidpointsOutput();
     updateDensity();
@@ -132,40 +67,6 @@ Lattice::Lattice(string path, int lattSize, double mobility, int binSize) : rng(
     initializeArrays();
     initializeLattice();
 
-//    boost::random::discrete_distribution<> pop(popDist);
-    
-//    flux = new double*[3];
-//    density0 = new double*[3];
-//    density1 = new double*[3];
-    
-//    for (int i = 0; i < 3; i++)
-//    {
-//        //cout << "inititalizing arrays" << endl;
-//        flux[i] = new double[sizeY];
-//        density0[i] = new double[sizeY];
-//        density1[i] = new double[sizeY];
-//        for (int y = 0; y < sizeY; y++)
-//        {
-//            density0[i][y] = 0.0;
-//            density1[i][y] = 0.0;
-//            flux[i][y] = 0.0;
-//        }
-//    }
-
-//    for (int x = 0; x < sizeX; x++)
-//    {
-//        latt[x] = new Cell[sizeY];
-//        for (int y = 0; y < sizeY; y++)
-//        {
-//            int spec;
-//            spec = pop(rng);
-//            latt[x][y].setSpecies(spec);
-//            latt[x][y].setSwapRate(0.8);
-//            latt[x][y].setDifRate(0.8);
-//            incrementSpeciesCount(spec);
-//            latt[x][y].setSwapRate(mobility);
-//        }
-//    }
     
     binMidpointsOutput();
     updateDensity();
@@ -197,48 +98,6 @@ Lattice::Lattice(string path, int xSize, int ySize, double mobility, int binSize
 
     initializeArrays();
     initializeLattice();
-
-//    boost::random::discrete_distribution<> pop(popDist);
-    
-//    flux = new double*[3];
-//    density0 = new double*[3];
-//    density1 = new double*[3];
-
-//    for (int i = 0; i < 3; i++)
-//    {
-//        //cout << "inititalizing arrays" << endl;
-//        flux[i] = new double[sizeY];
-//        density0[i] = new double[sizeY];
-//        density1[i] = new double[sizeY];
-//        for (int y = 0; y < sizeY; y++)
-//        {
-//            density0[i][y] = 0.0;
-//            density1[i][y] = 0.0;
-//            flux[i][y] = 0.0;
-//        }
-//
-        /*
-        current[i] = new int[sizeY - 1];
-        for (int y = 0; y < sizeY; y++)
-        {
-            current[i][y] = 0;
-        }
-        */
-//    }
-
-//    for (int x = 0; x < sizeX; x++)
-//    {
-//        latt[x] = new Cell[sizeY];
-//        for (int y = 0; y < sizeY; y++)
-//        {
-//            int spec;
-//            spec = pop(rng);
-//            latt[x][y].setSpecies(spec);
-//            latt[x][y].setSwapRate(mobilityRate);
-//            latt[x][y].setDifRate(mobilityRate);
-//            incrementSpeciesCount(spec);
-//        }
-//    }
     
     binMidpointsOutput();
     updateDensity();
