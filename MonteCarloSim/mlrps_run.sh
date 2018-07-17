@@ -74,7 +74,7 @@
 #density net
 #python3 densityCalculator.py a $target density_net.mp4 p 0 $ySize -c -1 -p $density_pfx -s $start_t -i $interval -S $steps -a $author
 
-base="data/binTest2/bin_width_x"
+base="data/binTest3/bin_width_x"
 prefix="latt_"
 density_pfx="density_"
 flux_pfx="flux_"
@@ -85,6 +85,8 @@ ySize="512"
 ylims="0 $ySize"
 binWidths=('8' '16' '32')
 binLims=('64' '32' '16')
+binCountLims=('0 250' '0 500' '0 1000')
+binNetCountLims=('0 750' '0 1500' '0 3000')
 intDist="64"
 mobility="2.5"
 rps_mobility="1.0"
@@ -98,7 +100,7 @@ fps="15"
 author="micarn"
 species=('a' 'b' 'c')
 
-for x in {0..3}; do
+for x in {0..2}; do
     target="${base/x/${binWidths[$x]}}"
     mkdir -p -v $target
 
@@ -139,22 +141,22 @@ for x in {0..3}; do
     python3 densityCalculator.py a $target density_net.mp4 p 0 $ySize -c -1 -p $density_pfx -v $vlines -s $start_t -i $interval -S $steps -a $author -f $fps --dpi $dpi
 
     #binned death count A
-    python3 densityCalculator.py a $target binned_death_a.mp4 p 0 ${binLims[$x]} -c 0 -p binned_death_counts_ -v $vlines -s $start_t -i $interval -S $steps -a $author -f $fps --binned
+    python3 densityCalculator.py a $target binned_death_a.mp4 p 0 ${binLims[$x]} -c 0 -p binned_death_counts_ -l ${binCountLims[$x]} -v $vlines -s $start_t -i $interval -S $steps -a $author -f $fps --binned
 
     #binned death count net
-    python3 densityCalculator.py a $target binned_death_net.mp4 p 0 ${binLims[$x]} -c -1 -p binned_death_counts_ -v $vlines -s $start_t -i $interval -S $steps -a $author -f $fps --binned
+    python3 densityCalculator.py a $target binned_death_net.mp4 p 0 ${binLims[$x]} -c -1 -p binned_death_counts_ -l ${binNetCountLims[$x]} -v $vlines -s $start_t -i $interval -S $steps -a $author -f $fps --binned
 
     #binned birth count A
-    python3 densityCalculator.py a $target binned_birth_a.mp4 p 0 ${binLims[$x]} -c 0 -p binned_birth_counts_ -v $vlines -s $start_t -i $interval -S $steps -a $author -f $fps --binned
+    python3 densityCalculator.py a $target binned_birth_a.mp4 p 0 ${binLims[$x]} -c 0 -p binned_birth_counts_ -l ${binCountLims[$x]} -v $vlines -s $start_t -i $interval -S $steps -a $author -f $fps --binned
 
     #binned birth count net
-    python3 densityCalculator.py a $target binned_birth_net.mp4 p 0 ${binLims[$x]} -c -1 -p binned_birth_counts_ -v $vlines -s $start_t -i $interval -S $steps -a $author -f $fps --binned
+    python3 densityCalculator.py a $target binned_birth_net.mp4 p 0 ${binLims[$x]} -c -1 -p binned_birth_counts_ -l ${binNetCountLims[$x]} -v $vlines -s $start_t -i $interval -S $steps -a $author -f $fps --binned
 
     #binned diffusion count A
-    python3 densityCalculator.py a $target binned_diffusion_a.mp4 p 0 ${binLims[$x]} -c 0 -p binned_diffusion_counts_ -v $vlines -s $start_t -i $interval -S $steps -a $author -f $fps --binned
+    python3 densityCalculator.py a $target binned_diffusion_a.mp4 p 0 ${binLims[$x]} -c 0 -p binned_diffusion_counts_ -l ${binCountLims[$x]} -v $vlines -s $start_t -i $interval -S $steps -a $author -f $fps --binned
 
     #binned diffusion count net
-    python3 densityCalculator.py a $target binned_diffusion_net.mp4 p 0 ${binLims[$x]} -c -1 -p binned_diffusion_counts_ -v $vlines -s $start_t -i $interval -S $steps -a $author -f $fps --binned
+    python3 densityCalculator.py a $target binned_diffusion_net.mp4 p 0 ${binLims[$x]} -c -1 -p binned_diffusion_counts_ -l ${binNetCountLims[$x]} -v $vlines -s $start_t -i $interval -S $steps -a $author -f $fps --binned
 done
 
 cd data

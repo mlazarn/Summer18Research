@@ -643,10 +643,13 @@ void Lattice::reaction(int x, int y)
         neighbor.setSpecies(currSpec);
         curr.setSpecies(neighSpec);
 
-        updateBinnedReactionCount(2, currSpec, y);
-        if (neighSpec != 3)
+        if (Y != y)
         {
-            updateBinnedReactionCount(2, currSpec, Y);
+            updateBinnedReactionCount(2, currSpec, y);
+            if (neighSpec != 3)
+            {
+                updateBinnedReactionCount(2, currSpec, Y);
+            }
         }
         //timestep++;
     }
@@ -755,7 +758,6 @@ void Lattice::dataOutput()
             {
                 for (int y = 0; y < sizeY; y++)
                 {
-                    int binY = y / binWidth;
                     switch (pfx) 
                     {
                         case 0:

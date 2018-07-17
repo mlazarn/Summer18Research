@@ -276,10 +276,13 @@ void LatticeMLRPS::RPSReaction(int x, int y)
         neighbor.setSpecies(currSpec);
         curr.setSpecies(neighSpec);
 
-        updateBinnedReactionCount(2, currSpec, y);
-        if (neighSpec != 3)
+        if (Y != y)
         {
-            updateBinnedReactionCount(2, neighSpec, Y);
+            updateBinnedReactionCount(2, currSpec, y);
+            if (neighSpec != 3)
+            {
+                updateBinnedReactionCount(2, neighSpec, Y);
+            }
         }
         //timestep++;
     }

@@ -200,6 +200,7 @@ def render_data(args):
     metadata = dict(title=args.output, artist=args.author, comment=args.comment)
     writer = FFMpegWriter(fps=args.framerate, metadata=metadata)
     
+    print('writing {}'.format(args.output))
     with writer.saving(fig, args.output, args.dpi):
         if args.swap < 1 or args.swap >= args.stop:
             frames = int( (args.stop - args.start) / args.interval )
