@@ -751,43 +751,61 @@ void Lattice::dataOutput()
         fstream data(fileName.c_str(), ofstream::out | ofstream :: app | ofstream::in);
         for (int i = 0; i < 3; i++)
         {
-            for (int y = 0; y < sizeY; y++)
+            if (pfx < 2)
             {
-                int binY = y / binWidth;
-                switch (pfx) 
+                for (int y = 0; y < sizeY; y++)
                 {
-                    case 0:
-                        data << density1[i][y];
-                        break;
-                    case 1:
-                        data << flux[i][y];
-                        break;
-                    case 2:
-                        data << binnedDensity1[i][binY];
-                        break;
-                    case 3:
-                        data << binnedFluxA[i][binY];
-                        break;
-                    case 4:
-                        data << binnedFluxB[i][binY];
-                        break;
-                    case 5:
-                        data << binnedDeathCounts[i][binY];
-                        break;
-                    case 6:
-                        data << binnedBirthCounts[i][binY];
-                        break;
-                    case 7:
-                        data << binnedDiffusionCounts[i][binY];
-                        break;
-                }
+                    int binY = y / binWidth;
+                    switch (pfx) 
+                    {
+                        case 0:
+                            data << density1[i][y];
+                            break;
+                        case 1:
+                            data << flux[i][y];
+                            break;
+                    }
 
-                if (y < sizeY - 1)
-                {
-                    data << ",";
+                    if (y < sizeY - 1)
+                    {
+                        data << ",";
+                    }
                 }
+                data << endl;
             }
-            data << endl;
+            else
+            {
+                for (int binY = 0; binY < binnedArraySize; binY++)
+                {
+                    switch (pfx) 
+                    {
+                        case 2:
+                            data << binnedDensity1[i][binY];
+                            break;
+                        case 3:
+                            data << binnedFluxA[i][binY];
+                            break;
+                        case 4:
+                            data << binnedFluxB[i][binY];
+                            break;
+                        case 5:
+                            data << binnedDeathCounts[i][binY];
+                            break;
+                        case 6:
+                            data << binnedBirthCounts[i][binY];
+                            break;
+                        case 7:
+                            data << binnedDiffusionCounts[i][binY];
+                            break;
+                    }
+
+                    if (binY < binnedArraySize - 1)
+                    {
+                        data << ",";
+                    }
+                }
+                data << endl;
+            }
         }
         data.close();
 
