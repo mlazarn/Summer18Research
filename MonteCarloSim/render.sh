@@ -1,5 +1,5 @@
 base_ml="data/isolated_render/run_x"
-base_ml="data/isolated_render/rps/run_x"
+base_rps="data/isolated_render/rps/run_x"
 
 prefix="latt_"
 
