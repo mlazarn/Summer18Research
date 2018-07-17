@@ -187,6 +187,8 @@ def render_data(args):
         l.set_linestyle('--')
     if len(args.vlines) > 0:
         ax.vlines(args.vlines, axis_range[0], axis_range[1], zorder=2)
+    if args.grid:
+        ax.grid()
     fig.set_tight_layout(True)
 
     ttl = ax.set_title(title.format(str(args.start)), loc='left')
@@ -272,6 +274,10 @@ parser.add_argument('--prefix', '-p')
 
 parser.add_argument('--lims', '-l', type=float, nargs=2)
 parser.add_argument('--vlines', '-v', type=int, nargs='+')
+
+parser.add_argument('--grid', '-g', action='store_true')
+#parser.add_argument('--grid_x', '-g', type=int, default=64)
+#parser.add_argument('--grid_y', '-G', type=float, default=0.1)
 
 parser.add_argument('--binned', '-b', action='store_true')
 
