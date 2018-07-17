@@ -114,8 +114,7 @@ Lattice::~Lattice()
         delete[] binnedDeathCounts[i];
         delete[] binnedBirthCounts[i];
         delete[] binnedDiffusionCounts[i];
-        delete[] binnedFluxA[i];
-        delete[] binnedFluxB[i];
+        delete[] binnedFlux[i];
         delete[] binnedDensity0[i];
         delete[] binnedDensity1[i];
         delete[] flux[i];
@@ -130,8 +129,7 @@ Lattice::~Lattice()
     delete binnedDeathCounts;
     delete binnedBirthCounts;
     delete binnedDiffusionCounts;
-    delete binnedFluxA;
-    delete binnedFluxB;
+    delete binnedFlux;
     delete binnedDensity0;
     delete binnedDensity1;
     delete flux;
@@ -148,8 +146,7 @@ void Lattice::initializeArrays()
     binnedDeathCounts = new int*[3];
     binnedBirthCounts = new int*[3];
     binnedDiffusionCounts = new int*[3];
-    binnedFluxA = new double*[3];
-    binnedFluxB = new double*[3];
+    binnedFlux = new double*[3];
     binnedDensity0 = new double*[3];
     binnedDensity1 = new double*[3];
     
@@ -167,8 +164,7 @@ void Lattice::initializeArrays()
         binnedDeathCounts[i] = new int[binnedArraySize];
         binnedBirthCounts[i] = new int[binnedArraySize];
         binnedDiffusionCounts[i] = new int[binnedArraySize];
-        binnedFluxA[i] = new double[binnedArraySize];
-        binnedFluxB[i] = new double[binnedArraySize];
+        binnedFlux[i] = new double[binnedArraySize];
         binnedDensity0[i] = new double[binnedArraySize];
         binnedDensity1[i] = new double[binnedArraySize];
         for (int y = 0; y < sizeY; y++)
@@ -185,8 +181,7 @@ void Lattice::initializeArrays()
             binnedDeathCounts[i][binY] = 0;
             binnedBirthCounts[i][binY] = 0;
             binnedDiffusionCounts[i][binY] = 0;
-            binnedFluxA[i][binY] = 0.0;
-            binnedFluxB[i][binY] = 0.0;
+            binnedFlux[i][binY] = 0.0;
             binnedDensity0[i][binY] = 0.0;
             binnedDensity1[i][binY] = 0.0;
         }
@@ -344,7 +339,7 @@ void Lattice::updateBinnedFlux()
             //method 1: binning the raw flux
             //binnedFluxA[i][binY] = binSum[i][binY] / binWidth;
             //method 2: taking the difference of the binned densities
-            binnedFluxB[i][binY] = binnedDensity1[i][binY] - binnedDensity0[i][binY];
+            binnedFlux[i][binY] = binnedDensity1[i][binY] - binnedDensity0[i][binY];
         }
     }
 }
@@ -601,10 +596,10 @@ void Lattice::dataOutput()
 
     data.close();
 
-    const char *prefixes[] = {"density_", "flux_", "binned_density_", "binned_flux_a_", "binned_flux_b_",
+    const char *prefixes[] = {"density_", "flux_", "binned_density_", "binned_flux_",
                          "binned_death_counts_", "binned_birth_counts_", "binned_diffusion_counts_"};
 
-    for (int pfx = 0; pfx < 8; pfx++)
+    for (int pfx = 0; pfx < 7; pfx++)
     {
         ss.str("");
         ss << filePath << prefixes[pfx] << monteCarloStep << ".csv";
@@ -644,18 +639,15 @@ void Lattice::dataOutput()
                             data << binnedDensity1[i][binY];
                             break;
                         case 3:
-                            data << binnedFluxA[i][binY];
+                            data << binnedFlux[i][binY];
                             break;
                         case 4:
-                            data << binnedFluxB[i][binY];
-                            break;
-                        case 5:
                             data << binnedDeathCounts[i][binY];
                             break;
-                        case 6:
+                        case 5:
                             data << binnedBirthCounts[i][binY];
                             break;
-                        case 7:
+                        case 6:
                             data << binnedDiffusionCounts[i][binY];
                             break;
                     }

@@ -36,8 +36,7 @@ class Lattice
         int **binnedDeathCounts;
         int **binnedBirthCounts;
         int **binnedDiffusionCounts;
-        double **binnedFluxA;
-        double **binnedFluxB;
+        double **binnedFlux;
         double **binnedDensity0;
         double **binnedDensity1;
 
