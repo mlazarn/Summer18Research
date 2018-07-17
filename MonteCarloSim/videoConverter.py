@@ -72,26 +72,39 @@ cmap = colors.ListedColormap(['r', 'g', 'b', 'k'])
 bounds = [0, 1, 2, 3, 4]
 norm = colors.BoundaryNorm(bounds, cmap.N)
 
+pad = None
+if args.frameless:
+    pad=0
+
 fig, ax = plt.subplots()
 
 os.chdir(args.path)
 
 lattice = np.genfromtxt(args.prefix + str(args.start) + '.csv', dtype=int, delimiter=',')
 
-im = ax.imshow(lattice, interpolation='nearest', cmap=cmap, norm=norm, zorder=1)
+im = ax.imshow(lattice, interpolation='nearest', cmap=cmap, norm=norm, zorder=1, aspect='auto')
 lims = ax.get_ylim()
 if args.vlines is not None:
     ax.vlines(args.vlines, lims[0], lims[1], zorder=2)
 if args.frameless:
+    ttl = ax.set_title('t=0', visible=False)
+    fig.subplots_adjust(left=0, bottom=0, right=1, top=1, wspace=0, hspace=0)
+    ax.set_frame_on(False)
+    #ax.set_axis_off()
     ax.axis('off')
-fig.set_tight_layout(True)
+    ax.axis('image')
+    ax.get_xaxis().set_visible(False)
+    ax.get_yaxis().set_visible(False)
+else:
+    ttl = ax.set_title('t=0', loc='left', visible=True)
 
-ttl = ax.set_title('t=0', loc='left')
+#fig.set_tight_layout(True)
+
 
 print("writing {}. Please wait.".format(args.output))
 with writer.saving(fig, args.output, args.dpi):
     #print("writing frame 0")
-    writer.grab_frame()
+    writer.grab_frame(pad_inches=pad)
     
     if args.swap < 1 or args.swap > args.stop:
         frames = int((args.stop - args.start) / args.interval)
@@ -100,7 +113,7 @@ with writer.saving(fig, args.output, args.dpi):
             try:
                 new_frame(args.prefix, ttl, im, t)
                 #print("writing frame {0}".format(str(t)))
-                writer.grab_frame()
+                writer.grab_frame(pad_inches=pad)
                 pbar.update()
                 #prog = (1.0 * (t / args.interval)) / ((args.stop - args.start) / args.interval)
                 #update_progress(prog)

@@ -341,7 +341,7 @@ void LatticeMLRPS::monteCarloRun(int steps, int interval, int startRecord)
 
         //timestep++;
  
-        if ( (y >= RPSMin && y <= RPSMax) ) 
+        if ( (y >= RPSMin && y < RPSMax) ) 
         {
             if (topology == 1)
             {
@@ -446,7 +446,7 @@ void LatticeMLRPS::monteCarloRun(int steps, int interval, int startRecord, int s
         
         //timestep++;
  
-        if ( (y >= RPSMin && y <= RPSMax) && monteCarloStep >= swapTime) 
+        if ( (y >= RPSMin && y < RPSMax) && monteCarloStep >= swapTime) 
         {
             if (topology == 1)
             {
@@ -541,7 +541,7 @@ void LatticeMLRPS::drivenMonteCarloRun(int steps, int interval, int startRecord,
 
         //timestep++;
  
-        if ( (y >= RPSMin && y <= RPSMax) && (monteCarloStep >= startDrive) && ((monteCarloStep - startDrive) % driveFrequency <= pulseWidth)) 
+        if ( (y >= RPSMin && y < RPSMax) && (monteCarloStep >= startDrive) && ((monteCarloStep - startDrive) % driveFrequency <= pulseWidth)) 
         {
             if (topology == 1)
             {
