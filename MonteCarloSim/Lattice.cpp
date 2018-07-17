@@ -7,7 +7,7 @@ Lattice::Lattice() : rng(std::time(0)), xCoordDist(0, 256), yCoordDist(0, 256), 
     sizeX = 256;
     sizeY = 256;
 
-    binWidth = 8;
+    binWidth = 4;
 
 //    double popDist[] = {0.3, 0.3, 0.3, 0.1};
     filePath = "";
@@ -714,32 +714,40 @@ void Lattice::monteCarloRun(int steps, int interval, int start)
     cout << "Starting Monte Carlo Run" << endl;
     do
     {
+        if (monteCarloStep % interval == 0)
+        {
+            float progress = (1.0 * monteCarloStep) / steps;
+            progressBar(progress);
+
+            //cout << timestep << endl;
+            if (monteCarloStep >= start)
+            {
+                updateFlux();
+                updateBinnedFlux();
+                dataOutput();
+            }
+
+            clearBinnedReactionCount();
+        }
+
         int x = xCoordDist(rng);
         int y = yCoordDist(rng);
+        timestep++;
 
         do 
         {
             x = xCoordDist(rng);
             y = yCoordDist(rng);
+            timestep++;
         }
         while (latt[x][y].getSpecies() > 2);
  
         reaction(x, y);
-        timestep++;
 
         if (timestep >= p)
         {
             timestep = 0;
             monteCarloStep++;
-        }
-
-        if (monteCarloStep % interval == 0)
-        {
-            //cout << timestep << endl;
-            if (monteCarloStep >= start)
-            {
-                dataOutput();
-            }
         }
 
     }

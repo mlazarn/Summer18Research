@@ -188,7 +188,7 @@ def render_data(args):
     if len(args.vlines) > 0:
         ax.vlines(args.vlines, axis_range[0], axis_range[1], zorder=2)
     if args.grid:
-        ax.grid()
+        ax.grid(which='both')
     fig.set_tight_layout(True)
 
     ttl = ax.set_title(title.format(str(args.start)), loc='left')

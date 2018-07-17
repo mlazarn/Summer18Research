@@ -72,7 +72,11 @@ cmap = colors.ListedColormap(['r', 'g', 'b', 'k'])
 bounds = [0, 1, 2, 3, 4]
 norm = colors.BoundaryNorm(bounds, cmap.N)
 
-fig, ax = plt.subplots()
+frameon = True
+if args.frameless:
+    frameon = False
+
+fig, ax = plt.subplots(frameon=frameon)
 
 os.chdir(args.path)
 
@@ -84,9 +88,11 @@ if args.vlines is not None:
     ax.vlines(args.vlines, lims[0], lims[1], zorder=2)
 if args.frameless:
     ax.axis('off')
+    ttl = ax.set_title('t=0', loc='left', visible=False)
+else:
+    ttl = ax.set_title('t=0', loc='left', visible=True)
 fig.set_tight_layout(True)
 
-ttl = ax.set_title('t=0', loc='left')
 
 print("writing {}. Please wait.".format(args.output))
 with writer.saving(fig, args.output, args.dpi):
