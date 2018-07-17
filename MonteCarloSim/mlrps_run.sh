@@ -74,7 +74,7 @@
 #density net
 #python3 densityCalculator.py a $target density_net.mp4 p 0 $ySize -c -1 -p $density_pfx -s $start_t -i $interval -S $steps -a $author
 
-base="data/binTest/bin_width_x"
+base="data/binTest2/bin_width_x"
 prefix="latt_"
 density_pfx="density_"
 flux_pfx="flux_"
@@ -104,7 +104,7 @@ for x in {0..3}; do
 
     #                  targ    o t xSize  ySize  mob       rps_mob       intDist  bin_w            steps  interval  start_t
     #                  1       2 3 4      5      6         7             8        9                10     11        12
-    #./LatticeMLRPSTest $target 0 1 $xSize $ySize $mobility $rps_mobility $intDist ${binWidths[$x]} $steps $interval $start_t
+    ./LatticeMLRPSTest $target 0 1 $xSize $ySize $mobility $rps_mobility $intDist ${binWidths[$x]} $steps $interval $start_t
 
     python3 videoConverter.py $target $prefix $start_t $interval $steps -v $vlines -o animation.mp4 -a $author -f $fps --dpi $dpi
 
@@ -156,6 +156,9 @@ for x in {0..3}; do
     #binned diffusion count net
     python3 densityCalculator.py a $target binned_diffusion_net.mp4 p 0 ${binLims[$x]} -c -1 -p binned_diffusion_counts_ -v $vlines -s $start_t -i $interval -S $steps -a $author -f $fps --binned
 done
+
+cd data
+tar -zcf bin_test_2_renders.tar.gz binTest2/*/*.mp4 binTest2/*/metadata.txt
 
 #for mobility in "${mobilities[@]}"; do
 #    for rps_mobility in "${RPSMobilities[@]}"; do

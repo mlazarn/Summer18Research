@@ -402,35 +402,44 @@ void Lattice::updateDensity()
 
 void Lattice::updateBinnedDensity()
 {
-    double binSum[3][binnedArraySize];
+    //double binSum[3][binnedArraySize];
 
     for (int i = 0; i < 3; i++)
     {
         for (int binY = 0; binY < binnedArraySize; binY++)
         {
-            binSum[i][binY] = 0.0;
-        }
-    }
+            double cumsum = 0.0;
+            //binSum[i][binY] = 0.0;
 
-    for (int i = 0; i < 3; i++)
-    {
-        for (int y = 0; y < sizeY; y++)
-        {
-            int binY = y / binWidth;
-            double tmp = binSum[i][binY] + density1[i][y];
-            binSum[i][binY] = tmp;
-
-        }
-    }
-
-    for (int i = 0; i < 3; i++)
-    {
-        for (int binY = 0; binY < binnedArraySize; binY++)
-        {
+            for (int n = 0; n < binWidth; n++)
+            {
+                int y = (binY * binWidth) + n;
+                cumsum += density1[i][y];
+            }
             binnedDensity0[i][binY] = binnedDensity1[i][binY];
-            binnedDensity1[i][binY] = binSum[i][binY] / binWidth;
+            binnedDensity1[i][binY] = cumsum / binWidth;
         }
     }
+
+    //for (int i = 0; i < 3; i++)
+    //{
+        //for (int y = 0; y < sizeY; y++)
+        //{
+            //int binY = y / binWidth;
+            //double tmp = binSum[i][binY] + density1[i][y];
+            //binSum[i][binY] = tmp;
+
+        //}
+    //}
+
+    //for (int i = 0; i < 3; i++)
+    //{
+        //for (int binY = 0; binY < binnedArraySize; binY++)
+        //{
+            //binnedDensity0[i][binY] = binnedDensity1[i][binY];
+            //binnedDensity1[i][binY] = binSum[i][binY] / binWidth;
+        //}
+    //}
 }
 
 void Lattice::updateFlux()
@@ -448,33 +457,33 @@ void Lattice::updateFlux()
 
 void Lattice::updateBinnedFlux()
 {
-    double binSum[3][binnedArraySize];
+    //double binSum[3][binnedArraySize];
 
-    for (int i = 0; i < 3; i++)
-    {
-        for (int binY = 0; binY < binnedArraySize; binY++)
-        {
-            binSum[i][binY] = 0.0;
-        }
-    }
+    //for (int i = 0; i < 3; i++)
+    //{
+        //for (int binY = 0; binY < binnedArraySize; binY++)
+        //{
+            //binSum[i][binY] = 0.0;
+        //}
+    //}
 
-    for (int i = 0; i < 3; i++)
-    {
-        for (int y = 0; y < sizeY; y++)
-        {
-            int binY = y / binWidth;
+    //for (int i = 0; i < 3; i++)
+    //{
+        //for (int y = 0; y < sizeY; y++)
+        //{
+            //int binY = y / binWidth;
             //method 1: binning the raw flux
-            binSum[i][binY] += flux[i][y];
+            //binSum[i][binY] += flux[i][y];
 
-        }
-    }
+        //}
+    //}
 
     for (int i = 0; i < 3; i ++)
     {
         for (int binY = 0; binY < binnedArraySize; binY++)
         {
             //method 1: binning the raw flux
-            binnedFluxA[i][binY] = binSum[i][binY] / binWidth;
+            //binnedFluxA[i][binY] = binSum[i][binY] / binWidth;
             //method 2: taking the difference of the binned densities
             binnedFluxB[i][binY] = binnedDensity1[i][binY] - binnedDensity0[i][binY];
         }

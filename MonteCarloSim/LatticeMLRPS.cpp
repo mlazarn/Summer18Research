@@ -319,8 +319,9 @@ void LatticeMLRPS::monteCarloRun(int steps, int interval, int startRecord)
                 updateFlux();
                 updateBinnedFlux();
                 dataOutput();
-                clearBinnedReactionCount();
             }
+
+            clearBinnedReactionCount();
         }
         
         int x = xCoordDist(rng);
