@@ -82,7 +82,7 @@ os.chdir(args.path)
 
 lattice = np.genfromtxt(args.prefix + str(args.start) + '.csv', dtype=int, delimiter=',')
 
-im = ax.imshow(lattice, interpolation='nearest', cmap=cmap, norm=norm, zorder=1, aspect='auto')
+im = ax.imshow(lattice, interpolation='nearest', cmap=cmap, norm=norm, zorder=1)
 lims = ax.get_ylim()
 if args.vlines is not None:
     ax.vlines(args.vlines, lims[0], lims[1], zorder=2)
