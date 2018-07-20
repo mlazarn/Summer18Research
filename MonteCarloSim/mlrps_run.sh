@@ -93,7 +93,7 @@ intDist="64"
 mobility="2.5"
 #rps_mobility="1.0"
 #mobilites=('1.25' '2.5' '5.0')
-RPSMobilities=('0.1' '2.5' '10.0') 
+RPSMobilities=('0.1' '2.5' '10.0' '5.0') 
 steps="5000"
 interval="1"
 start_t="3000"
@@ -102,7 +102,8 @@ fps="60"
 author="micarn"
 species=('a' 'b' 'c')
 
-for x in {0..2}; do
+
+for x in {3..3}; do
     target="${base/x/$x}"
     mkdir -p -v $target
 
@@ -157,7 +158,7 @@ for x in {0..2}; do
 done
 
 cd data
-tar -zcf plane_wave_renders.tar.gz planeWaveRenders/*/*.mp4 planeWaveRenders/*/metadata.txt
+tar -zcf plane_wave_renders_2.tar.gz planeWaveRenders/run_3/*.mp4 planeWaveRenders/run_3/metadata.txt
 
 #for mobility in "${mobilities[@]}"; do
 #    for rps_mobility in "${RPSMobilities[@]}"; do
