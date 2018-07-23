@@ -2,6 +2,8 @@
 
 using namespace std;
 
+// Default LatticeMLRPS Constructor. Calls the default Lattice constructor and
+// assigns a few values unique to LatticeMLRPS
 LatticeMLRPS::LatticeMLRPS() : Lattice()
 {
     RPSMin = 64;
@@ -19,6 +21,7 @@ LatticeMLRPS::LatticeMLRPS() : Lattice()
     }
 }
 
+// Calls the square Lattice constructor and assigns a few values unique to LatticeMLRPS.
 LatticeMLRPS::LatticeMLRPS(string path, int orr, int latticeSize, double mobility, double mobilityRPS, int intDist, int binSize) : Lattice(path, latticeSize, mobility, binSize)
 {
     if (interfaceDistance >= latticeSize / 2) 
@@ -44,6 +47,7 @@ LatticeMLRPS::LatticeMLRPS(string path, int orr, int latticeSize, double mobilit
     }
 }
 
+// Calls the rectangular Lattice constructor and assigns a few values unique to LatticeMLRPS.
 LatticeMLRPS::LatticeMLRPS(string path, int orr, int patchTopology, int xSize, int ySize, double mobility, double mobilityRPS, int intDist, int binSize) : Lattice(path, xSize, ySize, mobility, binSize)
 {
     orientation = orr;
@@ -80,36 +84,11 @@ LatticeMLRPS::LatticeMLRPS(string path, int orr, int patchTopology, int xSize, i
     }
 }
 
-/*(LatticeMLRPS::~LatticeMLRPS()
-{
-    cout << "~LatticeMLRPS()" << endl;
-    for (int i = 0; i < sizeX; ++i) 
-    {
-        delete[] latt[i];
-    }
-
-    delete[] latt;
-}
-
-
-LatticeMLRPS::~LatticeMLRPS()
-{
-    cout << "~LatticeMLRPS()" << endl;
-    for (int i = 0; i < size; ++i) 
-    {
-        delete[] latt[i];
-    }
-
-    delete[] latt;
-}
-*/
-
 void LatticeMLRPS::metadata(int start, int interval, int stop)
 {
     using namespace std;
     stringstream ss;
     ss << filePath << "metadata.txt";
-    //ss << filePath << "S" << size << "_" << timestep << ".ppm";
     string fileName;
     fileName = ss.str();
 
@@ -143,7 +122,6 @@ void LatticeMLRPS::metadata(int start, int interval, int stop, int swap, int swa
     using namespace std;
     stringstream ss;
     ss << filePath << "metadata.txt";
-    //ss << filePath << "S" << size << "_" << timestep << ".ppm";
     string fileName;
     fileName = ss.str();
 
@@ -179,7 +157,6 @@ void LatticeMLRPS::metadata(int start, int interval, int stop, int startDrive, i
     using namespace std;
     stringstream ss;
     ss << filePath << "metadata.txt";
-    //ss << filePath << "S" << size << "_" << timestep << ".ppm";
     string fileName;
     fileName = ss.str();
 
@@ -211,15 +188,13 @@ void LatticeMLRPS::metadata(int start, int interval, int stop, int startDrive, i
     data.close();
 }
 
+// Implements the RPS model reaction.
 void LatticeMLRPS::RPSReaction(int x, int y)
 {
     int neigh = neighDist(rng);
 
     int X = x, Y = y;
 
-    //int direction = 0;
-    //int boundary = y;
-    
     switch(neigh)
     {
         case 0 : //up
@@ -234,8 +209,6 @@ void LatticeMLRPS::RPSReaction(int x, int y)
             break;
         case 1 : //right
             Y = (y + 1) % sizeY;
-            //boundary = Y;
-            //direction = 1;
             break;
         case 2 : //down
             X = (x + 1) % sizeX;
@@ -249,7 +222,6 @@ void LatticeMLRPS::RPSReaction(int x, int y)
             {
                 Y = (y - 1) % sizeY;
             }
-            //direction = -1;
             break;
     }
 
@@ -267,12 +239,6 @@ void LatticeMLRPS::RPSReaction(int x, int y)
     int neighSpec = neighbor.getSpecies();
     if (rand < swapProb && neighSpec != currSpec) //Pair Swapping
     {
-        //updateCurrent(curr.getSpecies(), boundary, direction);
-        //if (tmp != 3) 
-        //{
-            //updateCurrent(tmp, boundary, direction * -1);
-        //}
-
         neighbor.setSpecies(currSpec);
         curr.setSpecies(neighSpec);
 
@@ -284,7 +250,6 @@ void LatticeMLRPS::RPSReaction(int x, int y)
                 updateBinnedReactionCount(2, neighSpec, Y);
             }
         }
-        //timestep++;
     }
     else if (rand >= swapProb) //Predation
     {
@@ -294,8 +259,6 @@ void LatticeMLRPS::RPSReaction(int x, int y)
             neighbor.setSpecies(curr.getSpecies());
             updateBinnedReactionCount(0, neighSpec, Y);
             updateBinnedReactionCount(1, neighSpec, Y);
-            //updateCurrent(curr.getSpecies(), boundary, direction);
-            //timestep++;
         }
     }
 
@@ -316,7 +279,6 @@ void LatticeMLRPS::monteCarloRun(int steps, int interval, int startRecord)
             float progress = (1.0 * monteCarloStep) / steps;
             progressBar(progress);
 
-            //cout << timestep << endl;
             if (monteCarloStep >= startRecord)
             {
                 updateFlux();
@@ -338,9 +300,8 @@ void LatticeMLRPS::monteCarloRun(int steps, int interval, int startRecord)
             timestep++;
         }
         while (latt[x][y].getSpecies() > 2);
-
-        //timestep++;
  
+        // Decides whether to use reaction(x, y) or reactionRPS(x, y)
         if ( (y >= RPSMin && y < RPSMax) ) 
         {
             if (topology == 1)
@@ -390,7 +351,6 @@ void LatticeMLRPS::monteCarloRun(int steps, int interval, int startRecord)
             updateDensity();
             updateBinnedDensity();
         
-            //clearCurrent();
             monteCarloStep++;
         }
 
@@ -414,7 +374,6 @@ void LatticeMLRPS::monteCarloRun(int steps, int interval, int startRecord, int s
             float progress = (1.0 * monteCarloStep) / steps;
             progressBar(progress);
 
-            //cout << timestep << endl;
             if (monteCarloStep >= startRecord)
             {
                 updateFlux();
@@ -427,7 +386,6 @@ void LatticeMLRPS::monteCarloRun(int steps, int interval, int startRecord, int s
             float progress = (1.0 * monteCarloStep) / steps;
             progressBar(progress);
 
-            //cout << timestep << endl;
             updateFlux();
             dataOutput();
         }
@@ -444,8 +402,6 @@ void LatticeMLRPS::monteCarloRun(int steps, int interval, int startRecord, int s
         }
         while (latt[x][y].getSpecies() > 2);
         
-        //timestep++;
- 
         if ( (y >= RPSMin && y < RPSMax) && monteCarloStep >= swapTime) 
         {
             if (topology == 1)
@@ -494,7 +450,6 @@ void LatticeMLRPS::monteCarloRun(int steps, int interval, int startRecord, int s
             updateDensity();
             updateBinnedDensity();
 
-            //clearCurrent();
             monteCarloStep++;
         }
 
@@ -518,7 +473,6 @@ void LatticeMLRPS::drivenMonteCarloRun(int steps, int interval, int startRecord,
             float progress = (1.0 * monteCarloStep) / steps;
             progressBar(progress);
 
-            //cout << timestep << endl;
             if (monteCarloStep >= startRecord)
             {
                 updateFlux();
@@ -539,8 +493,6 @@ void LatticeMLRPS::drivenMonteCarloRun(int steps, int interval, int startRecord,
         }
         while (latt[x][y].getSpecies() > 2);
 
-        //timestep++;
- 
         if ( (y >= RPSMin && y < RPSMax) && (monteCarloStep >= startDrive) && ((monteCarloStep - startDrive) % driveFrequency <= pulseWidth)) 
         {
             if (topology == 1)
@@ -590,7 +542,6 @@ void LatticeMLRPS::drivenMonteCarloRun(int steps, int interval, int startRecord,
             updateDensity();
             updateBinnedDensity();
 
-            //clearCurrent();
             monteCarloStep++;
         }
 

@@ -2,6 +2,9 @@
 
 using namespace std;
 
+// default constructor
+// note that the calls after the : are to initialize the boost rng and distributions.
+// I don't know why, but they need to be initialized there fort some reason.
 Lattice::Lattice() : rng(std::time(0)), xCoordDist(0, 256), yCoordDist(0, 256), neighDist(0, 3)
 {
     sizeX = 256;
@@ -9,12 +12,9 @@ Lattice::Lattice() : rng(std::time(0)), xCoordDist(0, 256), yCoordDist(0, 256), 
 
     binWidth = 4;
 
-//    double popDist[] = {0.3, 0.3, 0.3, 0.1};
     filePath = "";
 
     mobilityRate = 1.25;
-
-//    latt = new Cell*[sizeX];
 
     monteCarloStep = 0;
     timestep = 0;
@@ -23,7 +23,6 @@ Lattice::Lattice() : rng(std::time(0)), xCoordDist(0, 256), yCoordDist(0, 256), 
 
     initializeArrays();
     initializeLattice();
-
 
     binMidpointsOutput();
     updateDensity();
@@ -34,20 +33,10 @@ Lattice::Lattice() : rng(std::time(0)), xCoordDist(0, 256), yCoordDist(0, 256), 
 }
 
 /*
- * The constructor for the lattice. 
- *
- * @param double * popDist      this should be an array describing the probability with which
- *                              any given cell will be initialized to a certain species.
- *                              (e.g. if you want each cell to have a 30% chance of being
- *                              assigned A, B, or C and a 10% chance of being empty, then you
- *                              would pass {0.3, 0.3, 0.3, 0.1})
- *
- * @param string path           the directory where output files will be written.
+ * The square constructor for the lattice. 
  */
 Lattice::Lattice(string path, int lattSize, double mobility, int binSize) : rng(std::time(0)), xCoordDist(0, lattSize - 1), yCoordDist(0, lattSize - 1), neighDist(0, 3), actionDist()
 {
-//    double popDist[] = {0.3, 0.3, 0.3, 0.1};
-
     sizeX = lattSize;
     sizeY = lattSize;
 
@@ -60,14 +49,11 @@ Lattice::Lattice(string path, int lattSize, double mobility, int binSize) : rng(
 
     filePath = path;
 
-//    latt = new Cell*[sizeX];
-
     aPop = bPop = cPop = 0;
 
     initializeArrays();
     initializeLattice();
 
-    
     binMidpointsOutput();
     updateDensity();
     updateBinnedDensity();
@@ -76,10 +62,9 @@ Lattice::Lattice(string path, int lattSize, double mobility, int binSize) : rng(
     cout << "Initial Populatiom: " << "A: " << aPop << " B:" << bPop << " C: " << cPop << endl;
 }
 
+//rectangular constructor for the lattice.
 Lattice::Lattice(string path, int xSize, int ySize, double mobility, int binSize) : rng(std::time(0)), xCoordDist(0, xSize - 1), yCoordDist(0, ySize - 1), neighDist(0, 3), actionDist()
 {
-//    double popDist[] = {0.3, 0.3, 0.3, 0.1};
-
     sizeX = xSize;
     sizeY = ySize;
 
@@ -92,8 +77,6 @@ Lattice::Lattice(string path, int xSize, int ySize, double mobility, int binSize
 
     filePath = path;
 
-//    latt = new Cell*[sizeX];
-
     aPop = bPop = cPop = 0;
 
     initializeArrays();
@@ -107,6 +90,7 @@ Lattice::Lattice(string path, int xSize, int ySize, double mobility, int binSize
     cout << "Initial Populatiom: " << "A: " << aPop << " B:" << bPop << " C: " << cPop << endl;
 }
 
+//Destructor. De-allocates memory from the dynamically initialized arrays. 
 Lattice::~Lattice()
 {
     for (int i = 0; i < 3; i++)
@@ -139,6 +123,7 @@ Lattice::~Lattice()
     delete latt;
 }
 
+// This function initializes all of the data arrays.
 void Lattice::initializeArrays()
 {
     binnedArraySize = sizeY / binWidth;
@@ -189,6 +174,7 @@ void Lattice::initializeArrays()
     cout << "binned Array Size: " << binnedArraySize << endl;
 }
 
+// Randomly initializes the lattice.
 void Lattice::initializeLattice()
 {
     double popDist[] = {0.3, 0.3, 0.3, 0.1};
@@ -231,6 +217,14 @@ void Lattice::decrementSpeciesCount(int spec)
         }
 }
 
+// Calculates the net density of the lattice.
+double Lattice::globalDensity()
+{
+    int sum = aPop + bPop + cPop;
+    return ((1.0 * sum) / (sizeX * sizeY)) ;
+}
+
+// updates the transverse density array
 void Lattice::updateDensity()
 {
     //cout << "updating density" << endl;
@@ -254,16 +248,14 @@ void Lattice::updateDensity()
     //cout << "density updated" << endl;
 }
 
+// updateds the transverse binned density array.
 void Lattice::updateBinnedDensity()
 {
-    //double binSum[3][binnedArraySize];
-
     for (int i = 0; i < 3; i++)
     {
         for (int binY = 0; binY < binnedArraySize; binY++)
         {
             double cumsum = 0.0;
-            //binSum[i][binY] = 0.0;
 
             for (int n = 0; n < binWidth; n++)
             {
@@ -274,31 +266,11 @@ void Lattice::updateBinnedDensity()
             binnedDensity1[i][binY] = cumsum / binWidth;
         }
     }
-
-    //for (int i = 0; i < 3; i++)
-    //{
-        //for (int y = 0; y < sizeY; y++)
-        //{
-            //int binY = y / binWidth;
-            //double tmp = binSum[i][binY] + density1[i][y];
-            //binSum[i][binY] = tmp;
-
-        //}
-    //}
-
-    //for (int i = 0; i < 3; i++)
-    //{
-        //for (int binY = 0; binY < binnedArraySize; binY++)
-        //{
-            //binnedDensity0[i][binY] = binnedDensity1[i][binY];
-            //binnedDensity1[i][binY] = binSum[i][binY] / binWidth;
-        //}
-    //}
 }
 
+//updates the transverse flux array.
 void Lattice::updateFlux()
 {
-    //cout << "updating flux" << endl;
     for (int i = 0; i < 3; i++)
     {
         for (int y = 0; y < sizeY; y++)
@@ -306,39 +278,15 @@ void Lattice::updateFlux()
             flux[i][y] = density1[i][y] - density0[i][y];
         }
     }
-    //cout << "flux updated" << endl;
 }
 
+//updates the binned transverse flux array.
 void Lattice::updateBinnedFlux()
 {
-    //double binSum[3][binnedArraySize];
-
-    //for (int i = 0; i < 3; i++)
-    //{
-        //for (int binY = 0; binY < binnedArraySize; binY++)
-        //{
-            //binSum[i][binY] = 0.0;
-        //}
-    //}
-
-    //for (int i = 0; i < 3; i++)
-    //{
-        //for (int y = 0; y < sizeY; y++)
-        //{
-            //int binY = y / binWidth;
-            //method 1: binning the raw flux
-            //binSum[i][binY] += flux[i][y];
-
-        //}
-    //}
-
     for (int i = 0; i < 3; i ++)
     {
         for (int binY = 0; binY < binnedArraySize; binY++)
         {
-            //method 1: binning the raw flux
-            //binnedFluxA[i][binY] = binSum[i][binY] / binWidth;
-            //method 2: taking the difference of the binned densities
             binnedFlux[i][binY] = binnedDensity1[i][binY] - binnedDensity0[i][binY];
         }
     }
@@ -375,31 +323,11 @@ void Lattice::updateBinnedReactionCount(int reaction, int species, int y)
     }
 }
 
-/*
-void Lattice::updateCurrent(int spec, int y, int direction)
-{
-    current[spec][y] += direction;
-}
-
-
-void Lattice::clearCurrent()
-{
-    for (int i = 0; i < 3; i++) 
-    {
-        for (int y = 0; y < sizeY - 1; y++) 
-        {
-            current[i][y] = 0;
-        }
-    }
-}
-*/
-
 void Lattice::metadata(int start, int interval, int stop)
 {
     using namespace std;
     stringstream ss;
     ss << filePath << "metadata.txt";
-    //ss << filePath << "S" << size << "_" << timestep << ".ppm";
     string fileName;
     fileName = ss.str();
 
@@ -442,9 +370,6 @@ void Lattice::reaction(int x, int y)
 
     int X = x, Y = y;
 
-    //int direction = 0;
-    //int boundary = y;
-    
     switch(neigh)
     {
         case 0 : //up
@@ -459,8 +384,6 @@ void Lattice::reaction(int x, int y)
             break;
         case 1 : //right
             Y = (y + 1) % sizeY;
-            //boundary = Y;
-            //direction = 1;
             break;
         case 2 : //down
             X = (x + 1) % sizeX;
@@ -474,11 +397,9 @@ void Lattice::reaction(int x, int y)
             {
                 Y = (y - 1) % sizeY;
             }
-            //direction = -1;
             break;
     }
 
-    
     Cell & curr = latt[x][y];
 
     double norm = curr.getPredRate() + curr.getFertRate() + curr.getSwapRate();
@@ -505,7 +426,6 @@ void Lattice::reaction(int x, int y)
                 updateBinnedReactionCount(2, currSpec, Y);
             }
         }
-        //timestep++;
     }
     else if (rand >= swapProb && rand < swapProb + predProb) //Predation
     {
@@ -514,7 +434,6 @@ void Lattice::reaction(int x, int y)
             decrementSpeciesCount(neighbor.getSpecies());
             neighbor.setSpecies(3);
             updateBinnedReactionCount(0, neighSpec, Y);
-            //timestep++;
         }
     }
     else if (rand >= swapProb + predProb) //Reproduction
@@ -524,18 +443,17 @@ void Lattice::reaction(int x, int y)
             neighbor.setSpecies(curr.getSpecies());
             incrementSpeciesCount(curr.getSpecies());
             updateBinnedReactionCount(1, currSpec, Y);
-            //updateCurrent(curr.getSpecies(), boundary, direction);
-            //timestep++;
         }
     }
 }
 
+// this csv is used by the python code to render the binned array values with the 
+// correct relative spacial distance.
 void Lattice::binMidpointsOutput()
 {
     using namespace std;
     stringstream ss;
     ss << filePath << "bin_midpoints.csv";
-    //ss << filePath << "S" << size << "_" << timestep << ".ppm";
     string fileName;
     fileName = ss.str();
 
@@ -553,21 +471,16 @@ void Lattice::binMidpointsOutput()
     data.close();
 }
 
+// writes all of our data arrays to their own .csv files.
 void Lattice::dataOutput()
 {
     using namespace std;
     stringstream ss;
     ss << filePath << "latt" << "_" << monteCarloStep << ".csv";
-    //ss << filePath << "S" << size << "_" << timestep << ".ppm";
     string fileName;
     fileName = ss.str();
 
     fstream data(fileName.c_str(), ofstream::out | ofstream::app | ofstream::in);
-
-    //data << "P3\n" << size << " " << size << endl;
-    //data << "#" << fileName << "\n" << "1" << endl;
-
-    //cout <<  "writing " << fileName.c_str() << endl;
 
     for (int x = 0; x < sizeX; x++)
     {
@@ -576,14 +489,6 @@ void Lattice::dataOutput()
             int spec = latt[x][y].getSpecies();
 
             data << spec;
-            /*switch(spec)
-            {
-                case 0  :   data << "r" ; break;
-                case 1  :   data << "g" ; break;
-                case 2  :   data << "b" ; break;
-                case 3  :   data << "k" ; break;
-                default :   data << "y" ; break;
-            }*/
 
             if (y < sizeY - 1)
             {
@@ -661,57 +566,28 @@ void Lattice::dataOutput()
             }
         }
         data.close();
-
     }
-//    ss.str("");
-//    ss << filePath << "density" << "_" << monteCarloStep << ".csv";
-//    fileName = ss.str();
-//
-//    fstream dataDensity(fileName.c_str(), ofstream::out | ofstream::app | ofstream::in);
-//
-//    ss.str("");
-//    ss << filePath << "flux" << "_" << monteCarloStep << ".csv";
-//    fileName = ss.str();
-//
-//    fstream dataFlux(fileName.c_str(), ofstream::out | ofstream::app | ofstream::in);
-//
-//    for (int i = 0; i < 3; i++)
-//    {
-//        for (int y = 0; y < sizeY; y++)
-//        {
-//            double dns = density1[i][y];
-//            double flx = flux[i][y];
-//
-//            dataDensity << dns;
-//            dataFlux << flx;
-//
-//            if (y < sizeY - 1)
-//            {
-//                dataDensity << ",";
-//                dataFlux << ",";
-//            }
-//        }
-//
-//        dataDensity << endl;
-//        dataFlux << endl;
-//    }
-//
-//    dataDensity.close();
-//    dataFlux.close();
 }
 
+/*
+ * Calling this function runs the simulation.
+ *
+ * @param   steps   How many Monte-carlo steps you want the simulation to run for.
+ * @param   start   The first MCS that data will be recorded.
+ * @param   interval The frequency with which data will be recorded
+ */
 void Lattice::monteCarloRun(int steps, int interval, int start)
 {
     int p = sizeX * sizeY;
     cout << "Starting Monte Carlo Run" << endl;
     do
     {
+        // Updates the progress bar, updates arrays, and writes data every interval
         if (monteCarloStep % interval == 0)
         {
             float progress = (1.0 * monteCarloStep) / steps;
             progressBar(progress);
 
-            //cout << timestep << endl;
             if (monteCarloStep >= start)
             {
                 updateFlux();
@@ -720,6 +596,60 @@ void Lattice::monteCarloRun(int steps, int interval, int start)
             }
 
             clearBinnedReactionCount();
+        }
+
+        //choses a random coordinate until that coordinate is non-empty
+        int x = xCoordDist(rng);
+        int y = yCoordDist(rng);
+        timestep++;
+
+        do 
+        {
+            x = xCoordDist(rng);
+            y = yCoordDist(rng);
+            timestep++;
+        }
+        while (latt[x][y].getSpecies() > 2);
+ 
+        // performs a random reaction
+        reaction(x, y);
+
+        // updates the monte-carlo step
+        if (timestep >= p)
+        {
+            timestep = 0;
+            monteCarloStep++;
+        }
+
+    }
+    while ( monteCarloStep <= steps);
+}
+
+void Lattice::monteCarloDensityRun(int steps, int interval, int start)
+{
+    int p = sizeX * sizeY;
+    int datapoints = (steps - start) / interval;
+    double densities[datapoints];
+
+    stringstream ss;
+    ss << filePath << "densities.csv";
+    string fileName;
+    fileName = ss.str();
+
+    fstream data(fileName.c_str(), ofstream::out | ofstream::app | ofstream::in);
+
+    cout << "Starting Monte Carlo Run" << endl;
+    do
+    {
+        if (monteCarloStep % interval == 0)
+        {
+            float progress = (1.0 * monteCarloStep) / steps;
+            progressBar(progress);
+
+            if (monteCarloStep >= start)
+            {
+                data << globalDensity() << ",";
+            }
         }
 
         int x = xCoordDist(rng);
@@ -744,5 +674,6 @@ void Lattice::monteCarloRun(int steps, int interval, int start)
 
     }
     while ( monteCarloStep <= steps);
-}
 
+    data.close();
+}
