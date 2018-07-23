@@ -5,16 +5,22 @@
 
 int main(int argc, char *argv[])
 {
-    string path = "data/newDataTest2/";
+    string path = string(argv[1]).append("/");
+    int size = atoi(argv[2]);
+    double mobility = atof(argv[3]);
+    int binSize = 4;
+    int steps = atoi(argv[4]);
+    int interval = atoi(argv[5]);
+    int start = atoi(argv[6]);
 
-    Lattice testLattice(path, 200, 0.8);
+    Lattice testLattice(path, size, mobility, binSize);
 
     cout << "beginning test" << endl;
 
     testLattice.dataOutput();
 
     //testLattice.reactTest();
-    testLattice.monteCarloRun(600000000, 1000000, 100000000);
+    testLattice.monteCarloDensityRun(steps, interval, start);
 
     cout << "test complete" << endl;
     return 0;
