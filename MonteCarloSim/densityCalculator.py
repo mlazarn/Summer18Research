@@ -46,8 +46,7 @@ def plot_args_check(args):
     if args.dest_csv[-4:] != '.csv':
         raise ValueError('--dest_csv must end in .csv')
 
-def open_data(prefix, species, t, y_min, y_max):
-    filename = prefix + str(t) + '.csv'
+def open_data(filename, species, y_min, y_max):
     csv_data = np.genfromtxt(filename, dtype=float, delimiter=',')[ : , y_min:y_max]
 
     if species == -1:
@@ -57,16 +56,21 @@ def open_data(prefix, species, t, y_min, y_max):
 
     return output
 
+def open_densities(filename, y_min, y_max):
+    csv_data = np.genfromtxt(filename, dtype=float, delimiter=',')[y_min:y_max]
+
+    return csv_data
+
 def render_single_frame(args):
     species_names = [r'a', r'b', r'c', r'\text{net}']
     marks = ['r.', 'g.', 'b.', 'k.']
 
-    if args.unit == 'f':
+    if args.y_unit == 'f':
         title = r'Flux'
         axis_title = r'$\langle \Phi_{0} \rangle (r)$'.format(species_names[args.species])
         if args.lims is None:
             axis_range = [-0.1, 0.1]
-    elif args.unit == 'p':
+    elif args.y_unit == 'p':
         title = r'Density'
         axis_title = r'$\langle \rho_{0} \rangle (r)$'.format(species_names[args.species])
         if args.lims is None:
@@ -82,7 +86,7 @@ def render_single_frame(args):
 
     print('initializing')
 
-    data = open_data(args.prefix, args.species, args.start, args.y_min, args.y_max)
+    data = open_densities(args.target, args.y_min, args.y_max)
 
     if args.binned:
         r = np.genfromtxt("bin_midpoints.csv", dtype=float, delimiter=',')[args.y_min:args.y_max]
@@ -136,6 +140,8 @@ def render_data(args):
     os.chdir(args.target)
     print(os.getcwd())
 
+    filename = args.prefix + args.start + ".csv"
+
     data = open_data(args.prefix, args.species, args.start, args.y_min, args.y_max)
 
     if args.binned:
@@ -173,7 +179,8 @@ def render_data(args):
             for t in range(args.start, args.stop + 1, args.interval):
                 try:
                     if t > args.start:
-                        data = open_data(args.prefix, args.species, t, args.y_min, args.y_max)
+                        filename = args.prefix + str(t) + ".csv"
+                        data = open_data(filename, args.species, args.y_min, args.y_max)
                         l.set_ydata(data)
                         ttl.set_text(title.format(str(t)))
                     writer.grab_frame()
@@ -195,7 +202,8 @@ def render_data(args):
             for t in range(args.start, args.swap, args.interval):
                 try:
                     if t > args.start:
-                        data = open_data(args.prefix, args.species, t, args.y_min, args.y_max)
+                        filename = args.prefix + str(t) + ".csv"
+                        data = open_data(filename, args.species, args.y_min, args.y_max)
                         l.set_ydata(data)
                         ttl.set_text(title.format(str(t)))
                     writer.grab_frame()
@@ -208,7 +216,8 @@ def render_data(args):
                     raise
             for t in range(args.swap, args.stop + 1, args.swap_interval):
                 try:
-                    data = open_data(args.prefix, args.species, t, args.y_min, args.y_max)
+                    filename = args.prefix + str(t) + ".csv"
+                    data = open_data(filename, args.species, args.y_min, args.y_max)
                     l.set_ydata(data)
                     ttl.set_text(title.format(str(t)))
                     writer.grab_frame()
@@ -236,7 +245,7 @@ parser.add_argument('--species', '-c', type=int, default=0)
 parser.add_argument('--prefix', '-p')
 
 parser.add_argument('--lims', '-l', type=float, nargs=2)
-parser.add_argument('--vlines', '-v', type=int, nargs='+')
+parser.add_argument('--vlines', '-v', type=int, nargs='+', default=[])
 
 parser.add_argument('--grid', '-g', action='store_true')
 

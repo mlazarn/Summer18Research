@@ -6,11 +6,13 @@ interval="1"
 start="0"
 
 for i in {0..3}; do
-    targ="${base/x/$n}"
-    ./LatticeTest $targ $size ${mobilities[$i]} $steps $interval $start
+    targ="${base/x/$i}"
+    mkdir -p -v $targ
+
+    #./LatticeTest $targ $size ${mobilities[$i]} $steps $interval $start
 
     py_targ="${targ}/densities.csv"
     output="${targ}/densities.png"
 
-    python3 densityCalculator s $py_targ $output p t 0 3000 --grid --dpi 200
+    python3 densityCalculator.py s $py_targ $output p t 0 2999 --grid --dpi 200
 done

@@ -737,8 +737,6 @@ void Lattice::monteCarloRun(int steps, int interval, int start)
 void Lattice::monteCarloDensityRun(int steps, int interval, int start)
 {
     int p = sizeX * sizeY;
-    int datapoints = (steps - start) / interval;
-    double densities[datapoints];
 
     stringstream ss;
     ss << filePath << "densities.csv";
@@ -750,7 +748,7 @@ void Lattice::monteCarloDensityRun(int steps, int interval, int start)
     cout << "Starting Monte Carlo Run" << endl;
     do
     {
-        if (monteCarloStep % interval == 0)
+        if (monteCarloStep % interval == 0 && timestep == 0)
         {
             float progress = (1.0 * monteCarloStep) / steps;
             progressBar(progress);
