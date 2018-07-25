@@ -22,7 +22,6 @@ Lattice::Lattice() : rng(std::time(0)), xCoordDist(0, 256), yCoordDist(0, 256), 
     initializeArrays();
     initializeLattice();
 
-    binMidpointsOutput();
     updateDensity();
     updateBinnedDensity();
 
@@ -52,7 +51,6 @@ Lattice::Lattice(string path, int lattSize, double mobility, int binSize) : rng(
     initializeArrays();
     initializeLattice();
 
-    binMidpointsOutput();
     updateDensity();
     updateBinnedDensity();
 
@@ -80,7 +78,6 @@ Lattice::Lattice(string path, int xSize, int ySize, double mobility, int binSize
     initializeArrays();
     initializeLattice();
     
-    binMidpointsOutput();
     updateDensity();
     updateBinnedDensity();
 
@@ -541,151 +538,99 @@ void Lattice::binMidpointsOutput()
     data.close();
 }
 
-void Lattice::dataOutput()
+void Lattice::dataOutput(int outputType)
 {
     using namespace std;
     stringstream ss;
-    ss << filePath << "latt" << "_" << monteCarloStep << ".csv";
-    //ss << filePath << "S" << size << "_" << timestep << ".ppm";
+
+    const char *prefixes[] = {"latt_", "density_", "flux_", "binned_density_", "binned_flux_",
+                         "binned_death_counts_", "binned_birth_counts_", "binned_diffusion_counts_"};
+
+    ss << filePath << prefixes[outputType] << monteCarloStep << ".csv" ;
+
     string fileName;
     fileName = ss.str();
 
     fstream data(fileName.c_str(), ofstream::out | ofstream::app | ofstream::in);
 
-    //data << "P3\n" << size << " " << size << endl;
-    //data << "#" << fileName << "\n" << "1" << endl;
-
-    //cout <<  "writing " << fileName.c_str() << endl;
-
-    for (int x = 0; x < sizeX; x++)
+    if (outputType == 0)
     {
-        for (int y = 0; y < sizeY; y++)
+        for (int x = 0; x < sizeX; x++)
         {
-            int spec = latt[x][y].getSpecies();
-
-            data << spec;
-            /*switch(spec)
+            for (int y = 0; y < sizeY; y++)
             {
-                case 0  :   data << "r" ; break;
-                case 1  :   data << "g" ; break;
-                case 2  :   data << "b" ; break;
-                case 3  :   data << "k" ; break;
-                default :   data << "y" ; break;
-            }*/
+                int spec = latt[x][y].getSpecies();
 
-            if (y < sizeY - 1)
+                data << spec;
+
+                if (y < sizeY - 1)
+                {
+                    data << ",";
+                }
+            }
+
+            data << endl;
+        }
+    }
+    else if (outputType == 1 || outputType == 2)
+    {
+        for (int i = 0; i < 3; i++)
+        {
+            for (int y = 0; y < sizeY; y++)
             {
-                data << ",";
+                switch (outputType) 
+                {
+                    case 1:
+                        data << density1[i][y];
+                        break;
+                    case 2:
+                        data << flux[i][y];
+                        break;
+                }
+
+                if (y < sizeY - 1)
+                {
+                    data << ",";
+                }
             }
         }
+        data << endl;
+    }
+    else if (outputType > 2)
+    {
+        for (int i = 0; i < 3; i++)
+        {
+        for (int binY = 0; binY < binnedArraySize; binY++)
+        {
+            switch (outputType) 
+            {
+                    case 3:
+                        data << binnedDensity1[i][binY];
+                        break;
+                    case 4:
+                        data << binnedFlux[i][binY];
+                        break;
+                    case 5:
+                        data << binnedDeathCounts[i][binY];
+                        break;
+                    case 6:
+                        data << binnedBirthCounts[i][binY];
+                        break;
+                    case 7:
+                        data << binnedDiffusionCounts[i][binY];
+                        break;
+                }
 
+                if (binY < binnedArraySize - 1)
+                {
+                    data << ",";
+                }
+            }
+        }
         data << endl;
     }
 
     data.close();
-
-    const char *prefixes[] = {"density_", "flux_", "binned_density_", "binned_flux_",
-                         "binned_death_counts_", "binned_birth_counts_", "binned_diffusion_counts_"};
-
-    for (int pfx = 0; pfx < 7; pfx++)
-    {
-        ss.str("");
-        ss << filePath << prefixes[pfx] << monteCarloStep << ".csv";
-        fileName = ss.str();
-
-        fstream data(fileName.c_str(), ofstream::out | ofstream :: app | ofstream::in);
-        for (int i = 0; i < 3; i++)
-        {
-            if (pfx < 2)
-            {
-                for (int y = 0; y < sizeY; y++)
-                {
-                    switch (pfx) 
-                    {
-                        case 0:
-                            data << density1[i][y];
-                            break;
-                        case 1:
-                            data << flux[i][y];
-                            break;
-                    }
-
-                    if (y < sizeY - 1)
-                    {
-                        data << ",";
-                    }
-                }
-                data << endl;
-            }
-            else
-            {
-                for (int binY = 0; binY < binnedArraySize; binY++)
-                {
-                    switch (pfx) 
-                    {
-                        case 2:
-                            data << binnedDensity1[i][binY];
-                            break;
-                        case 3:
-                            data << binnedFlux[i][binY];
-                            break;
-                        case 4:
-                            data << binnedDeathCounts[i][binY];
-                            break;
-                        case 5:
-                            data << binnedBirthCounts[i][binY];
-                            break;
-                        case 6:
-                            data << binnedDiffusionCounts[i][binY];
-                            break;
-                    }
-
-                    if (binY < binnedArraySize - 1)
-                    {
-                        data << ",";
-                    }
-                }
-                data << endl;
-            }
-        }
-        data.close();
-
-    }
-//    ss.str("");
-//    ss << filePath << "density" << "_" << monteCarloStep << ".csv";
-//    fileName = ss.str();
-//
-//    fstream dataDensity(fileName.c_str(), ofstream::out | ofstream::app | ofstream::in);
-//
-//    ss.str("");
-//    ss << filePath << "flux" << "_" << monteCarloStep << ".csv";
-//    fileName = ss.str();
-//
-//    fstream dataFlux(fileName.c_str(), ofstream::out | ofstream::app | ofstream::in);
-//
-//    for (int i = 0; i < 3; i++)
-//    {
-//        for (int y = 0; y < sizeY; y++)
-//        {
-//            double dns = density1[i][y];
-//            double flx = flux[i][y];
-//
-//            dataDensity << dns;
-//            dataFlux << flx;
-//
-//            if (y < sizeY - 1)
-//            {
-//                dataDensity << ",";
-//                dataFlux << ",";
-//            }
-//        }
-//
-//        dataDensity << endl;
-//        dataFlux << endl;
-//    }
-//
-//    dataDensity.close();
-//    dataFlux.close();
 }
 
 void Lattice::monteCarloRun(int steps, int interval, int start)
@@ -704,7 +649,10 @@ void Lattice::monteCarloRun(int steps, int interval, int start)
             {
                 updateFlux();
                 updateBinnedFlux();
-                dataOutput();
+                for (int i = 0; i < 9; i++)
+                {
+                    dataOutput(i);
+                }
             }
 
             clearBinnedReactionCount();
@@ -712,21 +660,21 @@ void Lattice::monteCarloRun(int steps, int interval, int start)
 
         int x = xCoordDist(rng);
         int y = yCoordDist(rng);
-        timestep++;
+        timestep += (1.0 / p);
 
         do 
         {
             x = xCoordDist(rng);
             y = yCoordDist(rng);
-            timestep++;
+            timestep += (1.0 / p);
         }
         while (latt[x][y].getSpecies() > 2);
  
         reaction(x, y);
 
-        if (timestep >= p)
+        if (timestep >= 1)
         {
-            timestep = 0;
+            timestep = 0.0;
             monteCarloStep++;
         }
 
@@ -737,6 +685,7 @@ void Lattice::monteCarloRun(int steps, int interval, int start)
 void Lattice::monteCarloDensityRun(int steps, int interval, int start)
 {
     int p = sizeX * sizeY;
+    double tau = mobilityRate + 2.0;
 
     stringstream ss;
     ss << filePath << "densities.csv";
@@ -748,7 +697,7 @@ void Lattice::monteCarloDensityRun(int steps, int interval, int start)
     cout << "Starting Monte Carlo Run" << endl;
     do
     {
-        if (monteCarloStep % interval == 0 && timestep == 0)
+        if (monteCarloStep % interval == 0 && timestep == 0.0)
         {
             float progress = (1.0 * monteCarloStep) / steps;
             progressBar(progress);
@@ -761,21 +710,21 @@ void Lattice::monteCarloDensityRun(int steps, int interval, int start)
 
         int x = xCoordDist(rng);
         int y = yCoordDist(rng);
-        timestep++;
+        timestep += (1 / (p * tau));
 
         do 
         {
             x = xCoordDist(rng);
             y = yCoordDist(rng);
-            timestep++;
+            timestep += (1 / (p * tau));
         }
         while (latt[x][y].getSpecies() > 2);
  
         reaction(x, y);
 
-        if (timestep >= p)
+        if (timestep >= 1.0)
         {
-            timestep = 0;
+            timestep = 0.0;
             monteCarloStep++;
         }
 
@@ -783,4 +732,38 @@ void Lattice::monteCarloDensityRun(int steps, int interval, int start)
     while ( monteCarloStep <= steps);
 
     data.close();
+}
+
+double Lattice::densityRun(int steps)
+{
+    int p = sizeX * sizeY;
+    double tau = mobilityRate + 2.0;
+
+    cout << "Starting Monte Carlo Run" << endl;
+    do
+    {
+        int x = xCoordDist(rng);
+        int y = yCoordDist(rng);
+        timestep += (1 / (p * tau));
+
+        do 
+        {
+            x = xCoordDist(rng);
+            y = yCoordDist(rng);
+            timestep += (1 / (p * tau));
+        }
+        while (latt[x][y].getSpecies() > 2);
+ 
+        reaction(x, y);
+
+        if (timestep >= 1.0)
+        {
+            timestep = 0.0;
+            monteCarloStep++;
+        }
+
+    }
+    while (monteCarloStep < steps);
+
+    return globalDensity();
 }

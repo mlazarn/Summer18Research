@@ -283,7 +283,10 @@ void LatticeMLRPS::monteCarloRun(int steps, int interval, int startRecord)
             {
                 updateFlux();
                 updateBinnedFlux();
-                dataOutput();
+                for (int i = 0; i < 9; i++)
+                {
+                    dataOutput(i);
+                }
             }
 
             clearBinnedReactionCount();
@@ -378,7 +381,10 @@ void LatticeMLRPS::monteCarloRun(int steps, int interval, int startRecord, int s
             {
                 updateFlux();
                 updateBinnedFlux();
-                dataOutput();
+                for (int i = 0; i < 9; i++)
+                {
+                    dataOutput(i);
+                }
             }
         }
         else if (monteCarloStep >= swapTime && monteCarloStep % swapInterval == 0 && timestep == 0)
@@ -387,7 +393,10 @@ void LatticeMLRPS::monteCarloRun(int steps, int interval, int startRecord, int s
             progressBar(progress);
 
             updateFlux();
-            dataOutput();
+            for (int i = 0; i < 9; i++)
+            {
+                dataOutput(i);
+            }
         }
 
         int x = xCoordDist(rng);
@@ -477,7 +486,10 @@ void LatticeMLRPS::drivenMonteCarloRun(int steps, int interval, int startRecord,
             {
                 updateFlux();
                 updateBinnedFlux();
-                dataOutput();
+                for (int i = 0; i < 9; i++)
+                {
+                    dataOutput(i);
+                }
             }
         }
         

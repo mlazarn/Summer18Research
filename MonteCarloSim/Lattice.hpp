@@ -46,7 +46,7 @@ class Lattice
         double **binnedDensity1;
 
         // Keep track of time through the simulation.
-        int timestep;
+        double timestep;
         int monteCarloStep;
 
         // where the outputs go.
@@ -93,10 +93,11 @@ class Lattice
 
         //writes an array that just gives some spacial coordinates for the binned data.
         void binMidpointsOutput();
-        void dataOutput();
+        void dataOutput(int outputType);
         void setControlRow(int row);
         void setControlCol(int col);
         virtual void monteCarloRun(int steps, int interval, int start);
         virtual void monteCarloDensityRun(int steps, int interval, int start);
+        virtual double densityRun(int steps);
 };
 

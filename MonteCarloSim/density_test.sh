@@ -1,4 +1,4 @@
-base="data/densityTest/test_x"
+base="data/densityTest2/test_x"
 size="512"
 mobilities=('0.1' '1.25' '2.5' '10.0')
 steps="3000"
@@ -9,7 +9,7 @@ for i in {0..3}; do
     targ="${base/x/$i}"
     mkdir -p -v $targ
 
-    #./LatticeTest $targ $size ${mobilities[$i]} $steps $interval $start
+    ./LatticeTest $targ $size ${mobilities[$i]} $steps $interval $start
 
     py_targ="${targ}/densities.csv"
     output="${targ}/densities.png"
