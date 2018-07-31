@@ -53,16 +53,139 @@ def open_data(filename, species, y_min, y_max):
         output = np.sum(csv_data, axis=0)
     else:
         output = csv_data[species, : ]
-
+    
     return output
 
 def open_densities(filename, y_min, y_max):
     csv_data = np.genfromtxt(filename, dtype=float, delimiter=',')[y_min:y_max]
-
+    
     return csv_data
 
+def render_data(args):
+    species_names = [r'a', r'b', r'c', r'\mathrm{net}']
+    marks = ['r.', 'g.', 'b.', 'k.']
+
+    if args.y_unit == 'f':
+        title = r'Flux at $t={0}$'
+        axis_title = r'$\langle \Phi_{0} \rangle (r)$'.format(species_names[args.species])
+        if args.lims is None:
+            axis_range = [-0.1, 0.1]
+    elif args.y_unit == 'p':
+        title = r'Density at $t={0}$'
+        axis_title = r'$\langle \rho_{0} \rangle (r)$'.format(species_names[args.species])
+        if args.lims is None:
+            axis_range = [0.0, 1.0]
+
+    x_ttl = 'a'
+    
+    if args.x_unit == 'r':
+        x_ttl = r'$r$'
+    elif args.x_unit == 't':
+        x_ttl = r'$t$'
+
+    if args.lims is not None:
+        axis_range = args.lims
+
+    print('initializing')
+
+    os.chdir(args.target)
+    print(os.getcwd())
+
+    filename = args.prefix + str(args.start) + ".csv"
+
+    data = open_data(filename, args.species, args.y_min, args.y_max)
+
+    if args.binned:
+        r = np.genfromtxt("bin_midpoints.csv", dtype=float, delimiter=',')[args.y_min:args.y_max]
+    else:
+        r = np.arange(args.y_min, args.y_max)
+
+    fig, ax = plt.subplots()
+    l, = ax.plot(r, data, marks[args.species], zorder=2)
+    if args.binned:
+        l.set_linestyle('--')
+    if len(args.vlines) > 0:
+        ax.vlines(args.vlines, axis_range[0], axis_range[1], zorder=3)
+    if args.grid:
+        ax.grid(which='both', zorder=1)
+    fig.set_tight_layout(True)
+
+    ttl = ax.set_title(title.format(str(args.start)), loc='left')
+
+    ax.set_xlim(r[0], r[-1])
+    ax.set_xlabel(x_ttl)
+    ax.set_ylim(axis_range)
+    ax.set_ylabel(axis_title)
+
+    FFMpegWriter = manimation.writers['ffmpeg']
+    metadata = dict(title=args.output, artist=args.author, comment=args.comment)
+    writer = FFMpegWriter(fps=args.framerate, metadata=metadata)
+
+    print('writing {}'.format(args.output))
+
+    with writer.saving(fig, args.output, args.dpi):
+        if args.swap < 1 or args.swap >= args.stop:
+            frames = int( (args.stop - args.start) / args.interval )
+            pbar = tqdm(total=frames)
+            for t in range(args.start, args.stop + 1, args.interval):
+                try:
+                    if t > args.start:
+                        filename = args.prefix + str(t) + ".csv"
+                        data = open_data(filename, args.species, args.y_min, args.y_max)
+                        l.set_ydata(data)
+                        ttl.set_text(title.format(str(t)))
+
+                    writer.grab_frame()
+                    pbar.update()
+                except OSError:
+                    pbar.update()
+                    pass
+                except:
+                    print("Unexpected error:", sys.exc_info()[0])
+                    raise
+            pbar.close()
+        else:
+            if args.swap_interval is None:
+                setattr(args, 'swap_interval', args.interval)
+
+            frames = int( ((args.swap - args.start) / args.interval) + ((args.stop - args.swap) / args.swap_interval))
+            pbar = tqdm(total=frames)
+
+            for t in range(args.start, args.swap, args.interval):
+                try:
+                    if t > args.start:
+                        filename = args.prefix + str(t) + ".csv"
+                        data = open_data(filename, args.species, args.y_min, args.y_max)
+                        l.set_ydata(data)
+                        ttl.set_text(title.format(str(t)))
+                    writer.grab_frame()
+                    pbar.update()
+                except OSError:
+                    pbar.update()
+                    pass
+                except:
+                    print("Unexpected error:", sys.exc_info()[0])
+                    raise
+            for t in range(args.swap, args.stop + 1, args.swap_interval):
+                print("?")
+                try:
+                    filename = args.prefix + str(t) + ".csv"
+                    data = open_data(filename, args.species, args.y_min, args.y_max)
+                    l.set_ydata(data)
+                    ttl.set_text(title.format(str(t)))
+                    writer.grab_frame()
+                    pbar.update()
+                except OSError:
+                    pbar.update()
+                    pass
+                except:
+                    print("Unexpected error:", sys.exc_info()[0])
+                    raise
+            pbar.close()
+    print("Done")
+
 def render_single_frame(args):
-    species_names = [r'a', r'b', r'c', r'\text{net}']
+    species_names = [r'a', r'b', r'c', r'\mathrm{net}']
     marks = ['r.', 'g.', 'b.', 'k.']
 
     if args.y_unit == 'f':
@@ -111,125 +234,6 @@ def render_single_frame(args):
     ax.set_ylabel(axis_title)
 
     fig.savefig(args.output, dpi=args.dpi)
-
-def render_data(args):
-    species_names = [r'a', r'b', r'c', r'\text{net}']
-    marks = ['r.', 'g.', 'b.', 'k.']
-
-    if args.y_unit == 'f':
-        title = r'Flux at $t={0}$'
-        axis_title = r'$\langle \Phi_{0} \rangle (r)$'.format(species_names[args.species])
-        if args.lims is None:
-            axis_range = [-0.1, 0.1]
-    elif args.y_unit == 'p':
-        title = r'Density at $t={0}$'
-        axis_title = r'$\langle \rho_{0} \rangle (r)$'.format(species_names[args.species])
-        if args.lims is None:
-            axis_range = [0.0, 1.0]
-    
-    if args.x_unit == 'r':
-        x_ttl = r'$r$'
-    elif args.x_unit == 't':
-        x_ttl = r'$t$'
-
-    if args.lims is not None:
-        axis_range = args.lims
-
-    print('initializing')
-
-    os.chdir(args.target)
-    print(os.getcwd())
-
-    filename = args.prefix + str(args.start) + ".csv"
-
-    data = open_data(args.prefix, args.species, args.start, args.y_min, args.y_max)
-
-    if args.binned:
-        r = np.genfromtxt("bin_midpoints.csv", dtype=float, delimiter=',')[args.y_min:args.y_max]
-    else:
-        r = np.arange(args.y_min, args.y_max)
-
-    fig, ax = plt.subplots()
-    l, = ax.plot(r, data, marks[args.species], zorder=2)
-    if args.binned:
-        l.set_linestyle('--')
-    if len(args.vlines) > 0:
-        ax.vlines(args.vlines, axis_range[0], axis_range[1], zorder=3)
-    if args.grid:
-        ax.grid(which='both', zorder=1)
-    fig.set_tight_layout(True)
-
-    ttl = ax.set_title(title.format(str(args.start)), loc='left')
-
-    ax.set_xlim(r[0], r[-1])
-    ax.set_xlabel(x_ttl)
-    ax.set_ylim(axis_range)
-    ax.set_ylabel(axis_title)
-
-    FFMpegWriter = manimation.writers['ffmpeg']
-    metadata = dict(title=args.output, artist=args.author, comment=args.comment)
-    writer = FFMpegWriter(fps=args.framerate, metadata=metadata)
-    
-    print('writing {}'.format(args.output))
-    with writer.saving(fig, args.output, args.dpi):
-        if args.swap < 1 or args.swap >= args.stop:
-            frames = int( (args.stop - args.start) / args.interval )
-            pbar = tqdm(total=frames)
-
-            for t in range(args.start, args.stop + 1, args.interval):
-                try:
-                    if t > args.start:
-                        filename = args.prefix + str(t) + ".csv"
-                        data = open_data(filename, args.species, args.y_min, args.y_max)
-                        l.set_ydata(data)
-                        ttl.set_text(title.format(str(t)))
-                    writer.grab_frame()
-                    pbar.update()
-                except OSError:
-                    pbar.update()
-                    pass
-                except:
-                    print("Unexpected error:", sys.exc_info()[0])
-                    raise
-            pbar.close()
-        else:
-            if args.swap_interval is None:
-                setattr(args, 'swap_interval', args.interval)
-
-            frames = int( ((args.swap - args.start) / args.interval) + ((args.stop - args.swap) / args.swap_interval))
-            pbar = tqdm(total=frames)
-
-            for t in range(args.start, args.swap, args.interval):
-                try:
-                    if t > args.start:
-                        filename = args.prefix + str(t) + ".csv"
-                        data = open_data(filename, args.species, args.y_min, args.y_max)
-                        l.set_ydata(data)
-                        ttl.set_text(title.format(str(t)))
-                    writer.grab_frame()
-                    pbar.update()
-                except OSError:
-                    pbar.update()
-                    pass
-                except:
-                    print("Unexpected error:", sys.exc_info()[0])
-                    raise
-            for t in range(args.swap, args.stop + 1, args.swap_interval):
-                try:
-                    filename = args.prefix + str(t) + ".csv"
-                    data = open_data(filename, args.species, args.y_min, args.y_max)
-                    l.set_ydata(data)
-                    ttl.set_text(title.format(str(t)))
-                    writer.grab_frame()
-                    pbar.update()
-                except OSError:
-                    pbar.update()
-                    pass
-                except:
-                    print("Unexpected error:", sys.exc_info()[0])
-                    raise
-            pbar.close()
-    print("Done")
 
 parser = ap.ArgumentParser()
 parser.add_argument('mode', choices=['s', 'a'])
