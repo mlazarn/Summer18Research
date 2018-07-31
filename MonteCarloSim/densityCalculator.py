@@ -113,7 +113,7 @@ def render_single_frame(args):
     fig.savefig(args.output, dpi=args.dpi)
 
 def render_data(args):
-    species_names = [r'a', r'b', r'c', r'/text{net}']
+    species_names = [r'a', r'b', r'c', r'\text{net}']
     marks = ['r.', 'g.', 'b.', 'k.']
 
     if args.y_unit == 'f':
@@ -126,11 +126,11 @@ def render_data(args):
         axis_title = r'$\langle \rho_{0} \rangle (r)$'.format(species_names[args.species])
         if args.lims is None:
             axis_range = [0.0, 1.0]
-    elif args.y_unit == 'r':
-        title = r'Reactions at $t={0}'
-        axis_title = r'$n$'
-        if args.lims is None:
-            axis_range = [0, 64]
+    
+    if args.x_unit == 'r':
+        x_ttl = r'$r$'
+    elif args.x_unit == 't':
+        x_ttl = r'$t$'
 
     if args.lims is not None:
         axis_range = args.lims
@@ -140,7 +140,7 @@ def render_data(args):
     os.chdir(args.target)
     print(os.getcwd())
 
-    filename = args.prefix + args.start + ".csv"
+    filename = args.prefix + str(args.start) + ".csv"
 
     data = open_data(args.prefix, args.species, args.start, args.y_min, args.y_max)
 
@@ -162,7 +162,7 @@ def render_data(args):
     ttl = ax.set_title(title.format(str(args.start)), loc='left')
 
     ax.set_xlim(r[0], r[-1])
-    ax.set_xlabel(r'$r$')
+    ax.set_xlabel(x_ttl)
     ax.set_ylim(axis_range)
     ax.set_ylabel(axis_title)
 

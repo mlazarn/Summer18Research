@@ -4,6 +4,7 @@
 #include <boost/random/mersenne_twister.hpp> 
 #include <boost/random/uniform_int_distribution.hpp>
 #include <boost/random/discrete_distribution.hpp>
+#include <fftw3.h>
 
 #include <iostream>
 #include <fstream>
@@ -62,4 +63,5 @@ class LatticeMLRPS : public Lattice
         virtual void monteCarloRun(int steps, int interval, int start);
         virtual void monteCarloRun(int steps, int interval, int start, int swap, int swapInterval);
         virtual void drivenMonteCarloRun(int steps, int interval, int start, int startDrive, int driveFrequency, int pulseWidth);
+        virtual void specAnalysisRun(int steps, int interval, int startRecord);
 };

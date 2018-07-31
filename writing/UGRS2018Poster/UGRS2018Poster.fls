@@ -449,7 +449,6 @@ OUTPUT UGRS2018Poster.snm
 INPUT UGRS2018Poster.aux
 INPUT ./UGRS2018Poster.out
 INPUT ./UGRS2018Poster.out
-INPUT /usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb
 INPUT /usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi12.pfb
 INPUT /usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmr17.pfb
 INPUT /usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmss17.pfb
