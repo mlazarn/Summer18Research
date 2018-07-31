@@ -74,7 +74,7 @@
 #density net
 #python3 densityCalculator.py a $target density_net.mp4 p 0 $ySize -c -1 -p $density_pfx -s $start_t -i $interval -S $steps -a $author
 
-base="data/planeWaveRenders/run_"
+base="data/specTest"
 prefix="latt_"
 density_pfx="density_"
 flux_pfx="flux_"
@@ -91,21 +91,24 @@ binDiffCountLim="0 250"
 binNetDiffCountLim="0 750"
 intDist="64"
 mobility="2.5"
+RPSMobility="2.5"
 #rps_mobility="1.0"
 #mobilites=('1.25' '2.5' '5.0')
-RPSMobilities=('0.1' '2.5' '10.0' '5.0') 
-steps="5000"
+#RPSMobilities=('0.1' '2.5' '10.0' '5.0') 
+steps="2000"
 interval="1"
-start_t="3000"
+start_t="1000"
 dpi="200"
 fps="60"
 author="micarn"
 species=('a' 'b' 'c')
 units="p r"
 
+mkdir -p -v $base
+./LatticeMLRPSTest $base 0 1 $xSize $ySize $mobility $RPSMobility $intDist $binWidth $steps $interval $start_t
 
-for x in {0..3}; do
-    target="${base}${x}"
+#for x in {0..3}; do
+    #target="${base}${x}"
     #mkdir -p -v $target
 
     #                  targ    o t xSize  ySize  mob       rps_mob              intDist  bin_w            steps  interval  start_t
@@ -137,7 +140,7 @@ for x in {0..3}; do
     #python3 densityCalculator.py a $target density_a.mp4 p 0 $ySize -c 0 -p $density_pfx -v $vlines -s $start_t -i $interval -S $steps -a $author -f $fps --dpi $dpi -g
 
     #density net
-    python3 densityCalculator.py a $target 'density_net_newer.mp4' p r 0 $ySize -c -1 -p $density_pfx -v $vlines -s $start_t -i $interval -S $steps -a $author -f $fps --dpi $dpi -g
+    #python3 densityCalculator.py a $target 'density_net_newer.mp4' p r 0 $ySize -c -1 -p $density_pfx -v $vlines -s $start_t -i $interval -S $steps -a $author -f $fps --dpi $dpi -g
 
     #binned death count A
     #python3 densityCalculator.py a $target binned_death_a.mp4 p 0 $binLim -c 0 -p binned_death_counts_ -l $binCountLim -v $vlines -s $start_t -i $interval -S $steps -a $author -f $fps --binned -g
@@ -156,10 +159,10 @@ for x in {0..3}; do
 
     #binned diffusion count net
     #python3 densityCalculator.py a $target binned_diffusion_net.mp4 p 0 $binLim -c -1 -p binned_diffusion_counts_ -l $binNetDiffCountLim -v $vlines -s $start_t -i $interval -S $steps -a $author -f $fps --binned -g
-done
+#done
 
-cd data
-tar -zcf plane_wave_renders_2_1.tar.gz planeWaveRenders/*/density_net_newer.mp4
+#cd data
+#tar -zcf plane_wave_renders_2_1.tar.gz planeWaveRenders/*/density_net_newer.mp4
 
 #for mobility in "${mobilities[@]}"; do
 #    for rps_mobility in "${RPSMobilities[@]}"; do
