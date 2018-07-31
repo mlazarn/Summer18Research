@@ -40,7 +40,7 @@ int main(int argc, char *argv[])
     ss << path << "densities.csv";
     string filename = ss.str();
     fstream data(filename.c_str(), ofstream::out | ofstream::app | ofstream::in);
-    fstream mob_data(filename.c_str(), ofstream::out | ofstream::app | ofstream::in);
+    fstream mob_data("mobilities.csv", ofstream::out | ofstream::app | ofstream::in);
 
     cout << "beginning test" << endl;
 
@@ -49,19 +49,20 @@ int main(int argc, char *argv[])
     for (int i = 0; i < 5; i++)
     {
         mob_data << mobilities[i] << ",";
-        for (int run = 0; run < runs; run++)
-        {
-            float progress = (1.0 * prog) / totalMCRuns;
-            progressBar(progress);
-            double mobility = mobilities[i];
-            Lattice testLattice(path, size, mobility, binSize);
-            double density = testLattice.densityRun(steps);
-            data << density << ",";
-            prog++;
-            progress = (1.0 * prog) / totalMCRuns;
-            progressBar(progress);
-        }
-        data << endl;
+        //for (int run = 0; run < runs; run++)
+        //{
+            //float progress = (1.0 * prog) / totalMCRuns;
+            //progressBar(progress);
+            //double mobility = mobilities[i];
+            //Lattice testLattice(path, size, mobility, binSize);
+            //double density = testLattice.densityRun(steps);
+            //data << density << ",";
+            //prog++;
+            //progress = (1.0 * prog) / totalMCRuns;
+            //progressBar(progress);
+        //}
+        //data << endl;
+        mob_data.flush();
     }
 
     data.close();

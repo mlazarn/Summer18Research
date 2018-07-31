@@ -24,9 +24,6 @@ Lattice::Lattice() : rng(std::time(0)), xCoordDist(0, 256), yCoordDist(0, 256), 
 
     updateDensity();
     updateBinnedDensity();
-
-    cout << "Lattice Initialized" << endl;
-    cout << "Initial Populatiom: " << "A: " << aPop << " B:" << bPop << " C: " << cPop << endl;
 }
 
 /*
@@ -53,9 +50,6 @@ Lattice::Lattice(string path, int lattSize, double mobility, int binSize) : rng(
 
     updateDensity();
     updateBinnedDensity();
-
-    cout << "Lattice Initialized" << endl;
-    cout << "Initial Populatiom: " << "A: " << aPop << " B:" << bPop << " C: " << cPop << endl;
 }
 
 //rectangular constructor for the lattice.
@@ -80,9 +74,6 @@ Lattice::Lattice(string path, int xSize, int ySize, double mobility, int binSize
     
     updateDensity();
     updateBinnedDensity();
-
-    cout << "Lattice Initialized" << endl;
-    cout << "Initial Populatiom: " << "A: " << aPop << " B:" << bPop << " C: " << cPop << endl;
 }
 
 //Destructor.
@@ -165,7 +156,6 @@ void Lattice::initializeArrays()
             binnedDensity1[i][binY] = 0.0;
         }
     }
-    cout << "binned Array Size: " << binnedArraySize << endl;
 }
 
 void Lattice::initializeLattice()
@@ -739,7 +729,6 @@ double Lattice::densityRun(int steps)
     int p = sizeX * sizeY;
     double tau = mobilityRate + 2.0;
 
-    cout << "Starting Monte Carlo Run" << endl;
     do
     {
         int x = xCoordDist(rng);
