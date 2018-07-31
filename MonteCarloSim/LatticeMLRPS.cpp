@@ -560,4 +560,440 @@ void LatticeMLRPS::drivenMonteCarloRun(int steps, int interval, int startRecord,
     }
     while (monteCarloStep <= steps);
     cout << endl << "Simulation Complete" << endl;
+    int p = sizeX * sizeY;
+
+    cout << "Writing metadata" << endl;
+    metadata(startRecord, interval, steps, startDrive, driveFrequency, pulseWidth);
+
+    cout << "Starting Monte Carlo Run" << endl;
+    do
+    {
+        if (monteCarloStep % interval == 0 && timestep == 0)
+        {
+            float progress = (1.0 * monteCarloStep) / steps;
+            progressBar(progress);
+
+            if (monteCarloStep >= startRecord)
+            {
+                updateFlux();
+                updateBinnedFlux();
+                for (int i = 0; i < 9; i++)
+                {
+                    dataOutput(i);
+                }
+            }
+        }
+        
+        int x = xCoordDist(rng);
+        int y = yCoordDist(rng);
+        timestep++;
+
+        do 
+        {
+            x = xCoordDist(rng);
+            y = yCoordDist(rng);
+            timestep++;
+        }
+        while (latt[x][y].getSpecies() > 2);
+
+        if ( (y >= RPSMin && y < RPSMax) && (monteCarloStep >= startDrive) && ((monteCarloStep - startDrive) % driveFrequency <= pulseWidth)) 
+        {
+            if (topology == 1)
+            {
+                RPSReaction(x, y);
+            }
+            else if (x >= RPSMin && x <= RPSMax)
+            {
+                switch(orientation)
+                {
+                    case 0  :   RPSReaction(x, y); break;
+                    case 1  :   reaction(x, y); break;
+                    default :   RPSReaction(x, y); break;
+                }
+            }
+            else
+            {
+                switch(orientation)
+                {
+                    case 0  :   reaction(x, y); break;
+                    case 1  :   RPSReaction(x, y); break;
+                    default :   reaction(x, y); break;
+                }
+            }
+        }
+        else
+        {
+            if (topology == 1)
+            {
+                reaction(x, y);
+            }
+            else
+            {
+                switch(orientation)
+                {
+                    case 0  :   reaction(x, y); break;
+                    case 1  :   RPSReaction(x, y); break;
+                    default :   reaction(x, y); break;
+                }
+            }
+        }
+
+        if (timestep >= p) 
+        {
+            timestep = 0;
+
+            updateDensity();
+            updateBinnedDensity();
+
+            monteCarloStep++;
+        }
+
+    }
+    while (monteCarloStep <= steps);
+    cout << endl << "Simulation Complete" << endl;
+    int p = sizeX * sizeY;
+
+    cout << "Writing metadata" << endl;
+    metadata(startRecord, interval, steps, startDrive, driveFrequency, pulseWidth);
+
+    cout << "Starting Monte Carlo Run" << endl;
+    do
+    {
+        if (monteCarloStep % interval == 0 && timestep == 0)
+        {
+            float progress = (1.0 * monteCarloStep) / steps;
+            progressBar(progress);
+
+            if (monteCarloStep >= startRecord)
+            {
+                updateFlux();
+                updateBinnedFlux();
+                for (int i = 0; i < 9; i++)
+                {
+                    dataOutput(i);
+                }
+            }
+        }
+        
+        int x = xCoordDist(rng);
+        int y = yCoordDist(rng);
+        timestep++;
+
+        do 
+        {
+            x = xCoordDist(rng);
+            y = yCoordDist(rng);
+            timestep++;
+        }
+        while (latt[x][y].getSpecies() > 2);
+
+        if ( (y >= RPSMin && y < RPSMax) && (monteCarloStep >= startDrive) && ((monteCarloStep - startDrive) % driveFrequency <= pulseWidth)) 
+        {
+            if (topology == 1)
+            {
+                RPSReaction(x, y);
+            }
+            else if (x >= RPSMin && x <= RPSMax)
+            {
+                switch(orientation)
+                {
+                    case 0  :   RPSReaction(x, y); break;
+                    case 1  :   reaction(x, y); break;
+                    default :   RPSReaction(x, y); break;
+                }
+            }
+            else
+            {
+                switch(orientation)
+                {
+                    case 0  :   reaction(x, y); break;
+                    case 1  :   RPSReaction(x, y); break;
+                    default :   reaction(x, y); break;
+                }
+            }
+        }
+        else
+        {
+            if (topology == 1)
+            {
+                reaction(x, y);
+            }
+            else
+            {
+                switch(orientation)
+                {
+                    case 0  :   reaction(x, y); break;
+                    case 1  :   RPSReaction(x, y); break;
+                    default :   reaction(x, y); break;
+                }
+            }
+        }
+
+        if (timestep >= p) 
+        {
+            timestep = 0;
+
+            updateDensity();
+            updateBinnedDensity();
+
+            monteCarloStep++;
+        }
+
+    }
+    while (monteCarloStep <= steps);
+    cout << endl << "Simulation Complete" << endl;
+    int p = sizeX * sizeY;
+
+    cout << "Writing metadata" << endl;
+    metadata(startRecord, interval, steps, startDrive, driveFrequency, pulseWidth);
+
+    cout << "Starting Monte Carlo Run" << endl;
+    do
+    {
+        if (monteCarloStep % interval == 0 && timestep == 0)
+        {
+            float progress = (1.0 * monteCarloStep) / steps;
+            progressBar(progress);
+
+            if (monteCarloStep >= startRecord)
+            {
+                updateFlux();
+                updateBinnedFlux();
+                for (int i = 0; i < 9; i++)
+                {
+                    dataOutput(i);
+                }
+            }
+        }
+        
+        int x = xCoordDist(rng);
+        int y = yCoordDist(rng);
+        timestep++;
+
+        do 
+        {
+            x = xCoordDist(rng);
+            y = yCoordDist(rng);
+            timestep++;
+        }
+        while (latt[x][y].getSpecies() > 2);
+
+        if ( (y >= RPSMin && y < RPSMax) && (monteCarloStep >= startDrive) && ((monteCarloStep - startDrive) % driveFrequency <= pulseWidth)) 
+        {
+            if (topology == 1)
+            {
+                RPSReaction(x, y);
+            }
+            else if (x >= RPSMin && x <= RPSMax)
+            {
+                switch(orientation)
+                {
+                    case 0  :   RPSReaction(x, y); break;
+                    case 1  :   reaction(x, y); break;
+                    default :   RPSReaction(x, y); break;
+                }
+            }
+            else
+            {
+                switch(orientation)
+                {
+                    case 0  :   reaction(x, y); break;
+                    case 1  :   RPSReaction(x, y); break;
+                    default :   reaction(x, y); break;
+                }
+            }
+        }
+        else
+        {
+            if (topology == 1)
+            {
+                reaction(x, y);
+            }
+            else
+            {
+                switch(orientation)
+                {
+                    case 0  :   reaction(x, y); break;
+                    case 1  :   RPSReaction(x, y); break;
+                    default :   reaction(x, y); break;
+                }
+            }
+        }
+
+        if (timestep >= p) 
+        {
+            timestep = 0;
+
+            updateDensity();
+            updateBinnedDensity();
+
+            monteCarloStep++;
+        }
+
+    }
+    while (monteCarloStep <= steps);
+    cout << endl << "Simulation Complete" << endl;
+}
+
+void LatticeMLRPS::specAnalysisRun(int steps, int interval, int startRecord)
+{
+    double normRPS = 1.0 + mobilityRateRPS;
+    double normML = 2.0 + mobilityRate;
+
+    double fracRPS = (1.0 * interfaceDistance) / sizeY;
+
+    double norm = (fracRPS * normRPS) + ((1 - fracRPS) * normML);
+
+    int p = sizeX * sizeY;
+
+    double deltaT = 1.0 / (norm * p);
+
+    int timesteps = (steps - startRecord) / interval;
+    int idx = 0;
+    double temporalData[sizeY][timesteps];
+
+    cout << "Writing metadata" << endl;
+    metadata(startRecord, interval, steps);
+
+    cout << "Starting Monte Carlo Run" << endl;
+    do
+    {
+        if (monteCarloStep % interval == 0 && timestep == 0.0)
+        {
+            float progress = (1.0 * monteCarloStep) / steps;
+            progressBar(progress);
+
+            if (monteCarloStep >= startRecord)
+            {
+                for (int yIdx = 0; yIdx < sizeY; yIdx++)
+                {
+                    temporalData[yIdx][idx] = density1[0][yIdx];
+                }
+                idx ++;
+            }
+
+        }
+        
+        int x = xCoordDist(rng);
+        int y = yCoordDist(rng);
+        timestep += deltaT;
+
+        do 
+        {
+            x = xCoordDist(rng);
+            y = yCoordDist(rng);
+            timestep += deltaT;
+        }
+        while (latt[x][y].getSpecies() > 2);
+ 
+        // Decides whether to use reaction(x, y) or reactionRPS(x, y)
+        if ( (y >= RPSMin && y < RPSMax) ) 
+        {
+            if (topology == 1)
+            {
+                RPSReaction(x, y);
+            }
+            else if (x >= RPSMin && x <= RPSMax)
+            {
+                switch(orientation)
+                {
+                    case 0  :   RPSReaction(x, y); break;
+                    case 1  :   reaction(x, y); break;
+                    default :   RPSReaction(x, y); break;
+                }
+            }
+            else
+            {
+                switch(orientation)
+                {
+                    case 0  :   reaction(x, y); break;
+                    case 1  :   RPSReaction(x, y); break;
+                    default :   reaction(x, y); break;
+                }
+            }
+        }
+        else
+        {
+            if (topology == 1)
+            {
+                reaction(x, y);
+            }
+            else
+            {
+                switch(orientation)
+                {
+                    case 0  :   reaction(x, y); break;
+                    case 1  :   RPSReaction(x, y); break;
+                    default :   reaction(x, y); break;
+                }
+            }
+        }
+
+        if (timestep >= 1.0) 
+        {
+            timestep = 0.0;
+
+            updateDensity();
+        
+            monteCarloStep++;
+        }
+
+    }
+    while (monteCarloStep < steps);
+
+    double spectralData[sizeY][timesteps];
+
+    cout << "performing spectral analysis" << endl;
+
+    for (int y = 0; y < sizeY; y++)
+    {
+        double *in;
+        fftw_complex *out;
+        fftw_plan plan;
+
+        in = fftw_alloc_real(timesteps);
+        out = fftw_alloc_complex(timesteps);
+
+        for (int t = 0; t < timesteps; t++)
+        {
+            in[t] = temporalData[y][t];
+        }
+
+        plan = fftw_plan_dft_r2c_1d(timesteps, in, out, FFTW_ESTIMATE);
+
+        fftw_execute(plan);
+        
+        for (int t = 0; t < timesteps; t++)
+        {
+            spectralData[y][t] = out[t][0];
+        }
+
+        fftw_destroy_plan(plan);
+        fftw_free(in);
+        fftw_free(out);
+    }
+
+    stringstream ss;
+    ss << filePath << "spectralData.csv";
+    string fileName;
+    fileName = ss.str();
+
+    fstream data(fileName.c_str(), ofstream::out | ofstream::app | ofstream::in);
+
+    for (int y = 0; y < sizeY; y++)
+    {
+        for (int t = 0; t < timesteps; t++)
+        {
+            data << spectralData[y][t];
+            if (t < timesteps - 1)
+            {
+                cout << ",";
+            }
+        }
+        if (y < sizeY - 1)
+        {
+            cout << endl;
+        }
+    }
+    cout << endl << "Simulation Complete" << endl;
 }
