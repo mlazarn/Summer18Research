@@ -14,6 +14,8 @@ parser = ap.ArgumentParser()
 parser.add_argument('target')
 parser.add_argument('prefix')
 parser.add_argument('runs', type=int)
+
+parser.add_argument('--vlines', '-v', type=int, nargs='+', default=[])
 parser.add_argument('--dpi', type=int, default=100)
 
 args = parser.parse_args()
@@ -41,6 +43,8 @@ def plotSpectrograph(args):
     con = ax.imshow(spec_data, cmap='inferno')
     cb = fig.colorbar(con, ax=ax)
     ax.set_aspect(5)
+    if len(args.vlines) > 0:
+        ax.vlines(args.vlines, 0, 49, zorder=3)
 
     fig.set_tight_layout(True)
 
