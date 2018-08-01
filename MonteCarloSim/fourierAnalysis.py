@@ -11,11 +11,11 @@ from tqdm import tqdm
 
 def plotSpectrograph(args):
     targ = args.prefix + '0'
-    spec_data = np.genfromtxt(targ + '/spectralData.csv', dtype=float, delimiter=',')[:,1:50].T#[::-1,:]
+    stacked = np.genfromtxt(targ + '/spectralData.csv', dtype=float, delimiter=',')[:,1:50].T#[::-1,:]
 
     for run in range(1, args.runs):
         targ = args.prefix + str(run);
-        new_array = np.genfromtxt(targ + '/spectralData.csv', dtype=float, delimiter=',')[:1:50:-1].T[::-1,:]
+        new_array = np.genfromtxt(targ + '/spectralData.csv', dtype=float, delimiter=',')[:,1:50].T#[::-1,:]
         stacked = np.dstack((stacked, new_array))
 
     spec_data = np.mean(stacked, axis=2)

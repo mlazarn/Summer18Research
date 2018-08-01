@@ -74,7 +74,8 @@
 #density net
 #python3 densityCalculator.py a $target density_net.mp4 p 0 $ySize -c -1 -p $density_pfx -s $start_t -i $interval -S $steps -a $author
 
-base="data/specTest"
+base="data/specTest2"
+dir_suffix="test_"
 prefix="latt_"
 density_pfx="density_"
 flux_pfx="flux_"
@@ -104,8 +105,14 @@ author="micarn"
 species=('a' 'b' 'c')
 units="p r"
 
-mkdir -p -v $base
-./LatticeMLRPSTest $base 0 1 $xSize $ySize $mobility $RPSMobility $intDist $binWidth $steps $interval $start_t
+#for x in {0..14}; do
+    #target="${base}/${dir_suffix}${x}"
+    #mkdir -p -v $target
+    #./LatticeMLRPSTest $target 0 1 $xSize $ySize $mobility $RPSMobility $intDist $binWidth $steps $interval $start_t -v $vlines
+#done
+
+python3 fourierAnalysis.py $base $dir_suffix 15
+#python3 videoConverter.py ${base}/${dir_suffix}0 $prefix $start_t $interval $steps -v $vlines -o animation.mp4 -a $author -f $fps --dpi $dpi
 
 #for x in {0..3}; do
     #target="${base}${x}"
