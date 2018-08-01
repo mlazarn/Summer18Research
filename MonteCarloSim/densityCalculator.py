@@ -127,7 +127,7 @@ def render_data(args):
         if args.swap < 1 or args.swap >= args.stop:
             frames = int( (args.stop - args.start) / args.interval )
             pbar = tqdm(total=frames)
-            for t in range(args.start, args.stop + 1, args.interval):
+            for t in range(args.start, args.stop, args.interval):
                 try:
                     if t > args.start:
                         filename = args.prefix + str(t) + ".csv"
@@ -166,7 +166,7 @@ def render_data(args):
                 except:
                     print("Unexpected error:", sys.exc_info()[0])
                     raise
-            for t in range(args.swap, args.stop + 1, args.swap_interval):
+            for t in range(args.swap, args.stop, args.swap_interval):
                 print("?")
                 try:
                     filename = args.prefix + str(t) + ".csv"

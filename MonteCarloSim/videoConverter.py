@@ -109,7 +109,7 @@ with writer.saving(fig, args.output, args.dpi):
     if args.swap < 1 or args.swap > args.stop:
         frames = int((args.stop - args.start) / args.interval)
         pbar = tqdm(total=frames)
-        for t in range(args.start + args.interval, args.stop + 1, args.interval):
+        for t in range(args.start + args.interval, args.stop, args.interval):
             try:
                 new_frame(args.prefix, ttl, im, t)
                 #print("writing frame {0}".format(str(t)))
@@ -145,7 +145,7 @@ with writer.saving(fig, args.output, args.dpi):
             except:
                 print("Unexpected error:", sys.exc_info()[0])
                 raise
-        for t in range(args.swap, args.stop + 1, swap_interval):
+        for t in range(args.swap, args.stop, swap_interval):
             try:
                 new_frame(args.prefix, ttl, im, t)
                 #print("writing frame {0}".format(str(t)))

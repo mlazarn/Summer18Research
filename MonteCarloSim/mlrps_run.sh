@@ -74,8 +74,8 @@
 #density net
 #python3 densityCalculator.py a $target density_net.mp4 p 0 $ySize -c -1 -p $density_pfx -s $start_t -i $interval -S $steps -a $author
 
-base="data/specTest2"
-dir_suffix="test_"
+base="data/specTest3/test_"
+dir_suffix="run_"
 prefix="latt_"
 density_pfx="density_"
 flux_pfx="flux_"
@@ -90,12 +90,12 @@ binCountLim="0 125"
 binNetCountLim="0 375"
 binDiffCountLim="0 250"
 binNetDiffCountLim="0 750"
-intDist="64"
+intDist="128"
 mobility="2.5"
-RPSMobility="2.5"
+#RPSMobility="2.5"
 #rps_mobility="1.0"
 #mobilites=('1.25' '2.5' '5.0')
-#RPSMobilities=('0.1' '2.5' '10.0' '5.0') 
+RPSMobilities=('0.1' '2.5' '10.0' '5.0') 
 steps="2000"
 interval="1"
 start_t="1000"
@@ -105,19 +105,34 @@ author="micarn"
 species=('a' 'b' 'c')
 units="p r"
 
+for n in {0..3}; do
+    targ="${base}${n}"
+    for m in {0..14}; do
+        target="${targ}/${dir_suffix}${m}"
+        mkdir -p -v $target
+        ./LatticeMLRPSTest $target 0 1 $xSize $ySize $mobility ${RPSMobilities[$n]} $intDist $binWidth $steps $interval $start_t
+    done
+
+    python3 fourierAnalysis.py $targ $dir_suffix 15
+    python3 videoConverter.py ${base}/${dir_suffix}0 $prefix $start_t $interval $steps -v $vlines -o animation.mp4 -a $author -f $fps --dpi $dpi
+
+done
+
+cd data
+tar -zcvf specTestRenders.tar.gz specTest3/*/*.* specTest3/*/${dir_suffix}0/*.mp4
+
 #for x in {0..14}; do
     #target="${base}/${dir_suffix}${x}"
     #mkdir -p -v $target
     #./LatticeMLRPSTest $target 0 1 $xSize $ySize $mobility $RPSMobility $intDist $binWidth $steps $interval $start_t -v $vlines
 #done
 
-python3 fourierAnalysis.py $base $dir_suffix 15
+#python3 fourierAnalysis.py $base $dir_suffix 15
 #python3 videoConverter.py ${base}/${dir_suffix}0 $prefix $start_t $interval $steps -v $vlines -o animation.mp4 -a $author -f $fps --dpi $dpi
 
 #for x in {0..3}; do
     #target="${base}${x}"
-    #mkdir -p -v $target
-
+    #mkdir -p -v $target 
     #                  targ    o t xSize  ySize  mob       rps_mob              intDist  bin_w            steps  interval  start_t
     #                  1       2 3 4      5      6         7                    8        9                10     11        12
     #./LatticeMLRPSTest $target 0 1 $xSize $ySize $mobility ${RPSMobilities[$x]} $intDist $binWidth $steps $interval $start_t
