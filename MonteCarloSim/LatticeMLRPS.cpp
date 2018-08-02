@@ -587,7 +587,7 @@ void LatticeMLRPS::specAnalysisRun(int steps, int interval, int startRecord)
     {
         if (monteCarloStep % interval == 0 && timestep == 0.0)
         {
-            float progress = (1.0 * monteCarloStep) / steps;
+            float progress = (1.0 * monteCarloStep) / (steps - 1);
             progressBar(progress);
 
             if (monteCarloStep >= startRecord)
@@ -672,11 +672,12 @@ void LatticeMLRPS::specAnalysisRun(int steps, int interval, int startRecord)
     }
     while (monteCarloStep < steps);
 
-    cout << "performing spectral analysis" << endl;
+    cout << endl;
 
     double spectralData[sizeY][timesteps];
     double normSpecData[sizeY][timesteps];
 
+    cout << "performing spectral analysis" << endl;
     for (int y = 0; y < sizeY; y++)
     {
         double *in;
@@ -706,6 +707,8 @@ void LatticeMLRPS::specAnalysisRun(int steps, int interval, int startRecord)
         fftw_free(out);
     }
 
+    cout << "writing specData" << endl;
+
     stringstream ss;
     ss << filePath << "spectralData.csv";
     string fileName;
@@ -731,6 +734,7 @@ void LatticeMLRPS::specAnalysisRun(int steps, int interval, int startRecord)
 
     data.close();
 
+    cout << "writing normSpecData" << endl;
     ss.str("");
     ss << filePath << "normSpectralData.csv";
     fileName = ss.str();
