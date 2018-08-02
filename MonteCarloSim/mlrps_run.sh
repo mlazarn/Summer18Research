@@ -74,7 +74,7 @@
 #density net
 #python3 densityCalculator.py a $target density_net.mp4 p 0 $ySize -c -1 -p $density_pfx -s $start_t -i $interval -S $steps -a $author
 
-base="data/specTest3/test_"
+base="data/specTest4/test_"
 dir_suffix="run_"
 prefix="latt_"
 density_pfx="density_"
@@ -107,19 +107,19 @@ units="p r"
 
 for n in {0..3}; do
     targ="${base}${n}"
-    #for m in {0..14}; do
-        #target="${targ}/${dir_suffix}${m}"
-        #mkdir -p -v $target
-        #./LatticeMLRPSTest $target 0 1 $xSize $ySize $mobility ${RPSMobilities[$n]} $intDist $binWidth $steps $interval $start_t
-    #done
+    for m in {0..14}; do
+        target="${targ}/${dir_suffix}${m}"
+        mkdir -p -v $target
+        ./LatticeMLRPSTest $target 0 1 $xSize $ySize $mobility ${RPSMobilities[$n]} $intDist $binWidth $steps $interval $start_t
+    done
 
-    #python3 fourierAnalysis.py $targ $dir_suffix 15
+    python3 fourierAnalysis.py $targ $dir_suffix 15
     python3 videoConverter.py ${targ}/${dir_suffix}0 $prefix $start_t $interval $steps -v $vlines -o animation.mp4 -a $author -f $fps --dpi $dpi
 
 done
 
 cd data
-tar -zcvf specTestRenders.tar.gz specTest3/*/*.* specTest3/*/${dir_suffix}0/*.mp4
+tar -zcvf specTestRenders.tar.gz specTest4/*/*.* specTest4/*/${dir_suffix}0/*.mp4
 
 #for x in {0..14}; do
     #target="${base}/${dir_suffix}${x}"

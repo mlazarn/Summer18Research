@@ -675,10 +675,10 @@ void LatticeMLRPS::specAnalysisRun(int steps, int interval, int startRecord)
     cout << "performing spectral analysis" << endl;
 
     double spectralData[sizeY][timesteps];
+    double normSpecData[sizeY][timesteps];
 
     for (int y = 0; y < sizeY; y++)
     {
-        cout << "intitializing fft data objects" << endl;
         double *in;
         fftw_complex *out;
         fftw_plan plan;
@@ -686,7 +686,6 @@ void LatticeMLRPS::specAnalysisRun(int steps, int interval, int startRecord)
         in = fftw_alloc_real(timesteps);
         out = fftw_alloc_complex(timesteps);
 
-        cout << "assigning in values" << endl;
         for (int t = 0; t < timesteps; t++)
         {
             in[t] = temporalData[y][t];
@@ -694,12 +693,12 @@ void LatticeMLRPS::specAnalysisRun(int steps, int interval, int startRecord)
 
         plan = fftw_plan_dft_r2c_1d(timesteps, in, out, FFTW_ESTIMATE);
 
-        cout << "performing fft" << endl;
         fftw_execute(plan);
         
         for (int t = 0; t < timesteps; t++)
         {
             spectralData[y][t] = out[t][0];
+            normSpecData[y][t] = sqrt(pow(out[t][0], 2) + pow(out[t][1], 2));
         }
 
         fftw_destroy_plan(plan);
@@ -729,5 +728,31 @@ void LatticeMLRPS::specAnalysisRun(int steps, int interval, int startRecord)
             data << endl;
         }
     }
+
+    data.close();
+
+    ss.str("");
+    ss << filePath << "normSpectralData.csv";
+    fileName = ss.str();
+
+    fstream data2(fileName.c_str(), ofstream::out | ofstream::app | ofstream::in);
+
+    for (int y = 0; y < sizeY; y++)
+    {
+        for (int t = 0; t < timesteps; t++)
+        {
+            data2 << normSpecData[y][t];
+            if (t < timesteps - 1)
+            {
+                data2 << ",";
+            }
+        }
+        if (y < sizeY - 1)
+        {
+            data2 << endl;
+        }
+    }
+
+    data2.close();
     cout << endl << "Simulation Complete" << endl;
 }
