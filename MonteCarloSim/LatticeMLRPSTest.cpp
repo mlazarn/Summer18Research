@@ -7,8 +7,9 @@
 int main(int argc, char *argv[])
 {
     //cout << argc << endl;
-    //cout << "argv[1]=" << argv[1] << ", argv[2]=" << argv[2] << ", argv[3]=" << argv[3] << ", argv[4]=" << argv[4] << ", argv[5]=" << argv[5];
-    //cout << ", argv[6]=" << argv[6] << ", argv[7]=" << argv[7] << ", argv[8]=" << argv[8] << ", argv[9]=" << argv[9] << ", argv[10]=" << argv[10] << ", argv[11]=" << argv[11]<< endl;
+    //cout << "path=" << argv[1] << ", orientation=" << argv[2] << ", topology=" << argv[3] << ", xSize=" << argv[4] << ", ySize=" << argv[5];
+    //cout << ", mobility=" << argv[6] << ", mobilityRPS=" << argv[7] << ", interfaceDistance=" << argv[8] << ", binSize=" << argv[9] << ", steps=" << argv[10] << ", interval=" << argv[11];
+    //cout << ", start=" << argv[12] << ", run=" << argv[13] << endl;
 
     //cout << "\n\n Now testing converting the arguments";
 
@@ -34,10 +35,10 @@ int main(int argc, char *argv[])
     
 
     //LatticeMLRPS testLattice(path, orientation, xSize, mobility, mobilityRPS, interfaceDistance);
-    //cout << "initializing lattice" << endl;
+    cout << "initializing lattice" << endl;
     LatticeMLRPS testLattice(path, orientation, topology, xSize, ySize, mobility, mobilityRPS, interfaceDistance, binSize);
 
-    cout << "beginning test" << endl;
+    //cout << "beginning test" << endl;
 
     //testLattice.dataOutput();
     
@@ -51,6 +52,7 @@ int main(int argc, char *argv[])
     int steps = atoi(argv[10]);
     int interval = atoi(argv[11]);
     int start = atoi(argv[12]);
+    int run = atoi(argv[13]);
     /*
     int startDrive = atoi(argv[12]);
     int driveFrequency = atoi(argv[13]);
@@ -71,7 +73,7 @@ int main(int argc, char *argv[])
     //cout << "< " << ySize << "< " << mobility << "< " << mobilityRPS << "< ";
     //cout << interfaceDistance << "< " << steps << "< " << interval << "< " << start << endl;
     cout << "starting run" << endl;
-    testLattice.specAnalysisRun(steps, interval, start);
+    testLattice.specAnalysisRun(steps, interval, start, run);
     //testLattice.monteCarloRun(steps, interval, start, swapTime, swapInterval);
     //testLattice.drivenMonteCarloRun(steps, interval, start, startDrive, driveFrequency, pulseWidth);
 

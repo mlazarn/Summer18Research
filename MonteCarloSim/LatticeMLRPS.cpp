@@ -556,28 +556,35 @@ void LatticeMLRPS::drivenMonteCarloRun(int steps, int interval, int startRecord,
 
             monteCarloStep++;
         }
-
     }
     while (monteCarloStep <= steps);
-    cout << endl << "Simulation Complete" << endl;
+    cout << endl << "Simulation Complete" << endl; 
 }
 
-void LatticeMLRPS::specAnalysisRun(int steps, int interval, int startRecord)
+void LatticeMLRPS::specAnalysisRun(int steps, int interval, int startRecord, int run)
 {
-    double normRPS = 1.0 + mobilityRateRPS;
-    double normML = 2.0 + mobilityRate;
+    //double normRPS = 1.0 + mobilityRateRPS;
+    //double normML = 2.0 + mobilityRate;
 
-    double fracRPS = (1.0 * interfaceDistance) / sizeY;
+    //double fracRPS = (1.0 * interfaceDistance) / sizeY;
 
-    double norm = (fracRPS * normRPS) + ((1 - fracRPS) * normML);
+    //double norm = (fracRPS * normRPS) + ((1 - fracRPS) * normML);
 
     int p = sizeX * sizeY;
 
-    double deltaT = 1.0 / (norm * p);
+    //double deltaT = 1.0 / (norm * p);
+
+    double deltaT = 1.0 / p;
 
     int timesteps = (steps - startRecord) / interval;
     int idx = 0;
-    double temporalData[sizeY][timesteps];
+
+    double** temporalData = new double*[sizeY];
+    for (int y = 0; y < sizeY; y++)
+    {
+        temporalData[y] = new double[timesteps];
+    }
+
 
     cout << "Writing metadata" << endl;
     metadata(startRecord, interval, steps);
@@ -592,7 +599,10 @@ void LatticeMLRPS::specAnalysisRun(int steps, int interval, int startRecord)
 
             if (monteCarloStep >= startRecord)
             {
-                dataOutput(0);
+                if (run == 0)
+                {
+                    dataOutput(0);
+                }
                 for (int yIdx = 0; yIdx < sizeY; yIdx++)
                 {
                     if (idx < timesteps)
@@ -672,10 +682,15 @@ void LatticeMLRPS::specAnalysisRun(int steps, int interval, int startRecord)
     }
     while (monteCarloStep < steps);
 
-    cout << endl;
+    cout << endl << "Simulation Complete" << endl;
 
-    double spectralData[sizeY][timesteps];
-    double normSpecData[sizeY][timesteps];
+    double** spectralData = new double*[sizeY];
+    double** normSpecData = new double*[sizeY];
+    for (int y = 0; y < sizeY; y++)
+    {
+        spectralData[y] = new double[timesteps];
+        normSpecData[y] = new double[timesteps];
+    }
 
     cout << "performing spectral analysis" << endl;
     for (int y = 0; y < sizeY; y++)
@@ -758,25 +773,43 @@ void LatticeMLRPS::specAnalysisRun(int steps, int interval, int startRecord)
     }
 
     data2.close();
+
+    for (int y = 0; y < sizeY; y++)
+    {
+        delete[] normSpecData[y];
+        delete[] spectralData[y];
+    }
+
+    delete[] spectralData;
+    delete[] normSpecData;
+
     cout << endl << "Simulation Complete" << endl;
 }
 
-void LatticeMLRPS::specAnalysisRun(int steps, int interval, int startRecord, int subDivisions)
+void LatticeMLRPS::specAnalysisRun(int steps, int interval, int startRecord, int run, int spectralDataInterval)
 {
-    double normRPS = 1.0 + mobilityRateRPS;
-    double normML = 2.0 + mobilityRate;
+    //double normRPS = 1.0 + mobilityRateRPS;
+    //double normML = 2.0 + mobilityRate;
 
-    double fracRPS = (1.0 * interfaceDistance) / sizeY;
+    //double fracRPS = (1.0 * interfaceDistance) / sizeY;
 
-    double norm = (fracRPS * normRPS) + ((1 - fracRPS) * normML);
+    //double norm = (fracRPS * normRPS) + ((1 - fracRPS) * normML);
 
     int p = sizeX * sizeY;
 
-    double deltaT = 1.0 / (norm * p);
+    //double deltaT = 1.0 / (norm * p);
 
-    int timesteps = (steps - startRecord) / interval;
+    double deltaT = 1.0 / p;
+
+    int timesteps = ((steps - startRecord) / spectralDataInterval);
     int idx = 0;
-    double temporalData[sizeY][timesteps];
+
+    double** temporalData = new double*[sizeY];
+    for (int y = 0; y < sizeY; y++)
+    {
+        temporalData[y] = new double[timesteps];
+    }
+
 
     cout << "Writing metadata" << endl;
     metadata(startRecord, interval, steps);
@@ -791,17 +824,23 @@ void LatticeMLRPS::specAnalysisRun(int steps, int interval, int startRecord, int
 
             if (monteCarloStep >= startRecord)
             {
-                dataOutput(0);
-                for (int yIdx = 0; yIdx < sizeY; yIdx++)
+                if (run == 0)
                 {
-                    if (idx < timesteps)
-                    {
-                        temporalData[yIdx][idx] = density1[0][yIdx];
-                    }
+                    dataOutput(0);
                 }
-                idx ++;
             }
 
+        }
+        if (monteCarloStep % spectralDataInterval == 0 && timestep == 0.0 && monteCarloStep > startRecord) 
+        {
+            for (int yIdx = 0; yIdx < sizeY; yIdx++)
+            {
+                if (idx < timesteps)
+                {
+                    temporalData[yIdx][idx] = density1[0][yIdx];
+                }
+            }
+            idx ++;
         }
         
         int x = xCoordDist(rng);
@@ -871,10 +910,15 @@ void LatticeMLRPS::specAnalysisRun(int steps, int interval, int startRecord, int
     }
     while (monteCarloStep < steps);
 
-    cout << endl;
+    cout << endl << "Simulation Complete" << endl;
 
-    double spectralData[sizeY][timesteps];
-    double normSpecData[sizeY][timesteps];
+    double** spectralData = new double*[sizeY];
+    double** normSpecData = new double*[sizeY];
+    for (int y = 0; y < sizeY; y++)
+    {
+        spectralData[y] = new double[timesteps];
+        normSpecData[y] = new double[timesteps];
+    }
 
     cout << "performing spectral analysis" << endl;
     for (int y = 0; y < sizeY; y++)
@@ -957,5 +1001,15 @@ void LatticeMLRPS::specAnalysisRun(int steps, int interval, int startRecord, int
     }
 
     data2.close();
+
+    for (int y = 0; y < sizeY; y++)
+    {
+        delete[] normSpecData[y];
+        delete[] spectralData[y];
+    }
+
+    delete[] spectralData;
+    delete[] normSpecData;
+
     cout << endl << "Simulation Complete" << endl;
 }

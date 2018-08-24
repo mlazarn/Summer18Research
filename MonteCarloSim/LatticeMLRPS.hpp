@@ -63,6 +63,6 @@ class LatticeMLRPS : public Lattice
         virtual void monteCarloRun(int steps, int interval, int start);
         virtual void monteCarloRun(int steps, int interval, int start, int swap, int swapInterval);
         virtual void drivenMonteCarloRun(int steps, int interval, int start, int startDrive, int driveFrequency, int pulseWidth);
-        virtual void specAnalysisRun(int steps, int interval, int startRecord);
-        virtual void specAnalysisRun(int steps, int interval, int startRecord, int subDivisions);
+        virtual void specAnalysisRun(int steps, int interval, int startRecord, int run);
+        virtual void specAnalysisRun(int steps, int interval, int startRecord, int run, int subDivisions);
 };
