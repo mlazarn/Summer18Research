@@ -574,7 +574,7 @@ void LatticeMLRPS::specAnalysisRun(int steps, int interval, int startRecord, int
 
     //double deltaT = 1.0 / (norm * p);
 
-    double deltaT = 1.0 / p;
+    //double deltaT = 1.0 / p;
 
     int timesteps = (steps - startRecord) / interval;
     int idx = 0;
@@ -617,13 +617,13 @@ void LatticeMLRPS::specAnalysisRun(int steps, int interval, int startRecord, int
         
         int x = xCoordDist(rng);
         int y = yCoordDist(rng);
-        timestep += deltaT;
+        //timestep += deltaT;
 
         do 
         {
             x = xCoordDist(rng);
             y = yCoordDist(rng);
-            timestep += deltaT;
+            //timestep += deltaT;
         }
         while (latt[x][y].getSpecies() > 2);
  
@@ -670,9 +670,9 @@ void LatticeMLRPS::specAnalysisRun(int steps, int interval, int startRecord, int
             }
         }
 
-        if (timestep >= 1.0) 
+        if (timestep >= p) 
         {
-            timestep = 0.0;
+            timestep = 0;
 
             updateDensity();
         
@@ -786,7 +786,7 @@ void LatticeMLRPS::specAnalysisRun(int steps, int interval, int startRecord, int
     cout << endl << "Simulation Complete" << endl;
 }
 
-void LatticeMLRPS::specAnalysisRun(int steps, int interval, int startRecord, int run, int spectralDataInterval)
+void LatticeMLRPS::specAnalysisRun(int steps, int interval, int startRecord, int run, int subdiv)
 {
     //double normRPS = 1.0 + mobilityRateRPS;
     //double normML = 2.0 + mobilityRate;
@@ -799,9 +799,10 @@ void LatticeMLRPS::specAnalysisRun(int steps, int interval, int startRecord, int
 
     //double deltaT = 1.0 / (norm * p);
 
-    double deltaT = 1.0 / p;
+    //double deltaT = 1.0 / p;
 
-    int timesteps = ((steps - startRecord) / spectralDataInterval);
+    int timesteps = ((steps - startRecord) / interval) * subdiv;
+    int subinterval = p / subdiv;
     int idx = 0;
 
     double** temporalData = new double*[sizeY];
@@ -831,27 +832,28 @@ void LatticeMLRPS::specAnalysisRun(int steps, int interval, int startRecord, int
             }
 
         }
-        if (monteCarloStep % spectralDataInterval == 0 && timestep == 0.0 && monteCarloStep > startRecord) 
-        {
-            for (int yIdx = 0; yIdx < sizeY; yIdx++)
-            {
-                if (idx < timesteps)
-                {
-                    temporalData[yIdx][idx] = density1[0][yIdx];
-                }
-            }
-            idx ++;
-        }
         
         int x = xCoordDist(rng);
         int y = yCoordDist(rng);
-        timestep += deltaT;
+        timestep ++;
 
         do 
         {
+            if (timestep % subinterval == 0 && monteCarloStep > startRecord) 
+            {
+                for (int yIdx = 0; yIdx < sizeY; yIdx++)
+                {
+                    if (idx < timesteps)
+                    {
+                        updateDensity();
+                        temporalData[yIdx][idx] = density1[0][yIdx];
+                    }
+                }
+                idx ++;
+            }
             x = xCoordDist(rng);
             y = yCoordDist(rng);
-            timestep += deltaT;
+            timestep ++;
         }
         while (latt[x][y].getSpecies() > 2);
  
@@ -898,9 +900,9 @@ void LatticeMLRPS::specAnalysisRun(int steps, int interval, int startRecord, int
             }
         }
 
-        if (timestep >= 1.0) 
+        if (timestep >= p) 
         {
-            timestep = 0.0;
+            timestep = 0;
 
             updateDensity();
         
