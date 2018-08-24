@@ -11,19 +11,11 @@ from tqdm import tqdm
 
 def combineData(args):
     targ = args.prefix + '0'
-<<<<<<< HEAD
-    stacked = np.genfromtxt(targ + '/spectralData.csv', dtype=float, delimiter=',')[:,1:50]#[::-1,:]
+    stacked = np.genfromtxt(targ + "/" +  args.filename, dtype=float, delimiter=',')[:,1:args.height]#[::-1,:]
 
     for run in range(1, args.runs):
         targ = args.prefix + str(run);
-        new_array = np.genfromtxt(targ + '/spectralData.csv', dtype=float, delimiter=',')[:,1:50]#[::-1,:]
-=======
-    stacked = np.genfromtxt(targ + "/" +  args.filename, dtype=float, delimiter=',')[:,1:args.height].T#[::-1,:]
-
-    for run in range(1, args.runs):
-        targ = args.prefix + str(run);
-        new_array = np.genfromtxt(targ + "/" + args.filename, dtype=float, delimiter=',')[:,1:args.height].T#[::-1,:]
->>>>>>> b11404b3205eade89cecd5c431ea568ffb155b99
+        new_array = np.genfromtxt(targ + "/" + args.filename, dtype=float, delimiter=',')[:,1:args.height]#[::-1,:]
         stacked = np.dstack((stacked, new_array))
 
     spec_data = np.mean(stacked, axis=2)
@@ -46,11 +38,10 @@ def plotSpectrograph(args):
     ax.set_xlabel(r'$r$')
 
     fig.savefig(args.output, dpi=args.dpi)
-<<<<<<< HEAD
 
 def plotFreqPlot(args):
     specData = combineData(args)[args.position, :]
-    frequency = np.arange(1, 50) / args.steps
+    frequency = np.arange(1, args.height) / args.steps
 
     fig, ax = plt.subplots()
     ax.plot(frequency, specData, linestyle='-', marker='s')
@@ -62,8 +53,6 @@ def plotFreqPlot(args):
     ax.set_ylabel(r'$|a(\omega)|$')
     
     fig.savefig(args.output)
-=======
->>>>>>> b11404b3205eade89cecd5c431ea568ffb155b99
 
 parser = ap.ArgumentParser()
 parser.add_argument('target')
@@ -72,9 +61,8 @@ parser.add_argument('output')
 parser.add_argument('prefix')
 parser.add_argument('height', type=int)
 parser.add_argument('runs', type=int)
-parser.add_argument('steps', type=int)
 parser.add_argument('mode')
-parser.add_argument('output')
+parser.add_argument('--steps', '-s', type=int)
 parser.add_argument('--position', '-p', type=int)
 
 parser.add_argument('--vlines', '-v', type=int, nargs='+', default=[])
