@@ -7,11 +7,11 @@
 \usepackage{verbatim}
 \usepackage{enumitem}
 \usepackage[margin=1.25in]{geometry}
-\setlength{\parindent}{0cm}
+%\setlength{\parindent}{0cm}
 
 \title{Boundary Effects in Stochastic Cyclic Competition Models on a Two-Dimensional Lattice}
 \author{M. Lazarus Arnau, Shannon Serrao, Uwe C. T{\"a}uber\\ Department of Physics (MC 0435) and Center for Soft Matter and Biological Physics\\ Virginia Tech, Blacksburg, Virginia 24061}
-\date{July 26, 2018}
+%\date{July 26, 2018}
 
 \begin{document}
     
@@ -28,10 +28,17 @@
     behavior in the rest of the lattice. Specifically, we implement the ML reaction scheme 
     on a torus, except on a ring-shaped patch, which is set to follow the cyclic 
     Lotka-Volterra predation rules of the RPS model. There, we observe a marked disruption of 
-    the usual spiral patterns in the form of plane waves emanating from the RPS region, 
-    up to a characteristic distance that is set by the diffusion rate in the RPS 
-    patch. Furthermore, the overall population density drops considerably in the 
-    vicinity of the interface between both regions. 
+    the usual spiral patterns in the form of plane waves emanating from the RPS region. 
+    Using fast Fourier transforms we find that the spacial extent of these disruptions
+    is set by the diffusion rate in the May-Leonard region. Furthermore, the overall 
+    population density drops considerably in the vicinity of the interface between both regions.
+
+    %\hskip 
+
+    We will continue to characterize these effects before using our deepened understanding
+    of these systems to develop possible methods for local external control. We plan to
+    begin by exploring the possibility of using pulsed and periodic seeding to either
+    stabilize or destroy the spiral patterns displayed by our simulations.
 
     \hskip
 
