@@ -74,13 +74,13 @@
 #density net
 #python3 densityCalculator.py a $target density_net.mp4 p 0 $ySize -c -1 -p $density_pfx -s $start_t -i $interval -S $steps -a $author
 
-base="data/specTest4/test_"
+base="data/specTest9/mob_x/test_"
 dir_suffix="run_"
 prefix="latt_"
 density_pfx="density_"
 flux_pfx="flux_"
 lims="-0.05 0.05"
-vlines="32 64 96"
+vlines="64 128 192"
 xSize="256"
 ySize="512"
 ylims="0 $ySize"
@@ -94,32 +94,37 @@ intDist="128"
 mobility="2.5"
 #RPSMobility="2.5"
 #rps_mobility="1.0"
-#mobilites=('1.25' '2.5' '5.0')
+mobilities=('0.1' '2.5' '5.0' '10.0')
 RPSMobilities=('0.1' '2.5' '5.0' '10.0') 
-steps="2000"
+steps="7000"
 interval="1"
-start_t="1000"
+start_t="3000"
 dpi="200"
 fps="60"
 author="micarn"
 species=('a' 'b' 'c')
 units="p r"
 
-for n in {0..3}; do
-    targ="${base}${n}"
-    for m in {0..14}; do
-        target="${targ}/${dir_suffix}${m}"
-        mkdir -p -v $target
-        ./LatticeMLRPSTest $target 0 1 $xSize $ySize $mobility ${RPSMobilities[$n]} $intDist $binWidth $steps $interval $start_t
+output="specData.png"
+normOut="normSpecData.png"
+for l in {0..3}; do
+    for n in {0..3}; do
+        targ="${base/x/$l}${n}"
+        #for m in {0..49}; do
+            #target="${targ}/${dir_suffix}${m}"
+            #mkdir -p -v $target
+            #                  targ    o t xSize  ySize  mob               rps_mob              intDist  bin_w     steps  interval  start_t  run
+            #                  1       2 3 4      5      6                 7                    8        9         10     11        12       13
+            #./LatticeMLRPSTest $target 0 1 $xSize $ySize ${mobilities[$l]} ${RPSMobilities[$n]} $intDist $binWidth $steps $interval $start_t $m
+        #done
+        python3 fourierAnalysis.py $targ spectralData.csv $output $dir_suffix 100 50 -v $vlines --dpi $dpi
+        python3 fourierAnalysis.py $targ normSpectralData.csv $normOut $dir_suffix 100 50 -v $vlines --dpi $dpi
+        #python3 videoConverter.py ${targ}/${dir_suffix}0 $prefix $start_t $interval $steps -v $vlines -o animation.mp4 -a $author -f $fps --dpi $dpi
     done
-
-    python3 fourierAnalysis.py $targ $dir_suffix 15
-    python3 videoConverter.py ${targ}/${dir_suffix}0 $prefix $start_t $interval $steps -v $vlines -o animation.mp4 -a $author -f $fps --dpi $dpi
-
 done
 
 cd data
-tar -zcvf specTestRenders.tar.gz specTest4/*/*.* specTest4/*/${dir_suffix}0/*.mp4
+tar -zcf specTest9Renders.tar.gz specTest9
 
 #for x in {0..14}; do
     #target="${base}/${dir_suffix}${x}"
