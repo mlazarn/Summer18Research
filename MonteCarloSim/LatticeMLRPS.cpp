@@ -837,17 +837,24 @@ void LatticeMLRPS::specAnalysisRun(int steps, int interval, int startRecord, int
         int y = yCoordDist(rng);
         timestep ++;
 
+        if (timestep % subinterval == 0 && monteCarloStep > startRecord && idx < timesteps) 
+        {
+            for (int yIdx = 0; yIdx < sizeY; yIdx++)
+            {
+                updateDensity();
+                temporalData[yIdx][idx] = density1[0][yIdx];
+            }
+            idx++;
+        }
+
         do 
         {
-            if (timestep % subinterval == 0 && monteCarloStep > startRecord) 
+            if (timestep % subinterval == 0 && monteCarloStep > startRecord && idx < timesteps) 
             {
                 for (int yIdx = 0; yIdx < sizeY; yIdx++)
                 {
-                    if (idx < timesteps)
-                    {
-                        updateDensity();
-                        temporalData[yIdx][idx] = density1[0][yIdx];
-                    }
+                    updateDensity();
+                    temporalData[yIdx][idx] = density1[0][yIdx];
                 }
                 idx ++;
             }
