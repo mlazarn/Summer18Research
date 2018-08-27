@@ -93,13 +93,13 @@ binNetDiffCountLim="0 750"
 intDist="128"
 mobility="2.5"
 RPSMobility="2.5"
-rps_mobility="2.5"
+#rps_mobility="2.5"
 #mobilities=('0.1' '2.5' '5.0' '10.0')
 #RPSMobilities=('0.1' '2.5' '5.0' '10.0') 
-steps="23000"
+steps="4000"
 interval="10"
-specDataInterval="1"
 start_t="3000"
+subdiv="16"
 dpi="200"
 fps="60"
 author="micarn"
@@ -108,16 +108,16 @@ units="p r"
 
 output="specData.png"
 normOut="normSpecData.png"
-for m in {0..15}; do
-    target="${base}/${dir_suffix}${m}"
-    mkdir -p -v $target
+#for m in {0..15}; do
+    #target="${base}/${dir_suffix}${m}"
+    #mkdir -p -v $target
     #                  targ    o t xSize  ySize  mob               rps_mob              intDist  bin_w     steps  interval  start_t  run
     #                  1       2 3 4      5      6                 7                    8        9         10     11        12       13
-    ./LatticeMLRPSTest $target 0 1 $xSize $ySize ${mobilities[$l]} ${RPSMobilities[$n]} $intDist $binWidth $steps $interval $start_t $m
-done
-python3 fourierAnalysis.py $base spectralData.csv $output $dir_suffix 100 50 -v $vlines --dpi $dpi
-python3 fourierAnalysis.py $base normSpectralData.csv $normOut $dir_suffix 100 50 -v $vlines --dpi $dpi
-python3 fourierAnalysis.py $base normSpectralData.csv freqAnalysis.png $dir_suffix 100 15 f -s 20000
+    #./LatticeMLRPSTest $target 0 1 $xSize $ySize $mobility $RPSMobility $intDist $binWidth $steps $interval $start_t $m $subdiv
+#done
+#python3 fourierAnalysis.py $base spectralData.csv $output $dir_suffix 25 15 s -v $vlines --dpi $dpi -a 10.0
+#python3 fourierAnalysis.py $base normSpectralData.csv $normOut $dir_suffix 25 15 s -v $vlines --dpi $dpi -a 10.0
+python3 fourierAnalysis.py $base normSpectralData.csv freqAnalysis.png $dir_suffix 250 15 f -p 150 -s 16000 --dpi $dpi
 #for l in {0..3}; do
     #for n in {0..3}; do
         #targ="${base/x/$l}${n}"

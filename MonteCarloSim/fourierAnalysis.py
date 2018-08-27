@@ -19,6 +19,7 @@ def combineData(args):
         stacked = np.dstack((stacked, new_array))
 
     spec_data = np.mean(stacked, axis=2)
+    print(str(spec_data.shape))
     return spec_data
 
 def plotSpectrograph(args):
@@ -26,7 +27,7 @@ def plotSpectrograph(args):
 
     fig, ax = plt.subplots()
     con = ax.imshow(spec_data, cmap='inferno')
-    ax.set_aspect(5)
+    ax.set_aspect(args.aspect)
     if len(args.vlines) > 0:
         ax.vlines(args.vlines, 0, args.height - 1, zorder=3)
 
@@ -41,6 +42,7 @@ def plotSpectrograph(args):
 
 def plotFreqPlot(args):
     specData = combineData(args)[args.position, :]
+    print(str(specData.shape))
     frequency = np.arange(1, args.height) / args.steps
 
     fig, ax = plt.subplots()
@@ -62,6 +64,7 @@ parser.add_argument('prefix')
 parser.add_argument('height', type=int)
 parser.add_argument('runs', type=int)
 parser.add_argument('mode')
+parser.add_argument('--aspect', '-a', type=float, default=1.0)
 parser.add_argument('--steps', '-s', type=int)
 parser.add_argument('--position', '-p', type=int)
 
@@ -80,4 +83,5 @@ if args.mode == 's':
     plotSpectrograph(args)
 elif args.mode == 'f':
     plotFreqPlot(args)
+
 
