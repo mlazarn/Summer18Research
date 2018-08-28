@@ -46,7 +46,7 @@ class Lattice
         double **binnedDensity1;
 
         // Keep track of time through the simulation.
-        int timestep;
+        double timestep;
         int monteCarloStep;
 
         // where the outputs go.

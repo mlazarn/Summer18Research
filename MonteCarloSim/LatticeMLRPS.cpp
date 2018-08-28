@@ -574,7 +574,7 @@ void LatticeMLRPS::specAnalysisRun(int steps, int interval, int startRecord, int
 
     //double deltaT = 1.0 / (norm * p);
 
-    //double deltaT = 1.0 / p;
+    double deltaT = 1.0 / p;
 
     int timesteps = (steps - startRecord) / interval;
     int idx = 0;
@@ -617,13 +617,13 @@ void LatticeMLRPS::specAnalysisRun(int steps, int interval, int startRecord, int
         
         int x = xCoordDist(rng);
         int y = yCoordDist(rng);
-        //timestep += deltaT;
+        timestep += deltaT;
 
         do 
         {
             x = xCoordDist(rng);
             y = yCoordDist(rng);
-            //timestep += deltaT;
+            timestep += deltaT;
         }
         while (latt[x][y].getSpecies() > 2);
  
@@ -670,9 +670,9 @@ void LatticeMLRPS::specAnalysisRun(int steps, int interval, int startRecord, int
             }
         }
 
-        if (timestep >= p) 
+        if (timestep >= 1.0) 
         {
-            timestep = 0;
+            timestep = 0.0;
 
             updateDensity();
         
@@ -786,239 +786,3 @@ void LatticeMLRPS::specAnalysisRun(int steps, int interval, int startRecord, int
     cout << endl << "Simulation Complete" << endl;
 }
 
-void LatticeMLRPS::specAnalysisRun(int steps, int interval, int startRecord, int run, int subdiv)
-{
-    //double normRPS = 1.0 + mobilityRateRPS;
-    //double normML = 2.0 + mobilityRate;
-
-    //double fracRPS = (1.0 * interfaceDistance) / sizeY;
-
-    //double norm = (fracRPS * normRPS) + ((1 - fracRPS) * normML);
-
-    int p = sizeX * sizeY;
-
-    //double deltaT = 1.0 / (norm * p);
-
-    //double deltaT = 1.0 / p;
-
-    int timesteps = ((steps - startRecord) / interval) * subdiv;
-    int subinterval = p / subdiv;
-    int idx = 0;
-
-    double** temporalData = new double*[sizeY];
-    for (int y = 0; y < sizeY; y++)
-    {
-        temporalData[y] = new double[timesteps];
-    }
-
-
-    cout << "Writing metadata" << endl;
-    metadata(startRecord, interval, steps);
-
-    cout << "Starting Monte Carlo Run" << endl;
-    do
-    {
-        if (monteCarloStep % interval == 0 && timestep == 0.0)
-        {
-            float progress = (1.0 * monteCarloStep) / (steps - 1);
-            progressBar(progress);
-
-            if (monteCarloStep >= startRecord)
-            {
-                if (run == 0)
-                {
-                    dataOutput(0);
-                }
-            }
-
-        }
-        
-        int x = xCoordDist(rng);
-        int y = yCoordDist(rng);
-        timestep ++;
-
-        if (timestep % subinterval == 0 && monteCarloStep > startRecord && idx < timesteps) 
-        {
-            for (int yIdx = 0; yIdx < sizeY; yIdx++)
-            {
-                updateDensity();
-                temporalData[yIdx][idx] = density1[0][yIdx];
-            }
-            idx++;
-        }
-
-        do 
-        {
-            if (timestep % subinterval == 0 && monteCarloStep > startRecord && idx < timesteps) 
-            {
-                for (int yIdx = 0; yIdx < sizeY; yIdx++)
-                {
-                    updateDensity();
-                    temporalData[yIdx][idx] = density1[0][yIdx];
-                }
-                idx ++;
-            }
-            x = xCoordDist(rng);
-            y = yCoordDist(rng);
-            timestep ++;
-        }
-        while (latt[x][y].getSpecies() > 2);
- 
-        // Decides whether to use reaction(x, y) or reactionRPS(x, y)
-        if ( (y >= RPSMin && y < RPSMax) ) 
-        {
-            if (topology == 1)
-            {
-                RPSReaction(x, y);
-            }
-            else if (x >= RPSMin && x <= RPSMax)
-            {
-                switch(orientation)
-                {
-                    case 0  :   RPSReaction(x, y); break;
-                    case 1  :   reaction(x, y); break;
-                    default :   RPSReaction(x, y); break;
-                }
-            }
-            else
-            {
-                switch(orientation)
-                {
-                    case 0  :   reaction(x, y); break;
-                    case 1  :   RPSReaction(x, y); break;
-                    default :   reaction(x, y); break;
-                }
-            }
-        }
-        else
-        {
-            if (topology == 1)
-            {
-                reaction(x, y);
-            }
-            else
-            {
-                switch(orientation)
-                {
-                    case 0  :   reaction(x, y); break;
-                    case 1  :   RPSReaction(x, y); break;
-                    default :   reaction(x, y); break;
-                }
-            }
-        }
-
-        if (timestep >= p) 
-        {
-            timestep = 0;
-
-            updateDensity();
-        
-            monteCarloStep++;
-        }
-
-    }
-    while (monteCarloStep < steps);
-
-    cout << endl << "Simulation Complete" << endl;
-
-    double** spectralData = new double*[sizeY];
-    double** normSpecData = new double*[sizeY];
-    for (int y = 0; y < sizeY; y++)
-    {
-        spectralData[y] = new double[timesteps];
-        normSpecData[y] = new double[timesteps];
-    }
-
-    cout << "performing spectral analysis" << endl;
-    for (int y = 0; y < sizeY; y++)
-    {
-        double *in;
-        fftw_complex *out;
-        fftw_plan plan;
-
-        in = fftw_alloc_real(timesteps);
-        out = fftw_alloc_complex(timesteps);
-
-        for (int t = 0; t < timesteps; t++)
-        {
-            in[t] = temporalData[y][t];
-        }
-
-        plan = fftw_plan_dft_r2c_1d(timesteps, in, out, FFTW_ESTIMATE);
-
-        fftw_execute(plan);
-        
-        for (int t = 0; t < timesteps; t++)
-        {
-            spectralData[y][t] = out[t][0];
-            normSpecData[y][t] = sqrt(pow(out[t][0], 2) + pow(out[t][1], 2));
-        }
-
-        fftw_destroy_plan(plan);
-        fftw_free(in);
-        fftw_free(out);
-    }
-
-    cout << "writing specData" << endl;
-
-    stringstream ss;
-    ss << filePath << "spectralData.csv";
-    string fileName;
-    fileName = ss.str();
-
-    fstream data(fileName.c_str(), ofstream::out | ofstream::app | ofstream::in);
-
-    for (int y = 0; y < sizeY; y++)
-    {
-        for (int t = 0; t < timesteps; t++)
-        {
-            data << spectralData[y][t];
-            if (t < timesteps - 1)
-            {
-                data << ",";
-            }
-        }
-        if (y < sizeY - 1)
-        {
-            data << endl;
-        }
-    }
-
-    data.close();
-
-    cout << "writing normSpecData" << endl;
-    ss.str("");
-    ss << filePath << "normSpectralData.csv";
-    string fileName2 = ss.str();
-
-    fstream data2(fileName2.c_str(), ofstream::out | ofstream::app | ofstream::in);
-
-    for (int y = 0; y < sizeY; y++)
-    {
-        for (int t = 0; t < timesteps; t++)
-        {
-            data2 << normSpecData[y][t];
-            if (t < timesteps - 1)
-            {
-                data2 << ",";
-            }
-        }
-        if (y < sizeY - 1)
-        {
-            data2 << endl;
-        }
-    }
-
-    data2.close();
-
-    for (int y = 0; y < sizeY; y++)
-    {
-        delete[] normSpecData[y];
-        delete[] spectralData[y];
-    }
-
-    delete[] spectralData;
-    delete[] normSpecData;
-
-    cout << endl << "Simulation Complete" << endl;
-}
