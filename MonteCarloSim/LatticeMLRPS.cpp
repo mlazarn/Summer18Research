@@ -603,9 +603,9 @@ void LatticeMLRPS::specAnalysisRun(int steps, int interval, int startRecord, int
                 {
                     dataOutput(0);
                 }
-                for (int yIdx = 0; yIdx < sizeY; yIdx++)
+                if (idx < timesteps)
                 {
-                    if (idx < timesteps)
+                    for (int yIdx = 0; yIdx < sizeY; yIdx++)
                     {
                         temporalData[yIdx][idx] = density1[0][yIdx];
                     }
@@ -762,6 +762,235 @@ void LatticeMLRPS::specAnalysisRun(int steps, int interval, int startRecord, int
         {
             data2 << normSpecData[y][t];
             if (t < timesteps - 1)
+            {
+                data2 << ",";
+            }
+        }
+        if (y < sizeY - 1)
+        {
+            data2 << endl;
+        }
+    }
+
+    data2.close();
+
+    for (int y = 0; y < sizeY; y++)
+    {
+        delete[] normSpecData[y];
+        delete[] spectralData[y];
+    }
+
+    delete[] spectralData;
+    delete[] normSpecData;
+
+    cout << endl << "Simulation Complete" << endl;
+}
+
+void LatticeMLRPS::specAnalysisRun(int steps, int interval, int startRecord, int run, int zero_padding)
+{
+    //double normRPS = 1.0 + mobilityRateRPS;
+    //double normML = 2.0 + mobilityRate;
+
+    //double fracRPS = (1.0 * interfaceDistance) / sizeY;
+
+    //double norm = (fracRPS * normRPS) + ((1 - fracRPS) * normML);
+
+    int p = sizeX * sizeY;
+
+    //double deltaT = 1.0 / (norm * p);
+
+    double deltaT = 1.0 / p;
+
+    int timesteps = (steps - startRecord) / interval;
+    int idx = 0;
+
+    double** temporalData = new double*[sizeY];
+    for (int y = 0; y < sizeY; y++)
+    {
+        temporalData[y] = new double[timesteps + zero_padding];
+        for (int i = timesteps; i < (timesteps + zero_padding); i++)
+        {
+            temporalData[y][i] = 0.0;
+        }
+    }
+
+
+    cout << "Writing metadata" << endl;
+    metadata(startRecord, interval, steps);
+
+    cout << "Starting Monte Carlo Run" << endl;
+    do
+    {
+        if (monteCarloStep % interval == 0 && timestep == 0.0)
+        {
+            float progress = (1.0 * monteCarloStep) / (steps - 1);
+            progressBar(progress);
+
+            if (monteCarloStep >= startRecord)
+            {
+                if (run == 0)
+                {
+                    dataOutput(0);
+                }
+                if (idx < timesteps)
+                {
+                    for (int yIdx = 0; yIdx < sizeY; yIdx++)
+                    {
+                        temporalData[yIdx][idx] = density1[0][yIdx];
+                    }
+                }
+                idx ++;
+            }
+
+        }
+        
+        int x = xCoordDist(rng);
+        int y = yCoordDist(rng);
+        timestep += deltaT;
+
+        do 
+        {
+            x = xCoordDist(rng);
+            y = yCoordDist(rng);
+            timestep += deltaT;
+        }
+        while (latt[x][y].getSpecies() > 2);
+ 
+        // Decides whether to use reaction(x, y) or reactionRPS(x, y)
+        if ( (y >= RPSMin && y < RPSMax) ) 
+        {
+            if (topology == 1)
+            {
+                RPSReaction(x, y);
+            }
+            else if (x >= RPSMin && x <= RPSMax)
+            {
+                switch(orientation)
+                {
+                    case 0  :   RPSReaction(x, y); break;
+                    case 1  :   reaction(x, y); break;
+                    default :   RPSReaction(x, y); break;
+                }
+            }
+            else
+            {
+                switch(orientation)
+                {
+                    case 0  :   reaction(x, y); break;
+                    case 1  :   RPSReaction(x, y); break;
+                    default :   reaction(x, y); break;
+                }
+            }
+        }
+        else
+        {
+            if (topology == 1)
+            {
+                reaction(x, y);
+            }
+            else
+            {
+                switch(orientation)
+                {
+                    case 0  :   reaction(x, y); break;
+                    case 1  :   RPSReaction(x, y); break;
+                    default :   reaction(x, y); break;
+                }
+            }
+        }
+
+        if (timestep >= 1.0) 
+        {
+            timestep = 0.0;
+
+            updateDensity();
+        
+            monteCarloStep++;
+        }
+
+    }
+    while (monteCarloStep < steps);
+
+    cout << endl << "Simulation Complete" << endl;
+
+    double** spectralData = new double*[sizeY];
+    double** normSpecData = new double*[sizeY];
+    for (int y = 0; y < sizeY; y++)
+    {
+        spectralData[y] = new double[timesteps];
+        normSpecData[y] = new double[timesteps];
+    }
+
+    cout << "performing spectral analysis" << endl;
+    for (int y = 0; y < sizeY; y++)
+    {
+        double *in;
+        fftw_complex *out;
+        fftw_plan plan;
+
+        in = fftw_alloc_real(timesteps + zero_padding);
+        out = fftw_alloc_complex(timesteps + zero_padding);
+
+        for (int t = 0; t < (timesteps + zero_padding); t++)
+        {
+            in[t] = temporalData[y][t];
+        }
+
+        plan = fftw_plan_dft_r2c_1d((timesteps + zero_padding), in, out, FFTW_ESTIMATE);
+
+        fftw_execute(plan);
+        
+        for (int t = 0; t < timesteps + zero_padding; t++)
+        {
+            spectralData[y][t] = out[t][0];
+            normSpecData[y][t] = sqrt(pow(out[t][0], 2) + pow(out[t][1], 2));
+        }
+
+        fftw_destroy_plan(plan);
+        fftw_free(in);
+        fftw_free(out);
+    }
+
+    cout << "writing specData" << endl;
+
+    stringstream ss;
+    ss << filePath << "spectralData.csv";
+    string fileName;
+    fileName = ss.str();
+
+    fstream data(fileName.c_str(), ofstream::out | ofstream::app | ofstream::in);
+
+    for (int y = 0; y < sizeY; y++)
+    {
+        for (int t = 0; t < (timesteps + zero_padding); t++)
+        {
+            data << spectralData[y][t];
+            if (t < timesteps + zero_padding - 1)
+            {
+                data << ",";
+            }
+        }
+        if (y < sizeY - 1)
+        {
+            data << endl;
+        }
+    }
+
+    data.close();
+
+    cout << "writing normSpecData" << endl;
+    ss.str("");
+    ss << filePath << "normSpectralData.csv";
+    string fileName2 = ss.str();
+
+    fstream data2(fileName2.c_str(), ofstream::out | ofstream::app | ofstream::in);
+
+    for (int y = 0; y < sizeY; y++)
+    {
+        for (int t = 0; t < timesteps + zero_padding; t++)
+        {
+            data2 << normSpecData[y][t];
+            if (t < timesteps + zero_padding - 1)
             {
                 data2 << ",";
             }
