@@ -74,7 +74,7 @@
 #density net
 #python3 densityCalculator.py a $target density_net.mp4 p 0 $ySize -c -1 -p $density_pfx -s $start_t -i $interval -S $steps -a $author
 
-base="data/specTest10"
+base="data/specTest13/interval_"
 dir_suffix="run_"
 prefix="latt_"
 density_pfx="density_"
@@ -96,8 +96,10 @@ RPSMobility="2.5"
 #rps_mobility="2.5"
 #mobilities=('0.1' '2.5' '5.0' '10.0')
 #RPSMobilities=('0.1' '2.5' '5.0' '10.0') 
-steps="4000"
-interval="10"
+steps="7000"
+intervals=('1' '5' '10')
+step=('4000' '800' '400')
+#interval="10"
 start_t="3000"
 subdiv="16"
 dpi="200"
@@ -108,16 +110,20 @@ units="p r"
 
 output="specData.png"
 normOut="normSpecData.png"
-#for m in {0..15}; do
-    #target="${base}/${dir_suffix}${m}"
-    #mkdir -p -v $target
-    #                  targ    o t xSize  ySize  mob               rps_mob              intDist  bin_w     steps  interval  start_t  run
-    #                  1       2 3 4      5      6                 7                    8        9         10     11        12       13
-    #./LatticeMLRPSTest $target 0 1 $xSize $ySize $mobility $RPSMobility $intDist $binWidth $steps $interval $start_t $m $subdiv
-#done
-#python3 fourierAnalysis.py $base spectralData.csv $output $dir_suffix 25 15 s -v $vlines --dpi $dpi -a 10.0
-#python3 fourierAnalysis.py $base normSpectralData.csv $normOut $dir_suffix 25 15 s -v $vlines --dpi $dpi -a 10.0
-python3 fourierAnalysis.py $base normSpectralData.csv freqAnalysis.png $dir_suffix 250 15 f -p 150 -s 16000 --dpi $dpi
+
+for n in {0..2}; do
+    targ="${base}${intervals[$n]}"
+    for m in {0..14}; do
+        target="$targ/${dir_suffix}${m}"
+        mkdir -p -v $target
+        #                  targ    o t xSize  ySize  mob       rps_mob      intDist  bin_w     steps  interval         start_t  run
+        #                  1       2 3 4      5      6         7            8        9         10     11               12       13
+        ./LatticeMLRPSTest $target 0 1 $xSize $ySize $mobility $RPSMobility $intDist $binWidth $steps ${intervals[$n]} $start_t $m
+    done
+    python3 fourierAnalysis.py $targ spectralData.csv $output $dir_suffix 100 15 s -v $vlines --dpi $dpi -a 10.0
+    python3 fourierAnalysis.py $targ normSpectralData.csv $normOut $dir_suffix 100 15 s -v $vlines --dpi $dpi -a 10.0
+    python3 fourierAnalysis.py $targ normSpectralData.csv freqAnalysis.png $dir_suffix 100 15 f -p 150 -s ${step[$n]} --dpi $dpi
+done
 #for l in {0..3}; do
     #for n in {0..3}; do
         #targ="${base/x/$l}${n}"
