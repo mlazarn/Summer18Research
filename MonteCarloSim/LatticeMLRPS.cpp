@@ -786,7 +786,7 @@ void LatticeMLRPS::specAnalysisRun(int steps, int interval, int startRecord, int
     cout << endl << "Simulation Complete" << endl;
 }
 
-void LatticeMLRPS::specAnalysisRun(int steps, int interval, int startRecord, int run, int zero_padding)
+void LatticeMLRPS::specAnalysisRun(int steps, int interval, int startRecord, int run, int pad_factor)
 {
     //double normRPS = 1.0 + mobilityRateRPS;
     //double normML = 2.0 + mobilityRate;
@@ -802,13 +802,14 @@ void LatticeMLRPS::specAnalysisRun(int steps, int interval, int startRecord, int
     double deltaT = 1.0 / p;
 
     int timesteps = (steps - startRecord) / interval;
+    int tempDataWidth = timesteps + (timesteps * pad_factor);
     int idx = 0;
 
     double** temporalData = new double*[sizeY];
     for (int y = 0; y < sizeY; y++)
     {
-        temporalData[y] = new double[timesteps + zero_padding];
-        for (int i = timesteps; i < (timesteps + zero_padding); i++)
+        temporalData[y] = new double[tempDataWidth];
+        for (int i = timesteps; i < tempDataWidth; i++)
         {
             temporalData[y][i] = 0.0;
         }
@@ -928,19 +929,19 @@ void LatticeMLRPS::specAnalysisRun(int steps, int interval, int startRecord, int
         fftw_complex *out;
         fftw_plan plan;
 
-        in = fftw_alloc_real(timesteps + zero_padding);
-        out = fftw_alloc_complex(timesteps + zero_padding);
+        in = fftw_alloc_real(tempDataWidth);
+        out = fftw_alloc_complex(tempDataWidth);
 
-        for (int t = 0; t < (timesteps + zero_padding); t++)
+        for (int t = 0; t < tempDataWidth; t++)
         {
             in[t] = temporalData[y][t];
         }
 
-        plan = fftw_plan_dft_r2c_1d((timesteps + zero_padding), in, out, FFTW_ESTIMATE);
+        plan = fftw_plan_dft_r2c_1d(tempDataWidth, in, out, FFTW_ESTIMATE);
 
         fftw_execute(plan);
         
-        for (int t = 0; t < timesteps + zero_padding; t++)
+        for (int t = 0; t < tempDataWidth; t++)
         {
             spectralData[y][t] = out[t][0];
             normSpecData[y][t] = sqrt(pow(out[t][0], 2) + pow(out[t][1], 2));
@@ -962,10 +963,10 @@ void LatticeMLRPS::specAnalysisRun(int steps, int interval, int startRecord, int
 
     for (int y = 0; y < sizeY; y++)
     {
-        for (int t = 0; t < (timesteps + zero_padding); t++)
+        for (int t = 0; t < tempDataWidth; t++)
         {
             data << spectralData[y][t];
-            if (t < timesteps + zero_padding - 1)
+            if (t < tempDataWidth - 1)
             {
                 data << ",";
             }
@@ -987,10 +988,10 @@ void LatticeMLRPS::specAnalysisRun(int steps, int interval, int startRecord, int
 
     for (int y = 0; y < sizeY; y++)
     {
-        for (int t = 0; t < timesteps + zero_padding; t++)
+        for (int t = 0; t < tempDataWidth; t++)
         {
             data2 << normSpecData[y][t];
-            if (t < timesteps + zero_padding - 1)
+            if (t < tempDataWidth - 1)
             {
                 data2 << ",";
             }
