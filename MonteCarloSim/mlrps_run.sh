@@ -74,7 +74,7 @@
 #density net
 #python3 densityCalculator.py a $target density_net.mp4 p 0 $ySize -c -1 -p $density_pfx -s $start_t -i $interval -S $steps -a $author
 
-base="data/specTest13/interval_"
+base="data/specTest16/pad_"
 dir_suffix="run_"
 prefix="latt_"
 density_pfx="density_"
@@ -96,9 +96,8 @@ RPSMobility="2.5"
 #rps_mobility="2.5"
 #mobilities=('0.1' '2.5' '5.0' '10.0')
 #RPSMobilities=('0.1' '2.5' '5.0' '10.0') 
-steps="7000"
+steps="8000"
 intervals=('1' '5' '10')
-step=('4000' '800' '400')
 #interval="10"
 start_t="3000"
 subdiv="16"
@@ -107,12 +106,13 @@ fps="60"
 author="micarn"
 species=('a' 'b' 'c')
 units="p r"
+pad=('0' '2500' '5000')
 
 output="specData.png"
 normOut="normSpecData.png"
 
 for n in {0..2}; do
-    targ="${base}${intervals[$n]}"
+    targ="${base}${pad[$n]}"
     for m in {0..14}; do
         target="$targ/${dir_suffix}${m}"
         mkdir -p -v $target
@@ -120,9 +120,9 @@ for n in {0..2}; do
         #                  1       2 3 4      5      6         7            8        9         10     11               12       13
         ./LatticeMLRPSTest $target 0 1 $xSize $ySize $mobility $RPSMobility $intDist $binWidth $steps ${intervals[$n]} $start_t $m
     done
-    python3 fourierAnalysis.py $targ spectralData.csv $output $dir_suffix 100 15 s -v $vlines --dpi $dpi -a 10.0
-    python3 fourierAnalysis.py $targ normSpectralData.csv $normOut $dir_suffix 100 15 s -v $vlines --dpi $dpi -a 10.0
-    python3 fourierAnalysis.py $targ normSpectralData.csv freqAnalysis.png $dir_suffix 100 15 f -p 150 -s ${step[$n]} --dpi $dpi
+    python3 fourierAnalysis.py $targ temporalData.csv $output $dir_suffix 100 15 s -v $vlines --dpi $dpi -a 10.0
+    python3 fourierAnalysis.py $targ temporalData.csv $normOut $dir_suffix 100 15 s -v $vlines --dpi $dpi -a 10.0 --abs
+    python3 fourierAnalysis.py $targ temporalData.csv freqAnalysis.png $dir_suffix 100 15 f -p 150 -s ${step[$n]} --dpi $dpi --abs
 done
 #for l in {0..3}; do
     #for n in {0..3}; do
