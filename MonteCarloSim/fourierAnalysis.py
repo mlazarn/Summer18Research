@@ -16,16 +16,19 @@ def fourierTransform(array):
 
 def combineData(args):
     targ = args.prefix + '0'
-
-    stacked = sp.fftpack.fft(np.genfromtxt(targ + "/" +  args.filename, dtype=float, delimiter=','), n=args.legth)[:,1:args.height]
+    arr = np.genfromtxt(targ + "/" +  args.filename, dtype=float, delimiter=',')
+    stacked = sp.fftpack.fft(arr , n=(arr.shape[-1] + args.pad))[:,1:args.height]
 
     for run in range(1, args.runs):
         targ = args.prefix + str(run);
-        new_array = sp.fftpack.fft(np.genfromtxt(targ + "/" + args.filename, dtype=float, delimiter=','), n=args.lenth)[:,1:args.height]#[::-1,:]
+        arr = np.genfromtxt(targ + "/" +  args.filename, dtype=float, delimiter=',')
+        new_array = sp.fftpack.fft(arr , n=(arr.shape[-1] + args.pad))[:,1:args.height]
         stacked = np.dstack((stacked, new_array))
 
-    spec_data = np.mean(stacked, axis=2)
-    print(str(spec_data.shape))
+    if args.abs:
+        spec_data = np.mean(np.abs(stacked), axis=2)
+    else:
+        spec_data = np.mean(np.real(stacked), axis=2)
     return spec_data
 
 def plotSpectrograph(args):
@@ -49,7 +52,7 @@ def plotSpectrograph(args):
 def plotFreqPlot(args):
     specData = combineData(args)[args.position, :]
     print(str(specData.shape))
-    frequency = np.arange(1, args.height) / args.steps
+    frequency = np.arange(1, args.height) 
 
     fig, ax = plt.subplots()
     ax.plot(frequency, specData, linestyle='-', marker='s')
@@ -70,9 +73,10 @@ parser.add_argument('prefix')
 parser.add_argument('height', type=int)
 parser.add_argument('runs', type=int)
 parser.add_argument('mode')
+parser.add_argument('pad', type=int)
 parser.add_argument('--aspect', '-a', type=float, default=1.0)
-parser.add_argument('--steps', '-s', type=int)
 parser.add_argument('--position', '-p', type=int)
+parser.add_argument('--abs', '-A', action='store_true')
 
 parser.add_argument('--vlines', '-v', type=int, nargs='+', default=[])
 parser.add_argument('--dpi', type=int, default=100)

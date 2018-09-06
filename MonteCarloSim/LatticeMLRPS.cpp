@@ -776,17 +776,16 @@ void LatticeMLRPS::specAnalysisRun(int steps, int interval, int startRecord, int
 
     data2.close();
 
+    */
+
     for (int y = 0; y < sizeY; y++)
     {
-        delete[] normSpecData[y];
-        delete[] spectralData[y];
+        delete[] temporalData[y];
     }
 
-    delete[] spectralData;
-    delete[] normSpecData;
-
+    delete[] temporalData;
     cout << endl << "Simulation Complete" << endl;
-    */
+    
 }
 /*
 void LatticeMLRPS::specAnalysisRun(int steps, int interval, int startRecord, int run, int pad_factor)
