@@ -684,7 +684,7 @@ void LatticeMLRPS::specAnalysisRun(int steps, int interval, int startRecord, int
 
     cout << endl << "Simulation Complete" << endl;
 
-    double** spectralData = new double*[sizeY];
+    /*double** spectralData = new double*[sizeY];
     double** normSpecData = new double*[sizeY];
     for (int y = 0; y < sizeY; y++)
     {
@@ -722,10 +722,11 @@ void LatticeMLRPS::specAnalysisRun(int steps, int interval, int startRecord, int
         fftw_free(out);
     }
 
-    cout << "writing specData" << endl;
+    */
+    cout << "writing temporalData" << endl;
 
     stringstream ss;
-    ss << filePath << "spectralData.csv";
+    ss << filePath << "temporalData.csv";
     string fileName;
     fileName = ss.str();
 
@@ -735,7 +736,7 @@ void LatticeMLRPS::specAnalysisRun(int steps, int interval, int startRecord, int
     {
         for (int t = 0; t < timesteps; t++)
         {
-            data << spectralData[y][t];
+            data << temporalData[y][t];
             if (t < timesteps - 1)
             {
                 data << ",";
@@ -749,6 +750,7 @@ void LatticeMLRPS::specAnalysisRun(int steps, int interval, int startRecord, int
 
     data.close();
 
+    /*
     cout << "writing normSpecData" << endl;
     ss.str("");
     ss << filePath << "normSpectralData.csv";
@@ -784,8 +786,9 @@ void LatticeMLRPS::specAnalysisRun(int steps, int interval, int startRecord, int
     delete[] normSpecData;
 
     cout << endl << "Simulation Complete" << endl;
+    */
 }
-
+/*
 void LatticeMLRPS::specAnalysisRun(int steps, int interval, int startRecord, int run, int pad_factor)
 {
     //double normRPS = 1.0 + mobilityRateRPS;
@@ -1015,4 +1018,4 @@ void LatticeMLRPS::specAnalysisRun(int steps, int interval, int startRecord, int
 
     cout << endl << "Simulation Complete" << endl;
 }
-
+*/

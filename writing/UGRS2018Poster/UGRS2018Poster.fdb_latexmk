@@ -1,12 +1,12 @@
 # Fdb version 3
-["bibtex UGRS2018Poster"] 1532558729 "UGRS2018Poster.aux" "UGRS2018Poster.bbl" "UGRS2018Poster" 1532707446
+["bibtex UGRS2018Poster"] 1532558729 "UGRS2018Poster.aux" "UGRS2018Poster.bbl" "UGRS2018Poster" 1535691196
   "/usr/share/texmf-dist/bibtex/bst/base/ieeetr.bst" 1520157249 18361 1a00e58565e7f19bf2b3e1bfb82254ae ""
   "UGRS2018Poster.aux" 1532707442 2904 afc554f5123293ae8c8bb97c0ee0be82 ""
   "references.bib" 1532558267 3381 0c9bb201608de4ef4b302858daa95ca0 ""
   (generated)
   "UGRS2018Poster.blg"
   "UGRS2018Poster.bbl"
-["pdflatex"] 1532707438 "UGRS2018Poster.tex" "UGRS2018Poster.pdf" "UGRS2018Poster" 1532707446
+["pdflatex"] 1532707438 "UGRS2018Poster.tex" "UGRS2018Poster.pdf" "UGRS2018Poster" 1535691196
   "/usr/share/texmf-dist/fonts/map/fontname/texfonts.map" 1520157216 3332 103109f5612ad95229751940c61aada0 ""
   "/usr/share/texmf-dist/fonts/tfm/public/amsfonts/symbols/msam10.tfm" 1520157226 916 f87d7c45f9c908e672703b83b72241a3 ""
   "/usr/share/texmf-dist/fonts/tfm/public/amsfonts/symbols/msbm10.tfm" 1520157226 908 2921f8a10601f252058503cc6570e581 ""
@@ -233,10 +233,10 @@
   "images/rps_5_0.jpg" 1532307944 726195 9c040ce1c04875f27e3d08583f03abd7 ""
   "images/vt_logo.jpg" 1532307944 690310 b03d5b58b5860f23b0d9e13bf1712c38 ""
   (generated)
+  "UGRS2018Poster.pdf"
+  "UGRS2018Poster.out"
+  "UGRS2018Poster.toc"
+  "UGRS2018Poster.nav"
+  "UGRS2018Poster.snm"
   "UGRS2018Poster.aux"
   "UGRS2018Poster.log"
-  "UGRS2018Poster.snm"
-  "UGRS2018Poster.toc"
-  "UGRS2018Poster.out"
-  "UGRS2018Poster.pdf"
-  "UGRS2018Poster.nav"

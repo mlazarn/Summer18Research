@@ -3,19 +3,25 @@ import sys
 import argparse as ap
 
 import numpy as np
+import scipy as sp
 import matplotlib.pyplot as plt
 import matplotlib.animation as manimation
 from matplotlib import colors as colors
 
 from tqdm import tqdm
 
+def fourierTransform(array):
+    specData = sp.fftpack.fft(array, n=length)
+    return specData
+
 def combineData(args):
     targ = args.prefix + '0'
-    stacked = np.genfromtxt(targ + "/" +  args.filename, dtype=float, delimiter=',')[:,1:args.height]#[::-1,:]
+
+    stacked = sp.fftpack.fft(np.genfromtxt(targ + "/" +  args.filename, dtype=float, delimiter=','), n=args.legth)[:,1:args.height]
 
     for run in range(1, args.runs):
         targ = args.prefix + str(run);
-        new_array = np.genfromtxt(targ + "/" + args.filename, dtype=float, delimiter=',')[:,1:args.height]#[::-1,:]
+        new_array = sp.fftpack.fft(np.genfromtxt(targ + "/" + args.filename, dtype=float, delimiter=','), n=args.lenth)[:,1:args.height]#[::-1,:]
         stacked = np.dstack((stacked, new_array))
 
     spec_data = np.mean(stacked, axis=2)
