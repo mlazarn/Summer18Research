@@ -3,7 +3,7 @@ import sys
 import argparse as ap
 
 import numpy as np
-import scipy as sp
+from scipy.fftpack import fft
 import matplotlib.pyplot as plt
 import matplotlib.animation as manimation
 from matplotlib import colors as colors
@@ -17,12 +17,12 @@ def fourierTransform(array):
 def combineData(args):
     targ = args.prefix + '0'
     arr = np.genfromtxt(targ + "/" +  args.filename, dtype=float, delimiter=',')
-    stacked = sp.fftpack.fft(arr , n=(arr.shape[-1] + args.pad))[:,1:args.height]
+    stacked = fft(arr , n=(arr.shape[-1] + args.pad))[:,1:args.height]
 
     for run in range(1, args.runs):
         targ = args.prefix + str(run);
         arr = np.genfromtxt(targ + "/" +  args.filename, dtype=float, delimiter=',')
-        new_array = sp.fftpack.fft(arr , n=(arr.shape[-1] + args.pad))[:,1:args.height]
+        new_array = fft(arr , n=(arr.shape[-1] + args.pad))[:,1:args.height]
         stacked = np.dstack((stacked, new_array))
 
     if args.abs:
