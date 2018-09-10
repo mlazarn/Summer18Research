@@ -736,7 +736,7 @@ void LatticeMLRPS::specAnalysisRun(int steps, int interval, int startRecord, int
     {
         for (int t = 0; t < timesteps; t++)
         {
-            data << temporalData[y][t];
+            data << temporalData[y][t] - 0.26;
             if (t < timesteps - 1)
             {
                 data << ",";
