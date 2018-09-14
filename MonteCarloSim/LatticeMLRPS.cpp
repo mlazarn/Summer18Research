@@ -579,11 +579,12 @@ void LatticeMLRPS::specAnalysisRun(int steps, int interval, int startRecord, int
     int timesteps = (steps - startRecord) / interval;
     int idx = 0;
 
-    double** temporalData = new double*[sizeY];
-    for (int y = 0; y < sizeY; y++)
-    {
-        temporalData[y] = new double[timesteps];
-    }
+    //double** temporalData = new double*[sizeY];
+    double* temporalData = new double[timesteps];
+    //for (int y = 0; y < sizeY; y++)
+    //{
+        //temporalData[y] = new double[timesteps];
+    //}
 
 
     cout << "Writing metadata" << endl;
@@ -605,10 +606,11 @@ void LatticeMLRPS::specAnalysisRun(int steps, int interval, int startRecord, int
                 }
                 if (idx < timesteps)
                 {
-                    for (int yIdx = 0; yIdx < sizeY; yIdx++)
-                    {
-                        temporalData[yIdx][idx] = density1[0][yIdx];
-                    }
+                    temporalData[idx] = globalDensity();
+                    //for (int yIdx = 0; yIdx < sizeY; yIdx++)
+                    //{
+                        //temporalData[yIdx][idx] = density1[0][yIdx];
+                    //}
                 }
                 idx ++;
             }
@@ -736,7 +738,8 @@ void LatticeMLRPS::specAnalysisRun(int steps, int interval, int startRecord, int
     {
         for (int t = 0; t < timesteps; t++)
         {
-            data << temporalData[y][t] - 0.26;
+            data << temporalData[t] - 0.26;
+            //data << temporalData[y][t] - 0.26;
             if (t < timesteps - 1)
             {
                 data << ",";
@@ -778,10 +781,10 @@ void LatticeMLRPS::specAnalysisRun(int steps, int interval, int startRecord, int
 
     */
 
-    for (int y = 0; y < sizeY; y++)
-    {
-        delete[] temporalData[y];
-    }
+    //for (int y = 0; y < sizeY; y++)
+    //{
+        //delete[] temporalData[y];
+    //}
 
     delete[] temporalData;
     cout << endl << "Simulation Complete" << endl;

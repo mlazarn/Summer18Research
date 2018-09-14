@@ -202,7 +202,7 @@ void Lattice::decrementSpeciesCount(int spec)
 
 double Lattice::globalDensity()
 {
-    int sum = aPop + bPop + cPop;
+    int sum = aPop;
     return ((1.0 * sum) / (sizeX * sizeY)) ;
 }
 
