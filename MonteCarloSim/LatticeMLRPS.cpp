@@ -734,22 +734,24 @@ void LatticeMLRPS::specAnalysisRun(int steps, int interval, int startRecord, int
 
     fstream data(fileName.c_str(), ofstream::out | ofstream::app | ofstream::in);
 
-    for (int y = 0; y < sizeY; y++)
-    {
+    //for (int y = 0; y < sizeY; y++)
+    //{
         for (int t = 0; t < timesteps; t++)
         {
-            data << temporalData[t] - 0.26;
+            data << temporalData[t];
             //data << temporalData[y][t] - 0.26;
             if (t < timesteps - 1)
             {
                 data << ",";
             }
         }
-        if (y < sizeY - 1)
-        {
-            data << endl;
-        }
-    }
+        data << endl;
+        data << "0.0";
+        //if (y < sizeY - 1)
+        //{
+            //data << endl;
+        //}
+    //}
 
     data.close();
 
