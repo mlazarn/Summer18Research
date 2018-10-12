@@ -22,7 +22,11 @@ def combineData(args):
     for run in range(1, args.runs):
         targ = args.prefix + str(run);
         arr = np.genfromtxt(targ + "/" +  args.filename, dtype=float, delimiter=',')
-        new_array = fft(arr , n=(arr.shape[-1] + args.pad))[:,1:args.height]
+        mean = np.mean(arr, axis=1,keepdims=true)
+        offset = np.zeroes(mean.shape)
+        if args.offset:
+            offset = mean
+        new_array = fft(arr - offset, n=(arr.shape[-1] + args.pad))[:,1:args.height]
         stacked = np.dstack((stacked, new_array))
 
     if args.abs:
@@ -77,6 +81,7 @@ parser.add_argument('pad', type=int)
 parser.add_argument('--aspect', '-a', type=float, default=1.0)
 parser.add_argument('--position', '-p', type=int)
 parser.add_argument('--abs', '-A', action='store_true')
+parser.add_argument('--offset' '-o', action='store_true')
 
 parser.add_argument('--vlines', '-v', type=int, nargs='+', default=[])
 parser.add_argument('--dpi', type=int, default=100)
