@@ -17,12 +17,12 @@ def fourierTransform(array):
 def combineData(args):
     targ = args.prefix + '0'
     arr = np.genfromtxt(targ + "/" +  args.filename, dtype=float, delimiter=',')
-    stacked = fft(arr , n=(arr.shape[-1] + args.pad))[:,1:args.height]
+    stacked = fft(arr , n=(arr.shape[-1] + args.pad))[:,args.idx_0:args.idx_1]
 
     for run in range(1, args.runs):
         targ = args.prefix + str(run);
         arr = np.genfromtxt(targ + "/" +  args.filename, dtype=float, delimiter=',')
-        new_array = fft(arr , n=(arr.shape[-1] + args.pad))[:,1:args.height]
+        new_array = fft(arr , n=(arr.shape[-1] + args.pad))[:,args.idx_0:args.idx_1]
         stacked = np.dstack((stacked, new_array))
 
     if args.abs:
@@ -38,9 +38,9 @@ def plotSpectrograph(args):
     con = ax.imshow(spec_data, cmap='inferno')
     ax.set_aspect(args.aspect)
     if len(args.vlines) > 0:
-        ax.vlines(args.vlines, 0, args.height - 1, zorder=3)
+        ax.vlines(args.vlines, 0, (args.idx_1 - args.idx_0) - 1, zorder=3)
 
-    ax.set_ylim(0, args.height - 2)
+    ax.set_ylim(0, args.args.idx_0 - 2)
     cb = fig.colorbar(con, ax=ax)
     fig.set_tight_layout(True)
 
@@ -52,7 +52,7 @@ def plotSpectrograph(args):
 def plotFreqPlot(args):
     specData = combineData(args)[args.position, :]
     print(str(specData.shape))
-    frequency = np.arange(1, args.height) 
+    frequency = np.arange(0, args.idx_1) 
 
     fig, ax = plt.subplots()
     ax.plot(frequency, specData, linestyle='-', marker='s')
@@ -70,10 +70,11 @@ parser.add_argument('target')
 parser.add_argument('filename')
 parser.add_argument('output')
 parser.add_argument('prefix')
-parser.add_argument('height', type=int)
+parser.add_argument('idx_1', type=int)
 parser.add_argument('runs', type=int)
 parser.add_argument('mode')
 parser.add_argument('pad', type=int)
+parser.add_argument('--idx_0', type=int, default=0)
 parser.add_argument('--aspect', '-a', type=float, default=1.0)
 parser.add_argument('--position', '-p', type=int)
 parser.add_argument('--abs', '-A', action='store_true')
