@@ -232,14 +232,6 @@ INPUT /usr/share/texmf-dist/tex/generic/babel/babel.def
 INPUT /usr/share/texmf-dist/tex/generic/babel/txtbabel.def
 INPUT /usr/share/texmf-dist/tex/latex/base/inputenc.sty
 INPUT /usr/share/texmf-dist/tex/latex/base/inputenc.sty
-INPUT /usr/share/texmf-dist/tex/latex/base/utf8.def
-INPUT /usr/share/texmf-dist/tex/latex/base/utf8.def
-INPUT /usr/share/texmf-dist/tex/latex/base/t1enc.dfu
-INPUT /usr/share/texmf-dist/tex/latex/base/t1enc.dfu
-INPUT /usr/share/texmf-dist/tex/latex/base/ot1enc.dfu
-INPUT /usr/share/texmf-dist/tex/latex/base/ot1enc.dfu
-INPUT /usr/share/texmf-dist/tex/latex/base/omsenc.dfu
-INPUT /usr/share/texmf-dist/tex/latex/base/omsenc.dfu
 INPUT /usr/share/texmf-dist/tex/latex/tools/multicol.sty
 INPUT /usr/share/texmf-dist/tex/latex/tools/multicol.sty
 INPUT /usr/share/texmf-dist/tex/latex/subfig/subfig.sty
@@ -338,10 +330,10 @@ INPUT images/ecolirps.png
 INPUT ./images/ecolirps.png
 INPUT ./images/ecolirps.png
 INPUT /usr/share/texmf-dist/fonts/tfm/public/cm/cmss17.tfm
-INPUT /usr/share/texmf-dist/fonts/tfm/public/cm/cmss17.tfm
 INPUT images/Belousov-Zhabotinsky.jpg
 INPUT ./images/Belousov-Zhabotinsky.jpg
 INPUT ./images/Belousov-Zhabotinsky.jpg
+INPUT /usr/share/texmf-dist/fonts/tfm/public/cm/cmss17.tfm
 INPUT /usr/share/texmf-dist/fonts/tfm/public/cm/cmssi17.tfm
 INPUT /usr/share/texmf-dist/fonts/tfm/public/cm/cmssi17.tfm
 INPUT /usr/share/texmf-dist/fonts/tfm/public/cm/cmr17.tfm
