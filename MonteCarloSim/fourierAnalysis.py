@@ -75,8 +75,9 @@ def plotHWHM(args):
         FW = roots[-1] - roots[-2]
         half_widths[i] = FW / 2
 
+    x = np.arange(spec_data.shape[0])
     fig, ax = plt.subplots()
-    ax.plot(specData, linestyle='-', marker='s')
+    ax.plot(x, half_widths, linestyle='-', marker='s')
 
     ax.grid(which='both', zorder=1)
     fig.set_tight_layout(True)
