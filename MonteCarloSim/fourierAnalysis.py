@@ -44,9 +44,11 @@ def plotSpectrograph(args):
     data =  combineData(args)
     freq = data[0,:]
     spec_data = data[1:, :].T
+    num_cols = spec+data.shape[-1]
 
     fig, ax = plt.subplots()
-    con = ax.imshow(spec_data, cmap='inferno')
+    con = ax.imshow(spec_data, cmap='inferno', extent=[ -0.5, num_cols -0.5, 0, 
+        freq[-1] ])
     ax.set_aspect(args.aspect)
     if len(args.vlines) > 0:
         ax.vlines(args.vlines, 0, (args.idx_1 - args.idx_0) - 1, zorder=3)
