@@ -113,7 +113,7 @@ normOut="normSpecData.png"
 
 #for n in {0..0}; do
     targ="${base}"
-    for m in {0..14}; do
+    for m in {0..4}; do
         target="$targ/${dir_suffix}${m}"
         mkdir -p -v $target
         #                  targ    o t xSize  ySize  mob       rps_mob      intDist  bin_w     steps  interval         start_t  run
