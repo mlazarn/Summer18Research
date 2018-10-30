@@ -44,7 +44,7 @@ def plotSpectrograph(args):
     data =  combineData(args)
     freq = data[0,:]
     spec_data = data[1:, :].T
-    num_cols = spec+data.shape[-1]
+    num_cols = spec_data.shape[-1]
 
     fig, ax = plt.subplots()
     con = ax.imshow(spec_data, cmap='inferno', extent=[ -0.5, num_cols -0.5, 0, 
