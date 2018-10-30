@@ -4,6 +4,7 @@ import argparse as ap
 
 import numpy as np
 from scipy.fftpack import fft
+from scipy.fftpack import fftfreq
 import matplotlib.pyplot as plt
 import matplotlib.animation as manimation
 from matplotlib import colors as colors
@@ -57,7 +58,8 @@ def plotSpectrograph(args):
 def plotFreqPlot(args):
     specData = combineData(args)[args.position, :]
     print(str(specData.shape))
-    frequency = np.arange(0, args.idx_1) 
+    frequency = fftfreq(args.idx_1 - args.idx_0)
+    #frequency = np.arange(0, args.idx_1) 
 
     fig, ax = plt.subplots()
     ax.plot(frequency, specData, linestyle='-', marker='s')
@@ -68,6 +70,10 @@ def plotFreqPlot(args):
     ax.set_xlabel(r'$\omega$')
     ax.set_ylabel(r'$|a(\omega)|$')
     
+    if args.write_csv:
+        output = np.array(frequency, specData)
+        np.savetxt(args.write_csv_dest, output, delimiter=",")
+
     fig.savefig(args.output)
 
 parser = ap.ArgumentParser()
@@ -84,6 +90,8 @@ parser.add_argument('--aspect', '-a', type=float, default=1.0)
 parser.add_argument('--position', '-p', type=int)
 parser.add_argument('--abs', '-A', action='store_true')
 parser.add_argument('--offset', '-o', action='store_true')
+parser.add_argument('--write_csv', '-w', action='store_true')
+parser.add_argument('--write_csv_dest', '-d', default='spectralData.csv')
 
 parser.add_argument('--vlines', '-v', type=int, nargs='+', default=[])
 parser.add_argument('--dpi', type=int, default=100)
