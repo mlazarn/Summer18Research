@@ -60,6 +60,9 @@ def plotSpectrograph(args):
     ax.set_ylabel(r'$\omega$')
     ax.set_xlabel(r'$r$')
 
+    if args.write_csv:
+        np.savetxt(args.write_csv_dest, data, delimiter=",")
+
     fig.savefig(args.output, dpi=args.dpi)
 
 def plotHWHM(args):
@@ -88,7 +91,7 @@ def plotHWHM(args):
     ax.set_ylabel(r'$|a(\omega)|$')
     
     if args.write_csv:
-        output = np.array([frequency, specData])
+        output = np.array([x, half_widths])
         np.savetxt(args.write_csv_dest, output, delimiter=",")
 
     fig.savefig(args.output)
@@ -149,5 +152,7 @@ if args.mode == 's':
     plotSpectrograph(args)
 elif args.mode == 'f':
     plotFreqPlot(args)
+elif args.mode == 'h':
+    plotHWHM(args)
 
 
