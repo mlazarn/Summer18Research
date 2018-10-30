@@ -35,10 +35,14 @@ def combineData(args):
         spec_data = np.mean(np.abs(stacked), axis=2)
     else:
         spec_data = np.mean(np.real(stacked), axis=2)
-    return spec_data
+    freq = fftfreq(arr.shape[-1] + args.pad)[args.idx_0:args.idx_1]
+    output np.vstack((freq, spec_data)
+    return ouput
 
 def plotSpectrograph(args):
-    spec_data =  combineData(args).T
+    data =  combineData(args)
+    freq = data[0,:]
+    spec_data = data[1:, :].T
 
     fig, ax = plt.subplots()
     con = ax.imshow(spec_data, cmap='inferno')
@@ -56,9 +60,11 @@ def plotSpectrograph(args):
     fig.savefig(args.output, dpi=args.dpi)
 
 def plotFreqPlot(args):
-    specData = combineData(args)[args.position, :]
+    data = combineData(args)
+    frequency = data[0,:]
+    specData = data[args.position + 1, :]
     print(str(specData.shape))
-    frequency = fftfreq(args.idx_1 - args.idx_0)
+    #frequency = fftfreq(args.idx_1 - args.idx_0)
     #frequency = np.arange(0, args.idx_1) 
 
     fig, ax = plt.subplots()
