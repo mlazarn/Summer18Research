@@ -5,6 +5,7 @@ import argparse as ap
 import numpy as np
 from scipy.fftpack import fft
 from scipy.fftpack import fftfreq
+from scipy import interpolate as spInt
 import matplotlib.pyplot as plt
 import matplotlib.animation as manimation
 from matplotlib import colors as colors
@@ -59,6 +60,37 @@ def plotSpectrograph(args):
 
     fig.savefig(args.output, dpi=args.dpi)
 
+def plotHWHM(args):
+    data = combineData(args)
+    freq = data[0,:]
+    spec_data = data[1:, :]
+    n = spec_data.shape[-1]
+    frequencies = np.arange(0, freq[-1] + (freq[-1]/n), freq[-1]/n)
+    half_widths = np.empty(n)
+    for i in range(n):
+        raw_ampl = spec_data[i, :]
+        adjusted_ampl = raw_ampl - (np.max(raw_ampl) / 2)
+        spline = spInt.InterpolatedUnivariateSpline(freq, adjusted_ampl)
+        roots = spline.roots()
+        FW = roots[-1] - roots[-2]
+        half_widths[i] = FW / 2
+
+    fig, ax = plt.subplots()
+    ax.plot(specData, linestyle='-', marker='s')
+
+    ax.grid(which='both', zorder=1)
+    fig.set_tight_layout(True)
+    
+    ax.set_xlabel(r'$\omega$')
+    ax.set_ylabel(r'$|a(\omega)|$')
+    
+    if args.write_csv:
+        output = np.array([frequency, specData])
+        np.savetxt(args.write_csv_dest, output, delimiter=",")
+
+    fig.savefig(args.output)
+        
+
 def plotFreqPlot(args):
     data = combineData(args)
     frequency = data[0,:]
@@ -97,7 +129,7 @@ parser.add_argument('--position', '-p', type=int)
 parser.add_argument('--abs', '-A', action='store_true')
 parser.add_argument('--offset', '-o', action='store_true')
 parser.add_argument('--write_csv', '-w', action='store_true')
-parser.add_argument('--write_csv_dest', '-d', default='spectralData.csv')
+parser.add_argument('--write_csv_dest', '-d', default='output.csv')
 
 parser.add_argument('--vlines', '-v', type=int, nargs='+', default=[])
 parser.add_argument('--dpi', type=int, default=100)
