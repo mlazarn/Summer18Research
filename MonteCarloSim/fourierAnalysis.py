@@ -36,7 +36,7 @@ def combineData(args):
     else:
         spec_data = np.mean(np.real(stacked), axis=2)
     freq = fftfreq(arr.shape[-1] + args.pad)[args.idx_0:args.idx_1]
-    output np.vstack((freq, spec_data))
+    output = np.vstack((freq, spec_data))
     return ouput
 
 def plotSpectrograph(args):
