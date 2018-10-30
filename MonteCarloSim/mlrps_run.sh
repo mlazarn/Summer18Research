@@ -111,8 +111,8 @@ pad=('0' '2500' '5000')
 output="specData.png"
 normOut="normSpecData.png"
 
-for n in {0..0}; do
-    targ="${base}"#${n}" #${pad[$n]}"
+#for n in {0..0}; do
+    targ="${base}"
     for m in {0..14}; do
         target="$targ/${dir_suffix}${m}"
         mkdir -p -v $target
@@ -126,7 +126,7 @@ for n in {0..0}; do
     python3 fourierAnalysis.py $targ temporalData.csv $normOut $dir_suffix 100 15 s ${pad[2]} -v $vlines --dpi $dpi -a 10.0 --abs -o -w -d "hwhm.csv"
     #python3 fourierAnalysis.py $targ temporalData.csv freqAnalysisPadded.png $dir_suffix 100 50 f ${pad[2]} -p 0 --dpi $dpi --abs -o
     python3 videoConverter.py ${targ}/${dir_suffix}0 $prefix $start_t $interval $steps -v $vlines -o animation.mp4 -a $author -f $fps --dpi $dpi
-done
+#done
 
 #for l in {0..3}; do
     #for n in {0..3}; do
