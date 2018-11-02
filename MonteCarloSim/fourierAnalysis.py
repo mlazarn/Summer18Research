@@ -54,7 +54,7 @@ def plotSpectrograph(args):
     if len(args.vlines) > 0:
         ax.vlines(args.vlines, 0, (args.idx_1 - args.idx_0) - 1, zorder=3)
 
-    #ax.set_ylim(0, args.idx_0 - 2)
+    ax.set_ylim(0, args.idx_0 - 2)
     cb = fig.colorbar(con, ax=ax)
     fig.set_tight_layout(True)
 
@@ -70,8 +70,8 @@ def plotHWHM(args):
     data = combineData(args)
     freq = data[0,:]
     spec_data = data[1:, :]
-    n = spec_data.shape[-1]
-    frequencies = np.arange(0, freq[-1] + (freq[-1]/n), freq[-1]/n)
+    n = spec_data.shape[0]
+    frequencies = np.arange(0, freq[-1] + (freq[-1]/freq.shape[-1]), freq[-1]/freq.shape[-1])
     half_widths = np.empty(n)
     for i in range(n):
         raw_ampl = spec_data[i, :]
@@ -81,7 +81,7 @@ def plotHWHM(args):
         FW = roots[-1] - roots[-2]
         half_widths[i] = FW / 2
 
-    x = np.arange(spec_data.shape[0])
+    x = np.arange(n)
     fig, ax = plt.subplots()
     ax.plot(x, half_widths, linestyle='-', marker='s')
 
