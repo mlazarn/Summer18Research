@@ -1,3 +1,61 @@
+base="data/specTest26"
+dir_suffix="run_"
+prefix="latt_"
+density_pfx="density_"
+flux_pfx="flux_"
+lims="-0.05 0.05"
+vlines="64 128 192"
+xSize="256"
+ySize="512"
+ylims="0 $ySize"
+binWidth="4"
+binLim="128"
+binCountLim="0 125"
+binNetCountLim="0 375"
+binDiffCountLim="0 250"
+binNetDiffCountLim="0 750"
+intDist="64"
+mobility="5.0"
+RPSMobility="5.0"
+#rps_mobility="2.5"
+mobilities=('2.5' '5.0')
+#RPSMobilities=('0.1' '2.5' '5.0' '10.0') 
+steps="5000"
+interval="1"
+#interval="10"
+start_t="0"
+subdiv="16"
+dpi="200"
+fps="30"
+author="micarn"
+species=('a' 'b' 'c')
+units="p r"
+pad=('0' '2500' '5000')
+
+output="specData.png"
+normOut="normSpecData.png"
+hwhmOut="HalfWidthHalfMax.png"
+
+for n in {0..0}; do
+    targ="${base}"
+    #for m in {0..4}; do
+        #target="$targ/${dir_suffix}${m}"
+        #mkdir -p -v $target
+        #                  targ    o t xSize  ySize  mob       rps_mob      intDist  bin_w     steps  interval         start_t  run
+        #                  1       2 3 4      5      6         7            8        9         10     11               12       13
+        #./LatticeMLRPSTest $target 0 1 $xSize $ySize $mobility $RPSMobility $intDist $binWidth $steps $interval $start_t $m
+    #done
+    #python3 fourierAnalysis.py $targ temporalData.csv $output $dir_suffix 100 15 s ${pad[$n]} -v $vlines --dpi $dpi -a 10.0
+    #python3 fourierAnalysis.py $targ temporalData.csv $normOut $dir_suffix 100 15 s ${pad[$n]} -v $vlines --dpi $dpi -a 10.0 --abs
+    #python3 fourierAnalysis.py $targ temporalData.csv $normOut $dir_suffix 100 5 s ${pad[2]} -v $vlines --dpi $dpi -a 10.0 --abs -o -w -d "spectrograph.csv"
+    #python3 fourierAnalysis.py $targ temporalData.csv $normOut $dir_suffix 100 5 s ${pad[2]} -v $vlines --dpi $dpi -a 10.0 --abs -o -w -d "hwhm.csv"
+    python3 fourierAnalysis.py $targ temporalData.csv $normOut $dir_suffix 100 5 s ${pad[2]} --dpi $dpi -a 10.0 --abs -o -w -d "spectrograph.csv"
+    python3 fourierAnalysis.py $targ temporalData.csv $normOut $dir_suffix 100 5 h ${pad[2]} --dpi $dpi -a 10.0 --abs -o -w -d "hwhm.csv"
+    #python3 fourierAnalysis.py $targ temporalData.csv freqAnalysisPadded.png $dir_suffix 100 50 f ${pad[2]} -p 0 --dpi $dpi --abs -o
+    #python3 videoConverter.py ${targ}/${dir_suffix}0 $prefix $start_t $interval $steps -v $vlines -o animation.mp4 -a $author -f $fps --dpi $dpi
+    #python3 videoConverter.py ${targ}/${dir_suffix}0 $prefix $start_t $interval $steps -o animation.mp4 -a $author -f $fps --dpi $dpi
+done
+
 #base_dir="data/multi_test/type/"
 #base="/density_runx"
 #
@@ -73,61 +131,6 @@
 
 #density net
 #python3 densityCalculator.py a $target density_net.mp4 p 0 $ySize -c -1 -p $density_pfx -s $start_t -i $interval -S $steps -a $author
-
-base="data/specTest26"
-dir_suffix="run_"
-prefix="latt_"
-density_pfx="density_"
-flux_pfx="flux_"
-lims="-0.05 0.05"
-vlines="64 128 192"
-xSize="256"
-ySize="256"
-ylims="0 $ySize"
-binWidth="4"
-binLim="128"
-binCountLim="0 125"
-binNetCountLim="0 375"
-binDiffCountLim="0 250"
-binNetDiffCountLim="0 750"
-intDist="64"
-mobility="5.0"
-RPSMobility="5.0"
-#rps_mobility="2.5"
-mobilities=('2.5' '5.0')
-#RPSMobilities=('0.1' '2.5' '5.0' '10.0') 
-steps="5000"
-interval="1"
-#interval="10"
-start_t="0"
-subdiv="16"
-dpi="200"
-fps="30"
-author="micarn"
-species=('a' 'b' 'c')
-units="p r"
-pad=('0' '2500' '5000')
-
-output="specData.png"
-normOut="normSpecData.png"
-
-#for n in {0..0}; do
-    targ="${base}"
-    for m in {0..14}; do
-        target="$targ/${dir_suffix}${m}"
-        mkdir -p -v $target
-        #                  targ    o t xSize  ySize  mob       rps_mob      intDist  bin_w     steps  interval         start_t  run
-        #                  1       2 3 4      5      6         7            8        9         10     11               12       13
-        ./LatticeMLRPSTest $target 0 1 $xSize $ySize $mobility $RPSMobility $intDist $binWidth $steps $interval $start_t $m
-    done
-    #python3 fourierAnalysis.py $targ temporalData.csv $output $dir_suffix 100 15 s ${pad[$n]} -v $vlines --dpi $dpi -a 10.0
-    #python3 fourierAnalysis.py $targ temporalData.csv $normOut $dir_suffix 100 15 s ${pad[$n]} -v $vlines --dpi $dpi -a 10.0 --abs
-    python3 fourierAnalysis.py $targ temporalData.csv $normOut $dir_suffix 100 15 s ${pad[2]} -v $vlines --dpi $dpi -a 10.0 --abs -o -w -d "spectrograph.csv"
-    python3 fourierAnalysis.py $targ temporalData.csv $normOut $dir_suffix 100 15 s ${pad[2]} -v $vlines --dpi $dpi -a 10.0 --abs -o -w -d "hwhm.csv"
-    #python3 fourierAnalysis.py $targ temporalData.csv freqAnalysisPadded.png $dir_suffix 100 50 f ${pad[2]} -p 0 --dpi $dpi --abs -o
-    python3 videoConverter.py ${targ}/${dir_suffix}0 $prefix $start_t $interval $steps -v $vlines -o animation.mp4 -a $author -f $fps --dpi $dpi
-#done
-
 #for l in {0..3}; do
     #for n in {0..3}; do
         #targ="${base/x/$l}${n}"
