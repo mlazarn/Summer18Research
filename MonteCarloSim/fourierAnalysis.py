@@ -55,7 +55,7 @@ def plotSpectrograph(args):
     if len(args.vlines) > 0:
         ax.vlines(args.vlines, 0, (args.idx_1 - args.idx_0) - 1, zorder=3)
 
-    ax.set_ylim(0, args.idx_12)
+    ax.set_ylim(0, args.idx_1)
     cb = fig.colorbar(con, ax=ax)
     fig.set_tight_layout(True)
 
