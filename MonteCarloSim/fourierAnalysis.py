@@ -47,11 +47,12 @@ def plotSpectrograph(args):
     num_cols = spec_data.shape[-1]
     print(spec_data.shape)
 
+    print(args.aspect)
     fig, ax = plt.subplots()
-    con = ax.imshow(spec_data, cmap='inferno', aspect=args.aspect)
+    con = ax.imshow(spec_data, cmap='inferno')
     #con = ax.imshow(spec_data[::-1,:], cmap='inferno')
     #, extent=[ -0.5, num_cols -0.5, 0, freq[-1] ])
-    #ax.set_aspect(args.aspect)
+    ax.set_aspect(args.aspect)
     if len(args.vlines) > 0:
         ax.vlines(args.vlines, 0, (args.idx_1 - args.idx_0) - 1, zorder=3)
 
