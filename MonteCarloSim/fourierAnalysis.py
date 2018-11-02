@@ -55,7 +55,7 @@ def plotSpectrograph(args):
     ax.set_aspect(spec_data.shape[1] / (1.0*spec_data.shape[0]))
     if len(args.vlines) > 0:
         for x_line in args.vlines:
-            ax.axvline(x=x_line)
+            ax.axvline(x=x_line, color='k')
         #ax.vlines(args.vlines, 0, (args.idx_1 - args.idx_0) - 1, zorder=3)
 
     ax.set_ylim(0, args.idx_1 - 1)
@@ -92,7 +92,7 @@ def plotHWHM(args):
     ax.grid(which='both', zorder=1)
     if len(args.vlines) > 0:
         for x_line in args.vlines:
-            ax.axvline(x=x_line)
+            ax.axvline(x=x_line, color='k')
     fig.set_tight_layout(True)
     
     ax.set_xlabel(r'$\omega$')
