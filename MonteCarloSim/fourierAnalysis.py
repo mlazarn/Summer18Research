@@ -54,7 +54,7 @@ def plotSpectrograph(args):
     #, extent=[ -0.5, num_cols -0.5, 0, freq[-1] ])
     ax.set_aspect(spec_data.shape[1] / (1.0*spec_data.shape[0]))
     if len(args.vlines) > 0:
-        ax.axvline(vlines)
+        ax.axvline(args.vlines)
         #ax.vlines(args.vlines, 0, (args.idx_1 - args.idx_0) - 1, zorder=3)
 
     ax.set_ylim(0, args.idx_1 - 1)
@@ -90,7 +90,7 @@ def plotHWHM(args):
 
     ax.grid(which='both', zorder=1)
     if len(args.vlines) > 0:
-        ax.axvline(vlines)
+        ax.axvline(args.vlines)
     fig.set_tight_layout(True)
     
     ax.set_xlabel(r'$\omega$')
@@ -116,7 +116,7 @@ def plotFreqPlot(args):
 
     ax.grid(which='both', zorder=1)
     if len(args.vlines) > 0:
-        ax.axvline(vlines)
+        ax.axvline(args.vlines)
         #ax.vlines(args.vlines, 0, np.max(specData), zorder=3)
     fig.set_tight_layout(True)
     
