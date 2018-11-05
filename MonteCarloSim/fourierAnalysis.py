@@ -80,9 +80,16 @@ def plotHWHM(args):
     for i in range(n):
         raw_ampl = spec_data[i, :]
         adjusted_ampl = raw_ampl - (np.max(raw_ampl) / 2)
+        argMax = np.argmax(raw_ampl)
         spline = spInt.InterpolatedUnivariateSpline(freq, adjusted_ampl)
         roots = spline.roots()
-        FW = roots[-1] - roots[-2]
+        for j in range(roots.length - 1):
+            HWL = roots[-2]
+            HWR = roots[-1]
+            if roots[j] < freq[argMax] and roots[j + 1] > freq[argMax]:
+                HWL = roots[j]
+                HWR = roots[j+1]
+        FW = HWR -HWL 
         half_widths[i] = FW / 2
 
     x = np.arange(n)
