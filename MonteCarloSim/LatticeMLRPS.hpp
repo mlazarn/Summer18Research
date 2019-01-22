@@ -58,6 +58,10 @@ class LatticeMLRPS : public Lattice
         LatticeMLRPS(string path, int orr, int lattSize, double mobility, double mobilityRPS, int intDist, int binSize);
         LatticeMLRPS(string path, int orr, int patchTop, int xSize, int ySize, double mobility, double mobilityRPS, int intDist, int binSize);
         //~LatticeMLRPS();
+        
+        // Calculates the vertical autocorrelator (C_{spec spec} for some 
+        // distance r and some column y.
+        double autoCorrelator(int spec, int y, int r);
 
         void RPSReaction(int x, int y);
         virtual void monteCarloRun(int steps, int interval, int start);

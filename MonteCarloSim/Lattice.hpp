@@ -33,7 +33,7 @@ class Lattice
         double **flux;
         double **density0;
         double **density1;
-
+        
         // Declare arrays and necessary values for binned statistics.
         int binWidth;
         int binnedArraySize;
