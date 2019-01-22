@@ -814,7 +814,9 @@ void LatticeMLRPS::specAnalysisRun(int steps, int interval, int startRecord, int
             }
         }
 
+        cout << "?" << endl;
         data2.close();
+        cout << "??" << endl;
     }
 
 
