@@ -760,33 +760,33 @@ void LatticeMLRPS::specAnalysisRun(int steps, int interval, int startRecord, int
     }
 
     */
-    cout << "writing temporalData" << endl;
+    //cout << "writing temporalData" << endl;
 
     stringstream ss;
     ss << filePath << "temporalData.csv";
     string fileName;
     fileName = ss.str();
 
-    fstream data(fileName.c_str(), ofstream::out | ofstream::app | ofstream::in);
+    //fstream data(fileName.c_str(), ofstream::out | ofstream::app | ofstream::in);
 
-    for (int y = 0; y < sizeY; y++)
-    {
-        for (int t = 0; t < timesteps; t++)
-        {
+    //for (int y = 0; y < sizeY; y++)
+    //{
+        //for (int t = 0; t < timesteps; t++)
+        //{
             //data << temporalData[t];
-            data << temporalData[y][t] - 0.26;
-            if (t < timesteps - 1)
-            {
-                data << ",";
-            }
-        }
-        if (y < sizeY - 1)
-        {
-            data << endl;
-        }
-    }
+            //data << temporalData[y][t] - 0.26;
+            //if (t < timesteps - 1)
+            //{
+                //data << ",";
+            //}
+        //}
+        //if (y < sizeY - 1)
+        //{
+            //data << endl;
+        //}
+    //}
 
-    data.close();
+    //data.close();
 
     cout << "writing auto-correlation data" << endl;
 
