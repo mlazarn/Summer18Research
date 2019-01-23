@@ -1,0 +1,77 @@
+\documentclass{beamer}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{verbatim}
+
+\usetheme{Copenhagen}
+\usefonttheme[onlymath]{serif}
+\setbeamertemplate{caption}[numbered]
+\setbeamertemplate{enumerate items}[default]
+
+\title{\large Boundary Effects in Stochastic Cyclic Competition Models on a Two-Dimensional Lattice}
+\author{M. Lazarus Arnau, Shannon Serrao, Uwe C. T\"auber}
+\institute
+{
+    Department of Physics,\\
+    Virginia Polytechnic Institute and State University
+}
+\date{March 7, 2019}
+
+\begin{document}
+    \frame{\titlepage}
+
+    \begin{frame}
+        \frametitle{Introduction}
+        Motivations in Biology and Chemistry
+        \begin{itemize}
+            \item Reproductive strategies in side-blotched lizards\\
+            \item Experiments involving \textit{E. coli}\\
+            \item Belousov-Zhobotinsky Reaction
+        \end{itemize}
+    \end{frame}
+
+    \begin{frame}[t]{Models}
+        \begin{itemize}
+            \item Rock-Paper-Scissors (RPS) Model:
+                \begin{align*}
+                    \text{(Replacement) } & X_nX_{n+1} \xrightarrow{\zeta} X_nX_n\\
+                    \text{(Diffusion) } & XY \xrightarrow{\epsilon_r} YX
+                \end{align*}
+            \item May-Leonard (ML) Model:
+                \begin{align*}
+                    \text{(Predation) } & X_nX_{n+1} \xrightarrow{\sigma} X_n\varnothing\\
+                    \text{(Reproduction) } & X\varnothing \xrightarrow{\mu} XX\\
+                    \text{(Diffusion) } & XY \xrightarrow{\epsilon_m} YX
+                \end{align*}
+        \end{itemize} 
+    \end{frame}
+
+    \begin{frame}[t]{Models (cont.) }
+        Insert images of typical behavior.
+    \end{frame}
+
+    \begin{frame}[t]{Simulations}
+        \begin{itemize}
+            \item Toroidal topology\\
+            \item $ 256 \times 512 $ lattice\\
+            \item Primarily ML model\\
+            \item RPS implemented in a narrow (64 cell) strip.\\
+        \end{itemize}
+        Insert renders of the plane-waves.
+    \end{frame}
+
+    \begin{frame}[t]{Density Effects}
+        Insert vertical density graph\\
+        Insert vertical reaction rate graphs
+    \end{frame}
+
+    \begin{frame}[t]{Permeation length}
+        Insert renders of spectrographs
+    \end{frame}
+
+    \begin{frame}[t]{Vertical Correlation Lengths}
+        Insert vertical correlation function graphs
+    \end{frame}
+\end{document}
+

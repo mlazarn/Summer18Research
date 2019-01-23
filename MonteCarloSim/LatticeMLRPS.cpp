@@ -606,7 +606,7 @@ void LatticeMLRPS::specAnalysisRun(int steps, int interval, int startRecord, int
         autoCorr[i] = new double*[sizeY];
         for (int j = 0; j < sizeY; j++)
         {
-            autoCorr[i][j] = new double[sizeX-1];
+            autoCorr[i][j] = new double[sizeX];
         }
     }
 
@@ -814,9 +814,9 @@ void LatticeMLRPS::specAnalysisRun(int steps, int interval, int startRecord, int
             }
         }
 
-        cout << "?" << endl;
+        //cout << "?" << endl;
         data2.close();
-        cout << "??" << endl;
+        //cout << "??" << endl;
     }
 
 
@@ -848,11 +848,28 @@ void LatticeMLRPS::specAnalysisRun(int steps, int interval, int startRecord, int
 
     */
 
-    //for (int y = 0; y < sizeY; y++)
-    //{
-        //delete[] temporalData[y];
-    //}
-
+    //cout << "?" << endl;
+    for (int y = 0; y < sizeY; y++)
+    {
+        delete[] temporalData[y];
+    }
     delete[] temporalData;
+
+    //cout << "??" << endl;
+    for (int i = 0; i < timesteps; i++)
+    {
+        //cout << "i=" << i;
+        for (int j = 0; j < sizeY; j++)
+        {
+            delete[] autoCorr[i][j];
+        }
+        //cout << "!" << endl;
+        delete[] autoCorr[i];
+    }
+    //cout << "???" << endl;
+    delete[] autoCorr;
+    //cout << "????" << endl;
+    delete[] times;
+
     cout << endl << "Simulation Complete" << endl;
 }
