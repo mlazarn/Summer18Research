@@ -188,7 +188,7 @@ void LatticeMLRPS::metadata(int start, int interval, int stop, int startDrive, i
     data.close();
 }
 
-double LatticeMLRPS::autoCorrelator(int spec, int y, int r)
+double LatticeMLRPS::autoCorrelator(int spec, int y, int r, int mode)
 {
     double sum = 0.0;
     for (int i = 0; i < sizeX; ++i) 
@@ -198,6 +198,17 @@ double LatticeMLRPS::autoCorrelator(int spec, int y, int r)
             sum += 1.0;
         }
     }
+    double output;
+
+    if ( mode == 1 )
+    {
+        output = (sum / sizeX) - (density1[spec][y]*density1[spec][y]);
+    }
+    else 
+    {
+        output = (sum / sizeX);
+    }
+
     return (sum / sizeX) - (density1[spec][y]*density1[spec][y]);
 }
 

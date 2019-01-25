@@ -1,5 +1,5 @@
 # Fdb version 3
-["pdflatex"] 1548274734 "MarchMeetingPres.tex" "MarchMeetingPres.pdf" "MarchMeetingPres" 1548274735
+["pdflatex"] 1548275195 "MarchMeetingPres.tex" "MarchMeetingPres.pdf" "MarchMeetingPres" 1548275197
   "/usr/share/texmf-dist/fonts/map/fontname/texfonts.map" 1543696176 3332 103109f5612ad95229751940c61aada0 ""
   "/usr/share/texmf-dist/fonts/tfm/public/amsfonts/cmextra/cmex7.tfm" 1543696176 1004 54797486969f23fa377b128694d548df ""
   "/usr/share/texmf-dist/fonts/tfm/public/amsfonts/cmextra/cmex8.tfm" 1543696176 988 bdf658c3bfc2d96d3c8b02cfc1c94c20 ""
@@ -181,10 +181,10 @@
   "/usr/share/texmf-dist/web2c/texmf.cnf" 1543696176 33301 a3134070eacafb10b1f371612ce2650d ""
   "/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map" 1547684132 2969938 5f36858c1d6a6969aec067136c2512cb ""
   "/var/lib/texmf/web2c/pdftex/pdflatex.fmt" 1547684114 7910428 5f5c8b3168b322ed745e5e149b2a0be4 ""
-  "MarchMeetingPres.aux" 1548274735 1715 940846ddb8236babe409b31a191ab45c ""
-  "MarchMeetingPres.nav" 1548274735 747 0e276c0940a342ad38699132b0e9aa8d ""
-  "MarchMeetingPres.out" 1548274735 0 d41d8cd98f00b204e9800998ecf8427e ""
-  "MarchMeetingPres.tex" 1548274730 2196 5d3b08798c616bdd13473a8f9d7f704e ""
+  "MarchMeetingPres.aux" 1548275197 1963 ab8f7fb2983adaff98593378ec4f265d ""
+  "MarchMeetingPres.nav" 1548275197 923 02772eacdfe77d67b79e45a640fd18ab ""
+  "MarchMeetingPres.out" 1548275196 0 d41d8cd98f00b204e9800998ecf8427e ""
+  "MarchMeetingPres.tex" 1548275192 2413 597d20f7ac159a047aa5f4da2c307505 ""
   (generated)
   "MarchMeetingPres.pdf"
   "MarchMeetingPres.aux"

@@ -61,7 +61,8 @@ class LatticeMLRPS : public Lattice
         
         // Calculates the vertical autocorrelator (C_{spec spec} for some 
         // distance r and some column y.
-        double autoCorrelator(int spec, int y, int r);
+        // @param int mode  1 if subtract density square, 0 otherwise
+        double autoCorrelator(int spec, int y, int r, int mode);
 
         void RPSReaction(int x, int y);
         virtual void monteCarloRun(int steps, int interval, int start);
