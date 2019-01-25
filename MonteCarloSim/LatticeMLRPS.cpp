@@ -209,7 +209,7 @@ double LatticeMLRPS::autoCorrelator(int spec, int y, int r, int mode)
         output = (sum / sizeX);
     }
 
-    return (sum / sizeX) - (density1[spec][y]*density1[spec][y]);
+    return output;
 }
 
 // Implements the RPS model reaction.
