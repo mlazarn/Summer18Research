@@ -1,4 +1,4 @@
-base="data/autoCorrTest9"
+base="data/autoCorrTest10"
 dir_suffix="size_"
 prefix="latt_"
 density_pfx="density_"
@@ -45,7 +45,7 @@ for n in {0..0}; do
         mkdir -p -v $target
         #                  targ    o t xSize  ySize  mob       rps_mob      intDist  bin_w     steps  interval  start_t  run
         #                  1       2 3 4      5      6         7            8        9         10     11        12       13
-        ./LatticeMLRPSTest $target 0 1 ${xSizes[$m]} $ySize $mobility $RPSMobility $intDist $binWidth $steps $interval $start_t $m
+        ./LatticeMLRPSTest $target 0 1 ${xSizes[$m]} $ySize $mobility $RPSMobility $intDist $binWidth $steps $interval $start_t 0
     done
     #python3 fourierAnalysis.py $targ temporalData.csv $output $dir_suffix 100 15 s ${pad[$n]} -v $vlines --dpi $dpi -a 10.0
     #python3 fourierAnalysis.py $targ temporalData.csv $normOut $dir_suffix 100 15 s ${pad[$n]} -v $vlines --dpi $dpi -a 10.0 --abs
