@@ -45,7 +45,8 @@ for n in {0..0}; do
         mkdir -p -v $target
         #                  targ    o t xSize  ySize  mob       rps_mob      intDist  bin_w     steps  interval  start_t  run
         #                  1       2 3 4      5      6         7            8        9         10     11        12       13
-        ./LatticeMLRPSTest $target 0 1 ${xSizes[$m]} $ySize $mobility $RPSMobility $intDist $binWidth $steps $interval $start_t 0
+        #./LatticeMLRPSTest $target 0 1 ${xSizes[$m]} $ySize $mobility $RPSMobility $intDist $binWidth $steps $interval $start_t 0
+        python3 videoConverter.py ${target} $prefix $start_t $interval $steps -v $vlines -o animation.mp4 -a $author -f $fps --dpi $dpi
     done
     #python3 fourierAnalysis.py $targ temporalData.csv $output $dir_suffix 100 15 s ${pad[$n]} -v $vlines --dpi $dpi -a 10.0
     #python3 fourierAnalysis.py $targ temporalData.csv $normOut $dir_suffix 100 15 s ${pad[$n]} -v $vlines --dpi $dpi -a 10.0 --abs
@@ -54,12 +55,12 @@ for n in {0..0}; do
     #python3 fourierAnalysis.py $targ temporalData.csv $normOut $dir_suffix 100 5 s ${pad[2]} -v $vlines --dpi $dpi -a 10.0 --abs -o -w -d "spectrograph.csv"
     #python3 fourierAnalysis.py $targ temporalData.csv $hwhmOut $dir_suffix 100 5 h ${pad[2]} -v $vlines --dpi $dpi -a 10.0 --abs -o -w -d "hwhm.csv"
     #python3 fourierAnalysis.py $targ temporalData.csv freqAnalysisPadded.png $dir_suffix 100 50 f ${pad[2]} -p 0 --dpi $dpi --abs -o
-    python3 videoConverter.py ${targ} $prefix $start_t $interval $steps -v $vlines -o animation.mp4 -a $author -f $fps --dpi $dpi
+    #python3 videoConverter.py ${targ} $prefix $start_t $interval $steps -v $vlines -o animation.mp4 -a $author -f $fps --dpi $dpi
     #python3 videoConverter.py ${targ}/${dir_suffix}0 $prefix $start_t $interval $steps -o animation.mp4 -a $author -f $fps --dpi $dpi
 done
 
-cd data
-tar -zcvf autoCorrTest10.tar.gz autoCorrTest9/*/*
+#cd data
+#tar -zcvf $base.tar.gz $base/*/*
 
 #base_dir="data/multi_test/type/"
 #base="/density_runx"

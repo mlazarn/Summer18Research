@@ -651,10 +651,13 @@ void LatticeMLRPS::specAnalysisRun(int steps, int interval, int startRecord, int
                     {
                         for (int r = 0; r < sizeX ; r++)
                         {
-                            ac = autoCorrelator(0, y, r, 1);
+                            ac = autoCorrelator(0, y, r, 0) + 
+                                 autoCorrelator(1, y, r, 0) +
+                                 autoCorrelator(2, y, r, 0);
+                                
                                  //autoCorrelator(1, y, r) + 
                                  //autoCorrelator(2, y, r);
-                            autoCorr[idx][y][r] = ac; // / 3;
+                            autoCorr[idx][y][r] = ac / 3; // / 3;
                         }
                     }
                 }
