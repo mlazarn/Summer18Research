@@ -59,7 +59,7 @@ for n in {0..0}; do
 done
 
 cd data
-tar -zcvf autoCorrTest9.tar.gz autoCorrTest9/*/*
+tar -zcvf autoCorrTest10.tar.gz autoCorrTest9/*/*
 
 #base_dir="data/multi_test/type/"
 #base="/density_runx"
