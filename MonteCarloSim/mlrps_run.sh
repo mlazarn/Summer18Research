@@ -1,4 +1,4 @@
-base="data/autoCorrTest11"
+base="data/autoCorrTest12"
 dir_suffix="size_"
 prefix="latt_"
 density_pfx="density_"
@@ -59,7 +59,6 @@ for n in {0..0}; do
     #python3 videoConverter.py ${targ}/${dir_suffix}0 $prefix $start_t $interval $steps -o animation.mp4 -a $author -f $fps --dpi $dpi
 done
 
-cd data
 tar -zcvf $base.tar.gz $base/*/*
 
 #base_dir="data/multi_test/type/"
