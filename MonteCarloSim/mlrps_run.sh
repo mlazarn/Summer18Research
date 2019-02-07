@@ -1,4 +1,4 @@
-base="data/autoCorrTest12"
+base="data/autoCorrTest13"
 dir_suffix="size_"
 prefix="latt_"
 density_pfx="density_"
@@ -7,7 +7,7 @@ lims="-0.05 0.05"
 vlines="64 128 192"
 xSize="256"
 xSizes=('256','384', '512', '640', '768')
-ySize="768"
+ySize="512"
 ylims="0 $ySize"
 binWidth="4"
 binLim="128"
@@ -16,12 +16,12 @@ binNetCountLim="0 375"
 binDiffCountLim="0 250"
 binNetDiffCountLim="0 750"
 intDist="64"
-mobility="5.0"
+mobility="2.5"
 RPSMobility="5.0"
 #rps_mobility="2.5"
 mobilities=('2.5' '5.0')
 #RPSMobilities=('0.1' '2.5' '5.0' '10.0') 
-steps="30000"
+steps="20000"
 interval="100"
 #interval="10"
 start_t="10000"
@@ -39,7 +39,7 @@ hwhmOut="HalfWidthHalfMax.png"
 
 for n in {0..0}; do
     targ="${base}"
-    for m in {0..3}; do
+    for m in {0..4}; do
         target="$targ"
         target="$targ/${dir_suffix}${m}"
         mkdir -p -v $target
