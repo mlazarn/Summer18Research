@@ -1,12 +1,12 @@
-base="data/autoCorrTest13"
-dir_suffix="size_"
+base="data/reactionRateData"
+dir_suffix="run_"
 prefix="latt_"
 density_pfx="density_"
 flux_pfx="flux_"
 lims="-0.05 0.05"
 vlines="64 128 192"
-xSize="256"
-xSizes=('256','384', '512', '640', '768')
+xSize="512"
+#xSizes=('256','384', '512', '640', '768')
 ySize="512"
 ylims="0 $ySize"
 binWidth="4"
@@ -16,7 +16,7 @@ binNetCountLim="0 375"
 binDiffCountLim="0 250"
 binNetDiffCountLim="0 750"
 intDist="64"
-mobility="2.5"
+mobility="5.0"
 RPSMobility="5.0"
 #rps_mobility="2.5"
 mobilities=('2.5' '5.0')
@@ -40,7 +40,6 @@ hwhmOut="HalfWidthHalfMax.png"
 for n in {0..0}; do
     targ="${base}"
     for m in {0..4}; do
-        target="$targ"
         target="$targ/${dir_suffix}${m}"
         mkdir -p -v $target
         #                  targ    o t xSize  ySize  mob       rps_mob      intDist  bin_w     steps  interval  start_t  run

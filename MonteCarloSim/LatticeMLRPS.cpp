@@ -636,7 +636,21 @@ void LatticeMLRPS::specAnalysisRun(int steps, int interval, int startRecord, int
             {
                 if (run == 0)
                 {
+                    // Writes the current lattice state to a csv
                     dataOutput(0);
+
+                    // Writes the current density
+                    dataOutput(1);
+
+                    // Writes the currrent binned predation rate
+                    dataOutput(5);
+
+                    // Writes the currrent binned breeding rate
+                    dataOutput(6);
+
+                    // Writes the currrent binned diffusion rate
+                    dataOutput(7);
+
                 }
                 if (idx < timesteps)
                 {
