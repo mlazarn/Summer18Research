@@ -1,4 +1,5 @@
 base="data/reactionRateData"
+rate_prefix="rate_"
 dir_suffix="run_"
 prefix="latt_"
 density_pfx="density_"
@@ -20,11 +21,11 @@ mobility="5.0"
 RPSMobility="5.0"
 #rps_mobility="2.5"
 mobilities=('2.5' '5.0')
-#RPSMobilities=('0.1' '2.5' '5.0' '10.0') 
-steps="20000"
-interval="100"
+RPSMobilities=('0.1' '2.5' '5.0' '10.0') 
+steps="6000"
+interval="10"
 #interval="10"
-start_t="10000"
+start_t="5000"
 subdiv="16"
 dpi="200"
 fps="30"
@@ -37,16 +38,19 @@ output="specData.png"
 normOut="normSpecData.png"
 hwhmOut="HalfWidthHalfMax.png"
 
-for n in {0..0}; do
-    targ="${base}"
-    for m in {0..4}; do
-        target="$targ/${dir_suffix}${m}"
-        mkdir -p -v $target
-        #                  targ    o t xSize  ySize  mob       rps_mob      intDist  bin_w     steps  interval  start_t  run
-        #                  1       2 3 4      5      6         7            8        9         10     11        12       13
-        ./LatticeMLRPSTest $target 0 1 $xSize $ySize $mobility $RPSMobility $intDist $binWidth $steps $interval $start_t 0
-        python3 videoConverter.py ${target} $prefix $start_t $interval $steps -v $vlines -o animation.mp4 -a $author -f $fps --dpi $dpi
+for k in {0..3}; do
+    for n in {0..24}; do
+        targ="${base}"
+        for m in {0..4}; do
+            target="$targ/${rate_prefix}${k}/${dir_suffix}${m}"
+            mkdir -p -v $target
+            #                  targ    o t xSize  ySize  mob       rps_mob              intDist  bin_w     steps  interval  start_t  run
+            #                  1       2 3 4      5      6         7                    8        9         10     11        12       13
+            ./LatticeMLRPSTest $target 0 1 $xSize $ySize $mobility ${RPSMobilities[$k]} $intDist $binWidth $steps $interval $start_t 0
+            python3 videoConverter.py ${target} $prefix $start_t $interval $steps -v $vlines -o animation.mp4 -a $author -f $fps --dpi $dpi
     done
+done
+
     #python3 fourierAnalysis.py $targ temporalData.csv $output $dir_suffix 100 15 s ${pad[$n]} -v $vlines --dpi $dpi -a 10.0
     #python3 fourierAnalysis.py $targ temporalData.csv $normOut $dir_suffix 100 15 s ${pad[$n]} -v $vlines --dpi $dpi -a 10.0 --abs
     #python3 fourierAnalysis.py $targ temporalData.csv $normOut $dir_suffix 100 5 s ${pad[2]} -v $vlines --dpi $dpi -a 10.0 --abs -o -w -d "spectrograph.csv"
