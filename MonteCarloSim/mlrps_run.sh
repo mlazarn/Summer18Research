@@ -39,17 +39,15 @@ normOut="normSpecData.png"
 hwhmOut="HalfWidthHalfMax.png"
 
 for k in {0..3}; do
+    targ="${base}/${rate_prefix}"
     for n in {0..24}; do
-        targ="${base}"
-        for m in {0..4}; do
-            target="$targ/${rate_prefix}${k}/${dir_suffix}${m}"
-            mkdir -p -v $target
-            #                  targ    o t xSize  ySize  mob       rps_mob              intDist  bin_w     steps  interval  start_t  run
-            #                  1       2 3 4      5      6         7                    8        9         10     11        12       13
-            ./LatticeMLRPSTest $target 0 1 $xSize $ySize $mobility ${RPSMobilities[$k]} $intDist $binWidth $steps $interval $start_t 0
-            python3 videoConverter.py ${target} $prefix $start_t $interval $steps -v $vlines -o animation.mp4 -a $author -f $fps --dpi $dpi
+        target="$targ/${dir_suffix}${m}"
+        mkdir -p -v $target
+        #                  targ    o t xSize  ySize  mob       rps_mob              intDist  bin_w     steps  interval  start_t  run
+        #                  1       2 3 4      5      6         7                    8        9         10     11        12       13
+        ./LatticeMLRPSTest $target 0 1 $xSize $ySize $mobility ${RPSMobilities[$k]} $intDist $binWidth $steps $interval $start_t 0
+        python3 videoConverter.py ${target} $prefix $start_t $interval $steps -v $vlines -o animation.mp4 -a $author -f $fps --dpi $dpi
     done
-done
 
     #python3 fourierAnalysis.py $targ temporalData.csv $output $dir_suffix 100 15 s ${pad[$n]} -v $vlines --dpi $dpi -a 10.0
     #python3 fourierAnalysis.py $targ temporalData.csv $normOut $dir_suffix 100 15 s ${pad[$n]} -v $vlines --dpi $dpi -a 10.0 --abs
