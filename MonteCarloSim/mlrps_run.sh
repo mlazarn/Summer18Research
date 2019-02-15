@@ -39,9 +39,9 @@ normOut="normSpecData.png"
 hwhmOut="HalfWidthHalfMax.png"
 
 for k in {0..3}; do
-    targ="${base}/${rate_prefix}"
+    targ="${base}/${rate_prefix}${k}"
     for n in {0..24}; do
-        target="$targ/${dir_suffix}${m}"
+        target="$targ/${dir_suffix}${n}"
         mkdir -p -v $target
         #                  targ    o t xSize  ySize  mob       rps_mob              intDist  bin_w     steps  interval  start_t  run
         #                  1       2 3 4      5      6         7                    8        9         10     11        12       13
