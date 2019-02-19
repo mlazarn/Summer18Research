@@ -583,41 +583,41 @@ void Lattice::dataOutput(int outputType)
                     data << ",";
                 }
             }
+            data << endl;
         }
-        data << endl;
     }
     else if (outputType > 2)
     {
         for (int i = 0; i < 3; i++)
         {
-        for (int binY = 0; binY < binnedArraySize; binY++)
-        {
-            switch (outputType) 
+            for (int binY = 0; binY < binnedArraySize; binY++)
             {
-                    case 3:
-                        data << binnedDensity1[i][binY];
-                        break;
-                    case 4:
-                        data << binnedFlux[i][binY];
-                        break;
-                    case 5:
-                        data << binnedDeathCounts[i][binY];
-                        break;
-                    case 6:
-                        data << binnedBirthCounts[i][binY];
-                        break;
-                    case 7:
-                        data << binnedDiffusionCounts[i][binY];
-                        break;
-                }
-
-                if (binY < binnedArraySize - 1)
+                switch (outputType) 
                 {
-                    data << ",";
+                        case 3:
+                            data << binnedDensity1[i][binY];
+                            break;
+                        case 4:
+                            data << binnedFlux[i][binY];
+                            break;
+                        case 5:
+                            data << binnedDeathCounts[i][binY];
+                            break;
+                        case 6:
+                            data << binnedBirthCounts[i][binY];
+                            break;
+                        case 7:
+                            data << binnedDiffusionCounts[i][binY];
+                            break;
+                    }
+
+                    if (binY < binnedArraySize - 1)
+                    {
+                        data << ",";
+                    }
                 }
-            }
+            data << endl;
         }
-        data << endl;
     }
 
     data.close();
