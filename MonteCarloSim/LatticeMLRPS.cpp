@@ -638,7 +638,7 @@ void LatticeMLRPS::specAnalysisRun(int steps, int interval, int startRecord, int
                 {
                     // Writes the current lattice state to a csv
                     dataOutput(0);
-
+                }
                     // Writes the current density
                     dataOutput(1);
 
@@ -650,8 +650,6 @@ void LatticeMLRPS::specAnalysisRun(int steps, int interval, int startRecord, int
 
                     // Writes the currrent binned diffusion rate
                     dataOutput(7);
-
-                }
                 if (idx < timesteps)
                 {
                     times[idx] = monteCarloStep;
@@ -677,7 +675,7 @@ void LatticeMLRPS::specAnalysisRun(int steps, int interval, int startRecord, int
                 }
                 idx ++;
             }
-
+            clearBinnedReactionCount();
         }
         
         int x = xCoordDist(rng);

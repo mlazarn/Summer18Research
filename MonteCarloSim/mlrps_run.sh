@@ -1,4 +1,4 @@
-base="data/reactionRateData"
+base="data/reactionRateData2"
 rate_prefix="rate_"
 dir_suffix="run_"
 prefix="latt_"
@@ -22,10 +22,10 @@ RPSMobility="5.0"
 #rps_mobility="2.5"
 mobilities=('2.5' '5.0')
 RPSMobilities=('0.1' '2.5' '5.0' '10.0') 
-steps="6000"
+steps="3500"
 interval="10"
 #interval="10"
-start_t="5000"
+start_t="2500"
 subdiv="16"
 dpi="200"
 fps="30"
@@ -45,8 +45,31 @@ for k in {0..3}; do
         mkdir -p -v $target
         #                  targ    o t xSize  ySize  mob       rps_mob              intDist  bin_w     steps  interval  start_t  run
         #                  1       2 3 4      5      6         7                    8        9         10     11        12       13
-        ./LatticeMLRPSTest $target 0 1 $xSize $ySize $mobility ${RPSMobilities[$k]} $intDist $binWidth $steps $interval $start_t 0
-        python3 videoConverter.py ${target} $prefix $start_t $interval $steps -v $vlines -o animation.mp4 -a $author -f $fps --dpi $dpi
+        ./LatticeMLRPSTest $target 0 1 $xSize $ySize $mobility ${RPSMobilities[$k]} $intDist $binWidth $steps $interval $start_t $n
+        #python3 videoConverter.py ${target} $prefix $start_t $interval $steps -v $vlines -o animation.mp4 -a $author -f $fps --dpi $dpi
+
+        rm $target/density_net_newer.mp4
+
+        #density net
+        python3 densityCalculator.py a $target 'density_net_newer.mp4' p r 0 $ySize -c -1 -p $density_pfx -v $vlines -s $start_t -i $interval -S $steps -a $author -f $fps --dpi $dpi -g
+    
+        #binned death count A
+        #python3 densityCalculator.py a $target binned_death_a.mp4 p 0 $binLim -c 0 -p binned_death_counts_ -l $binCountLim -v $vlines -s $start_t -i $interval -S $steps -a $author -f $fps --binned -g
+    
+        #binned death count net
+        python3 densityCalculator.py a $target 'binned_death_net.mp4' p r 0 $binLim -c -1 -p binned_death_counts_ -l $binNetCountLim -v $vlines -s $start_t -i $interval -S $steps -a $author -f $fps --binned -g
+
+        #binned birth count A
+        #python3 densityCalculator.py a $target binned_birth_a.mp4 p 0 $binLim -c 0 -p binned_birth_counts_ -l $binCountLim -v $vlines -s $start_t -i $interval -S $steps -a $author -f $fps --binned -g
+
+        #binned birth count net
+        python3 densityCalculator.py a $target 'binned_birth_net.mp4' p r 0 $binLim -c -1 -p binned_birth_counts_ -l $binNetCountLim -v $vlines -s $start_t -i $interval -S $steps -a $author -f $fps --binned -g
+
+        #binned diffusion count A
+        #python3 densityCalculator.py a $target binned_diffusion_a.mp4 p 0 $binLim -c 0 -p binned_diffusion_counts_ -l $binDiffCountLim -v $vlines -s $start_t -i $interval -S $steps -a $author -f $fps --binned -g
+
+        #binned diffusion count net
+        python3 densityCalculator.py a $target 'binned_diffusion_net.mp4' p r 0 $binLim -c -1 -p binned_diffusion_counts_ -l $binNetDiffCountLim -v $vlines -s $start_t -i $interval -S $steps -a $author -f $fps --binned -g
     done
 
     #python3 fourierAnalysis.py $targ temporalData.csv $output $dir_suffix 100 15 s ${pad[$n]} -v $vlines --dpi $dpi -a 10.0
