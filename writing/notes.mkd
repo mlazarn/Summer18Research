@@ -4,3 +4,30 @@
 +The rules represent a microscopic set of rules
 ++When iumplemented on scale we see unexpected behavior.
 +
+
++ Good morning. My name is Lazarus and I'd like to discuss our research on how 
+  spatial inhomogeneities in cyclic competition models can effect the long-term
+  formation of spatio-temporal patterns.
+
++ The two models that we are looking at are motivated by a variety of systems in biology, population
+  dynamics, and chemistry in which each actor can be in one of three species, each of which 
+  is dominant over the next; so species A replaces species B, species B replaces species C, and
+  C replaces species A. In both the Rock-Paper-Scissors and May-Leonard model the particles
+  are allowed to move through space according to a mobility rate epsilon. The difference between 
+  the two models is that in the May-Leonard model predation and reproduction are seperate processes 
+  , whereas in the RPS system they occur simultaneously.
+
++ We are interested in these two systems because, while in the coexistance regime, the ML model 
+  produces long-lived patterns in the form of spiral waves whose domain becomes larger as 
+  their mobility increases, as opposed to the RPS model which produces patches that become
+  less ordered for higher mobility rates. Our goal through this project is to explore possible
+  methods by which we can disrupt the formation of these patterns.
+
++ In order to do this we implemented a MC simulation of MLM on a lattice with periodic 
+  boundary conditions. On a vertical section of the lattice we instead implemented the RPS
+  model. Upon running these simulations we observed a disruption of the normal spiral waves in
+  the form of plane-waves which seemingly eminate away from the RPS region at the boundary.
+
+The reason that we are
+  where three species compete in a cyclical manner. 
+  The first is the Rock-Paper-Scissors model
