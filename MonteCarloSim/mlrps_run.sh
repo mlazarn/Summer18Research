@@ -1,11 +1,11 @@
-base="data/reactionRateData3"
+base="data/reactionRateData4"
 rate_prefix="rate_"
 dir_suffix="run_"
 prefix="latt_"
 density_pfx="density_"
 flux_pfx="flux_"
 lims="-0.05 0.05"
-vlines="64 128 192"
+vlines="64 511"
 xSize="512"
 #xSizes=('256','384', '512', '640', '768')
 ySize="512"
@@ -16,12 +16,12 @@ binCountLim="0 125"
 binNetCountLim="0 375"
 binDiffCountLim="0 250"
 binNetDiffCountLim="0 750"
-intDist="64"
+intDist="0"
 mobility="5.0"
 RPSMobility="5.0"
 #rps_mobility="2.5"
-mobilities=('2.5' '5.0')
-RPSMobilities=('0.1' '2.5' '5.0' '10.0') 
+mobilities=('0.1' '2.5' '5.0' '10.0')
+RPSMobilities=('0.001' '0.01' '0.1' '2.5' '5.0' '10.0' '100' '1000') 
 steps="2600"
 interval="50"
 #interval="10"
@@ -38,20 +38,22 @@ output="specData.png"
 normOut="normSpecData.png"
 hwhmOut="HalfWidthHalfMax.png"
 
-for k in {0..3}; do
+for k in {0..7}; do
     targ="${base}/${rate_prefix}${k}"
-    for n in {0..499}; do
+    #for n in {0..499}; do
+    for n in {0..249}; do
         target="$targ/${dir_suffix}${n}"
+        #rm $target/animation.mp4
         mkdir -p -v $target
         #                  targ    o t xSize  ySize  mob       rps_mob              intDist  bin_w     steps  interval  start_t  run
         #                  1       2 3 4      5      6         7                    8        9         10     11        12       13
         ./LatticeMLRPSTest $target 0 1 $xSize $ySize $mobility ${RPSMobilities[$k]} $intDist $binWidth $steps $interval $start_t $n
         #python3 videoConverter.py ${target} $prefix $start_t $interval $steps -v $vlines -o animation.mp4 -a $author -f $fps --dpi $dpi
 
-        rm $target/density_net_newer.mp4
+        #rm $target/density_net_newer.mp4
 
         #density net
-        python3 densityCalculator.py a $target 'density_net_newer.mp4' p r 0 $ySize -c -1 -p $density_pfx -v $vlines -s $start_t -i $interval -S $steps -a $author -f $fps --dpi $dpi -g
+        #python3 densityCalculator.py a $target 'density_net_newer.mp4' p r 0 $ySize -c -1 -p $density_pfx -v $vlines -s $start_t -i $interval -S $steps -a $author -f $fps --dpi $dpi -g
     
         #binned death count A
         #python3 densityCalculator.py a $target binned_death_a.mp4 p 0 $binLim -c 0 -p binned_death_counts_ -l $binCountLim -v $vlines -s $start_t -i $interval -S $steps -a $author -f $fps --binned -g
@@ -71,6 +73,7 @@ for k in {0..3}; do
         #binned diffusion count net
         #python3 densityCalculator.py a $target 'binned_diffusion_net.mp4' p r 0 $binLim -c -1 -p binned_diffusion_counts_ -l $binNetDiffCountLim -v $vlines -s $start_t -i $interval -S $steps -a $author -f $fps --binned -g
     done
+    python3 corrLen.py $targ $dir_suffix autoCorr2550.csv avg_auto_corr.csv 250
 
     #python3 fourierAnalysis.py $targ temporalData.csv $output $dir_suffix 100 15 s ${pad[$n]} -v $vlines --dpi $dpi -a 10.0
     #python3 fourierAnalysis.py $targ temporalData.csv $normOut $dir_suffix 100 15 s ${pad[$n]} -v $vlines --dpi $dpi -a 10.0 --abs

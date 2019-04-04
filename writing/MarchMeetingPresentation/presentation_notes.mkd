@@ -1,0 +1,63 @@
+# Title slide (1/8)
+# Motivation (2/8)
++ RPS & ML models motivated by systems in bio., pop. dyn., chem. that follow a cyclic
+  A > B > C > A competition scheme.
++ Despite sharing a cyclic competition scheme both models exhibit different long term pattern 
+  formation (particles clusetering disordered patchs vs. long lived spiral waves)
++ We are interested in developing local control schemes that can affect the steady-state 
+  pattern formation of the MLM and systems like it.
++ To this end we are investigating how changing the microscopic rules from MLM to RPS on a 
+  small region affects the formation of long lived macroscopic patterns in the rest of the 
+  lattice.
+
+# Models (3/8)
++ Both models follow a "rock paper scissors" competition scheme 
++ In both models mobility is enabled via pair-swapping reaction.
++ In RPS predation & reproduction are combined in to a single replacement reaction (hence particle
+  count is conserved). In ML the two reactions are decoupled.
++ This decoupling (and hence loss of particle conservation) is what causes the pattern 
+  formation in the MLM.
+
+# Combined System (4/8)
++ Toroidal lattice governed mostly by MLM except for a narrow ring shaped patch governed by the 
+  RPS model.
++ Initialized by assigning each site a random species. System is then evolved via a Monte-Carlo 
+  simulation.
++ In all simulations we fix the reaction rates to be 1, ML mobility rate to be 5. Chosen as such
+  because these rates are well within the regime in which the MLM produces stable well defined
+  spiral waves. This allows us to focus on how changing the RPS mobility affects the system.
+  
+# Combined System (Cont.) (5/8)
++ Slide is backup for in case video doesn't work
++ When we simulate the system we observe disruption of the spiral waves in the form of plane-waves emanating
+  away from the interface.
++ Plane waves remain present over long timescales.
+
+# Correlation Lengths and Permeation Distance (6/8)
++ In order to quantify the length (parallel to the interface) distance of the plane waves 
+  we calculate the vertical auto-correlation (AC) function of each species for each column once
+  the system has reached a steady-state.
++ Because the plane waves are not always perfectly parallel to the interface, we average the
+  AC functions of each species in order to remove random phase errors.
++ These AC functions are then averaged over several hundred runs. From the averaged correlation functions 
+  we extract the vertical correlation length for each column. This gives as a rough but easily 
+  computed measure of plane-wave size.
++ Doing this, we find that lower RPS mobility rates correspond to larger, more cohesive plane
+  waves.
++ By computing the correlation lengths we are also able to measure how far the plane waves travel
+  in to the ML region before the system reverts to normal spiral wave formation. For all RPS 
+  mobilities we tested this is approximately constant at three times the characteristic wavelength 
+  of a ML system.
+
+# Well-Mixing Effects: Boundary Effects (7/8)
++ We also observed a marked decrease in net population density near the RPS-ML interface.
++ In order to explain this we recorded the net population density of pure ML systems starting 
+  from random initial conditions until they reach their steady state. Doing this reveals that 
+  the population quickly approaches its mean field density before recovering to its steady-state 
+  carrying capacity.
++ This indicates that the drop in density near the interface is a result of the disorder in the
+  RPS region causing the lattice to be more "well mixed" near the interface which causes the 
+  system to behave in a more mean-field like manner, hence the drop in population density.
+  
+# Conclusions (8/8)
+As is on slides.

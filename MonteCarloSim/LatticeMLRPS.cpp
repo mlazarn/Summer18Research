@@ -603,12 +603,13 @@ void LatticeMLRPS::specAnalysisRun(int steps, int interval, int startRecord, int
     int timesteps = (steps - startRecord) / interval;
     int idx = 0;
 
-    double** temporalData = new double*[sizeY];
+    //double** temporalData = new double*[sizeY];
+    //double* temporalData = new double[timesteps];
     //double** temporalData = new double[timesteps];
-    for (int y = 0; y < sizeY; y++)
-    {
-        temporalData[y] = new double[timesteps];
-    }
+    //for (int y = 0; y < sizeY; y++)
+    //{
+        //temporalData[y] = new double[timesteps];
+    //}
 
     int* times = new int[timesteps];
     double*** autoCorr = new double**[timesteps];
@@ -625,6 +626,7 @@ void LatticeMLRPS::specAnalysisRun(int steps, int interval, int startRecord, int
     metadata(startRecord, interval, steps);
 
     cout << "Starting Monte Carlo Run" << endl;
+    updateDensity();
     do
     {
         if (monteCarloStep % interval == 0 && timestep == 0.0)
@@ -634,30 +636,39 @@ void LatticeMLRPS::specAnalysisRun(int steps, int interval, int startRecord, int
 
             if (monteCarloStep >= startRecord)
             {
-                if (run == 0)
-                {
+                //if (run == 0)
+                //{
                     // Writes the current lattice state to a csv
-                    dataOutput(0);
-                }
+                    //dataOutput(0);
+                //}
                     // Writes the current density
-                    dataOutput(1);
+                    //dataOutput(1);
 
                     // Writes the currrent binned predation rate
-                    dataOutput(5);
+                    //dataOutput(5);
 
                     // Writes the currrent binned breeding rate
-                    dataOutput(6);
+                    //dataOutput(6);
 
                     // Writes the currrent binned diffusion rate
-                    dataOutput(7);
+                    //dataOutput(7);
                 if (idx < timesteps)
                 {
                     times[idx] = monteCarloStep;
                     //temporalData[idx] = globalDensity();
-                    for (int yIdx = 0; yIdx < sizeY; yIdx++)
-                    {
-                        temporalData[yIdx][idx] = density1[0][yIdx];
-                    }
+                    //double A = 0.0;
+                    //double B = 0.0;
+                    //double C = 0.0;
+                    //for (int yIdx = 0; yIdx < sizeY; yIdx++)
+                    //{
+                        //A += density1[0][yIdx];
+                        //B += density1[1][yIdx];
+                        //C += density1[2][yIdx];
+                    //}
+                    //A = A/sizeY;
+                    //B = B/sizeY;
+                    //C = C/sizeY;
+                    //temporalData[idx] = (A + B + C);
                     double ac;
                     for (int y = 0; y < sizeY; y++)
                     {
@@ -675,7 +686,7 @@ void LatticeMLRPS::specAnalysisRun(int steps, int interval, int startRecord, int
                 }
                 idx ++;
             }
-            clearBinnedReactionCount();
+            //clearBinnedReactionCount();
         }
         
         int x = xCoordDist(rng);
@@ -701,9 +712,12 @@ void LatticeMLRPS::specAnalysisRun(int steps, int interval, int startRecord, int
             {
                 switch(orientation)
                 {
-                    case 0  :   RPSReaction(x, y); break;
+                    //case 0  :   RPSReaction(x, y); break;
+                    //case 1  :   reaction(x, y); break;
+                    //default :   RPSReaction(x, y); break;
+                    case 0  :   reaction(x, y); break;
                     case 1  :   reaction(x, y); break;
-                    default :   RPSReaction(x, y); break;
+                    default :   reaction(x, y); break;
                 }
             }
             else
@@ -790,8 +804,8 @@ void LatticeMLRPS::specAnalysisRun(int steps, int interval, int startRecord, int
 
     stringstream ss;
     ss << filePath << "temporalData.csv";
-    string fileName;
-    fileName = ss.str();
+    //string fileName;
+    //fileName = ss.str();
 
     //fstream data(fileName.c_str(), ofstream::out | ofstream::app | ofstream::in);
 
@@ -875,25 +889,25 @@ void LatticeMLRPS::specAnalysisRun(int steps, int interval, int startRecord, int
     */
 
     //cout << "?" << endl;
-    for (int y = 0; y < sizeY; y++)
-    {
-        delete[] temporalData[y];
-    }
-    delete[] temporalData;
+    //for (int y = 0; y < sizeY; y++)
+    //{
+        //delete[] temporalData[y];
+    //}
+    //delete[] temporalData;
 
     //cout << "??" << endl;
     for (int i = 0; i < timesteps; i++)
     {
         //cout << "i=" << i;
-        for (int j = 0; j < sizeY; j++)
-        {
-            delete[] autoCorr[i][j];
-        }
+        //for (int j = 0; j < sizeY; j++)
+        //{
+            //delete[] autoCorr[i][j];
+        //}
         //cout << "!" << endl;
         delete[] autoCorr[i];
     }
     //cout << "???" << endl;
-    delete[] autoCorr;
+    //delete[] autoCorr;
     //cout << "????" << endl;
     delete[] times;
 

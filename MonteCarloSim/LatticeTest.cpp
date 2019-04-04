@@ -28,7 +28,7 @@ int main(int argc, char *argv[])
     string path = string(argv[1]).append("/");
     int runs = 50;
     int size = 256;
-    double mobilities[] = {0.1, 1.25, 2.5, 5.0, 10.0};
+    double mobilities[] = {0.1, 2.5, 5.0, 10.0};
     //int size = atoi(argv[2]);
     //double mobility = atof(argv[3]);
     int binSize = 4;
@@ -46,7 +46,7 @@ int main(int argc, char *argv[])
 
     int prog = 0;
 
-    for (int i = 0; i < 5; i++)
+    for (int i = 0; i < 4; i++)
     {
         mob_data << mobilities[i] << ",";
         //for (int run = 0; run < runs; run++)
