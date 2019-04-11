@@ -1,4 +1,4 @@
-base="data/reactionRateData4"
+base="data/reactionRateData5"
 rate_prefix="rate_"
 dir_suffix="run_"
 prefix="latt_"
@@ -41,7 +41,7 @@ hwhmOut="HalfWidthHalfMax.png"
 for k in {0..7}; do
     targ="${base}/${rate_prefix}${k}"
     #for n in {0..499}; do
-    for n in {0..249}; do
+    for n in {0..149}; do
         target="$targ/${dir_suffix}${n}"
         #rm $target/animation.mp4
         mkdir -p -v $target
