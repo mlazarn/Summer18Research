@@ -595,6 +595,7 @@ void LatticeMLRPS::specAnalysisRun(int steps, int interval, int startRecord, int
     //double norm = (fracRPS * normRPS) + ((1 - fracRPS) * normML);
 
     int p = sizeX * sizeY;
+    int halfX = sizeX / 2;
 
     //double deltaT = 1.0 / (norm * p);
 
@@ -618,7 +619,7 @@ void LatticeMLRPS::specAnalysisRun(int steps, int interval, int startRecord, int
         autoCorr[i] = new double*[sizeY];
         for (int j = 0; j < sizeY; j++)
         {
-            autoCorr[i][j] = new double[sizeX];
+            autoCorr[i][j] = new double[halfX];
         }
     }
 
@@ -636,22 +637,23 @@ void LatticeMLRPS::specAnalysisRun(int steps, int interval, int startRecord, int
 
             if (monteCarloStep >= startRecord)
             {
-                //if (run == 0)
-                //{
+                if (run == 0)
+                {
                     // Writes the current lattice state to a csv
-                    //dataOutput(0);
-                //}
+                    dataOutput(0);
+
                     // Writes the current density
-                    //dataOutput(1);
+                    dataOutput(1);
 
                     // Writes the currrent binned predation rate
-                    //dataOutput(5);
+                    dataOutput(5);
 
                     // Writes the currrent binned breeding rate
-                    //dataOutput(6);
+                    dataOutput(6);
 
                     // Writes the currrent binned diffusion rate
                     //dataOutput(7);
+                }
                 if (idx < timesteps)
                 {
                     times[idx] = monteCarloStep;
@@ -672,7 +674,7 @@ void LatticeMLRPS::specAnalysisRun(int steps, int interval, int startRecord, int
                     double ac;
                     for (int y = 0; y < sizeY; y++)
                     {
-                        for (int r = 0; r < sizeX ; r++)
+                        for (int r = 0; r < halfX ; r++)
                         {
                             ac = autoCorrelator(0, y, r, 1) + 
                                  autoCorrelator(1, y, r, 1) +
@@ -680,13 +682,13 @@ void LatticeMLRPS::specAnalysisRun(int steps, int interval, int startRecord, int
                                 
                                  //autoCorrelator(1, y, r) + 
                                  //autoCorrelator(2, y, r);
-                            autoCorr[idx][y][r] = ac / 3; // / 3;
+                            autoCorr[idx][y][r] = ac / 3;
                         }
                     }
                 }
                 idx ++;
             }
-            //clearBinnedReactionCount();
+            clearBinnedReactionCount();
         }
         
         int x = xCoordDist(rng);
@@ -840,10 +842,10 @@ void LatticeMLRPS::specAnalysisRun(int steps, int interval, int startRecord, int
 
         for (int y = 0; y < sizeY; y++)
         {
-            for (int r = 0; r < sizeX; r++)
+            for (int r = 0; r < halfX; r++)
             {
                 data2 << autoCorr[t][y][r];
-                if (r < sizeX - 2)
+                if (r < halfX - 1)
                 {
                     data2 << ",";
                 }

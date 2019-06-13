@@ -20,23 +20,28 @@ def open_data(filename):
     return csv_data
 
 def get_fwhm(data):
-    freq = fftshift(fftfreq(256))
-    specdat  = np.abs(fft(data[1:257]))
-    specdat[0] = specdat[2]
-    specdat = fftshift(specdat)
+    freq = fftfreq(256)
+    #freq = fftshift(fftfreq(256))
+    # normalizing by 2.0 / 256
+    specdat = np.abs(fft(data[0:256]) * (2.0 / 256))
+    #specdat[0] = specdat[2]
+    #specdat = fftshift(specdat)
     
     adjusted_dat = specdat - (np.max(specdat) / 2)
     argMax = np.argmax(specdat)
     spline = spInt.InterpolatedUnivariateSpline(freq, adjusted_dat)
     roots = spline.roots()
-    for j in range(roots.shape[-1] - 1):
-        HWL = roots[-2]
-        HWR = roots[-1]
-        if roots[j] < freq[argMax] and roots[j + 1] > freq[argMax]:
-            HWL = roots[j]
-            HWR = roots[j+1]
-    FW = HWR - HWL
-    return FW
+    try:
+        for j in range(roots.shape[-1] - 1):
+            HWL = roots[-2]
+            HWR = roots[-1]
+            if roots[j] < freq[argMax] and roots[j + 1] > freq[argMax]:
+                HWL = roots[j]
+                HWR = roots[j+1]
+        FW = HWR - HWL
+        return FW
+    except IndexError:
+        FW = np.nan
     #half_width = FW / 2
     #return half_width
 

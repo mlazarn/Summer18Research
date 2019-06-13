@@ -1,4 +1,4 @@
-base="data/reactionRateData5"
+base="data/multiData1"
 rate_prefix="rate_"
 dir_suffix="run_"
 prefix="latt_"
@@ -10,7 +10,7 @@ xSize="512"
 #xSizes=('256','384', '512', '640', '768')
 ySize="512"
 ylims="0 $ySize"
-binWidth="4"
+binWidth="1"
 binLim="128"
 binCountLim="0 125"
 binNetCountLim="0 375"
@@ -21,11 +21,11 @@ mobility="5.0"
 RPSMobility="5.0"
 #rps_mobility="2.5"
 mobilities=('0.1' '2.5' '5.0' '10.0')
-RPSMobilities=('0.001' '0.01' '0.1' '2.5' '5.0' '10.0' '100' '1000') 
-steps="2600"
-interval="50"
+RPSMobilities=('0.01' '0.1' '1.0' '2.5' '5.0' '10.0' '100' '1000') 
+steps="4000"
+interval="5"
 #interval="10"
-start_t="2500"
+start_t="3990"
 subdiv="16"
 dpi="200"
 fps="30"
@@ -41,13 +41,22 @@ hwhmOut="HalfWidthHalfMax.png"
 for k in {0..7}; do
     targ="${base}/${rate_prefix}${k}"
     #for n in {0..499}; do
-    for n in {0..149}; do
-        target="$targ/${dir_suffix}${n}"
+    for n in {0..249}; do
+        n0=$( expr 2 \* $n )
+        n1=$( expr 2 \* $n + 1 )
+
+        #target="$targ/${dir_suffix}${n}"
+        target0="$targ/${dir_suffix}${n0}"
+        target1="$targ/${dir_suffix}${n1}"
         #rm $target/animation.mp4
-        mkdir -p -v $target
-        #                  targ    o t xSize  ySize  mob       rps_mob              intDist  bin_w     steps  interval  start_t  run
-        #                  1       2 3 4      5      6         7                    8        9         10     11        12       13
-        ./LatticeMLRPSTest $target 0 1 $xSize $ySize $mobility ${RPSMobilities[$k]} $intDist $binWidth $steps $interval $start_t $n
+        #mkdir -p -v $target
+        mkdir -p -v $target0
+        mkdir -p -v $target1
+        #                  targ     o t xSize  ySize  mob       rps_mob              intDist  bin_w     steps  interval  start_t  run
+        #                  1        2 3 4      5      6         7                    8        9         10     11        12       13
+        ./LatticeMLRPSTest $target0 0 1 $xSize $ySize $mobility ${RPSMobilities[$k]} $intDist $binWidth $steps $interval $start_t $n0
+        ./LatticeMLRPSTest $target1 0 1 $xSize $ySize $mobility ${RPSMobilities[$k]} $intDist $binWidth $steps $interval $start_t $n1 &
+        wait
         #python3 videoConverter.py ${target} $prefix $start_t $interval $steps -v $vlines -o animation.mp4 -a $author -f $fps --dpi $dpi
 
         #rm $target/density_net_newer.mp4
@@ -73,7 +82,7 @@ for k in {0..7}; do
         #binned diffusion count net
         #python3 densityCalculator.py a $target 'binned_diffusion_net.mp4' p r 0 $binLim -c -1 -p binned_diffusion_counts_ -l $binNetDiffCountLim -v $vlines -s $start_t -i $interval -S $steps -a $author -f $fps --binned -g
     done
-    python3 corrLen.py $targ $dir_suffix autoCorr2550.csv avg_auto_corr.csv 250
+    python corrLen.py $targ $dir_suffix autoCorr_3995.csv avg_auto_corr.csv 500
 
     #python3 fourierAnalysis.py $targ temporalData.csv $output $dir_suffix 100 15 s ${pad[$n]} -v $vlines --dpi $dpi -a 10.0
     #python3 fourierAnalysis.py $targ temporalData.csv $normOut $dir_suffix 100 15 s ${pad[$n]} -v $vlines --dpi $dpi -a 10.0 --abs
