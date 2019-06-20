@@ -1,4 +1,4 @@
-base="data/multiData1"
+base="data/multiData2"
 rate_prefix="rate_"
 dir_suffix="run_"
 prefix="latt_"
@@ -21,7 +21,8 @@ mobility="5.0"
 RPSMobility="5.0"
 #rps_mobility="2.5"
 mobilities=('0.1' '2.5' '5.0' '10.0')
-RPSMobilities=('0.01' '0.1' '1.0' '2.5' '5.0' '10.0' '100' '1000') 
+#RPSMobilities=('0.01' '0.1' '1.0' '2.5' '5.0' '10.0' '100' '1000') 
+RPSMobilities=('20.0' '40.0' '60.0' '80.0') 
 steps="4000"
 interval="5"
 #interval="10"
@@ -38,16 +39,18 @@ output="specData.png"
 normOut="normSpecData.png"
 hwhmOut="HalfWidthHalfMax.png"
 
-for k in {0..7}; do
+for k in {0..3}; do
     targ="${base}/${rate_prefix}${k}"
     #for n in {0..499}; do
-    for n in {0..249}; do
+    for n in {0..99}; do
         n0=$( expr 2 \* $n )
         n1=$( expr 2 \* $n + 1 )
+        n2=$( expr 2 \* $n + 2 )
 
         #target="$targ/${dir_suffix}${n}"
         target0="$targ/${dir_suffix}${n0}"
         target1="$targ/${dir_suffix}${n1}"
+        target2="$targ/${dir_suffix}${n2}"
         #rm $target/animation.mp4
         #mkdir -p -v $target
         mkdir -p -v $target0
@@ -56,6 +59,7 @@ for k in {0..7}; do
         #                  1        2 3 4      5      6         7                    8        9         10     11        12       13
         ./LatticeMLRPSTest $target0 0 1 $xSize $ySize $mobility ${RPSMobilities[$k]} $intDist $binWidth $steps $interval $start_t $n0 &
         ./LatticeMLRPSTest $target1 0 1 $xSize $ySize $mobility ${RPSMobilities[$k]} $intDist $binWidth $steps $interval $start_t $n1 &
+        ./LatticeMLRPSTest $target1 0 1 $xSize $ySize $mobility ${RPSMobilities[$k]} $intDist $binWidth $steps $interval $start_t $n2 &
         wait
         #python3 videoConverter.py ${target} $prefix $start_t $interval $steps -v $vlines -o animation.mp4 -a $author -f $fps --dpi $dpi
 

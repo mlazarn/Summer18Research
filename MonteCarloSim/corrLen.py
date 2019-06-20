@@ -20,21 +20,21 @@ def open_data(filename):
     return csv_data
 
 def get_fwhm(data):
-    freq = fftfreq(256)
-    #freq = fftshift(fftfreq(256))
-    # normalizing by 2.0 / 256
-    specdat = np.abs(fft(data[0:256]) * (2.0 / 256))
-    #specdat[0] = specdat[2]
-    #specdat = fftshift(specdat)
-    
-    adjusted_dat = specdat - (np.max(specdat) / 2)
-    argMax = np.argmax(specdat)
-    spline = spInt.InterpolatedUnivariateSpline(freq, adjusted_dat)
-    roots = spline.roots()
     try:
+        freq = fftfreq(256)
+        #freq = fftshift(fftfreq(256))
+        # normalizing by 2.0 / 256
+        specdat = np.abs(fft(data[0:256]) * (2.0 / 256))
+        #specdat[0] = specdat[2]
+        #specdat = fftshift(specdat)
+        
+        adjusted_dat = specdat - (np.max(specdat) / 2)
+        argMax = np.argmax(specdat)
+        spline = spInt.InterpolatedUnivariateSpline(freq, adjusted_dat)
+        roots = spline.roots()
+        HWL = roots[-2]
+        HWR = roots[-1]
         for j in range(roots.shape[-1] - 1):
-            HWL = roots[-2]
-            HWR = roots[-1]
             if roots[j] < freq[argMax] and roots[j + 1] > freq[argMax]:
                 HWL = roots[j]
                 HWR = roots[j+1]
@@ -63,7 +63,7 @@ def calculate_corr_len(args):
 
     print('writing autocorrelation')
 
-    np.savetxt(args.output, data, delimiter=',')
+    #np.savetxt(args.output, data, delimiter=',')
 
     c_len = np.zeros(data.shape[1])
 
