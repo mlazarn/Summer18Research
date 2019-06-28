@@ -21,16 +21,17 @@ def open_data(filename):
 
 def get_fwhm(data):
     try:
-        freq = fftfreq(256)
+        N = data.shape[-1]
+        freq = fftfreq(N)
         #freq = fftshift(fftfreq(256))
         # normalizing by 2.0 / 256
-        specdat = np.abs(fft(data[0:256]) * (2.0 / 256))
+        specdat = np.abs(fft(data) * (2.0 / N))
         #specdat[0] = specdat[2]
         #specdat = fftshift(specdat)
         
         adjusted_dat = specdat - (np.max(specdat) / 2)
         argMax = np.argmax(specdat)
-        spline = spInt.InterpolatedUnivariateSpline(freq, adjusted_dat)
+        spline = spInt.InterpolatedUnivariateSpline(freq[0:N//2], adjusted_dat[0:N//2])
         roots = spline.roots()
         HWL = roots[-2]
         HWR = roots[-1]
@@ -42,6 +43,7 @@ def get_fwhm(data):
         return FW
     except IndexError:
         FW = np.nan
+        return FW
     #half_width = FW / 2
     #return half_width
 
