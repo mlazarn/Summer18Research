@@ -1,4 +1,4 @@
-base="data/multiData3"
+base="data/multiData4"
 rate_prefix="rate_"
 dir_suffix="run_"
 prefix="latt_"
@@ -22,7 +22,7 @@ RPSMobility="5.0"
 #rps_mobility="2.5"
 mobilities=('0.1' '2.5' '5.0' '10.0')
 #RPSMobilities=('0.01' '0.1' '1.0' '2.5' '5.0' '10.0' '100' '1000') 
-RPSMobilities=('25.0' '30.0' '35.0' '40.0') 
+RPSMobilities=('26.0' '27.0' '28.0' '29.0') 
 steps="4000"
 interval="5"
 #interval="10"

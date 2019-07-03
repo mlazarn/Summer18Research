@@ -65,7 +65,7 @@ def calculate_corr_len(args):
 
     print('writing autocorrelation')
 
-    #np.savetxt(args.output, data, delimiter=',')
+    np.savetxt(args.output, data, delimiter=',')
 
     c_len = np.zeros(data.shape[1])
 
