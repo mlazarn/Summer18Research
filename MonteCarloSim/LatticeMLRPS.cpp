@@ -604,24 +604,24 @@ void LatticeMLRPS::specAnalysisRun(int steps, int interval, int startRecord, int
     int timesteps = (steps - startRecord) / interval;
     int idx = 0;
 
-    //double** temporalData = new double*[sizeY];
+    double** temporalData = new double*[sizeY];
     //double* temporalData = new double[timesteps];
     //double** temporalData = new double[timesteps];
-    //for (int y = 0; y < sizeY; y++)
-    //{
-        //temporalData[y] = new double[timesteps];
-    //}
+    for (int y = 0; y < sizeY; y++)
+    {
+        temporalData[y] = new double[timesteps];
+    }
 
     int* times = new int[timesteps];
-    double*** autoCorr = new double**[timesteps];
-    for (int i = 0; i < timesteps; i++)
-    {
-        autoCorr[i] = new double*[sizeY];
-        for (int j = 0; j < sizeY; j++)
-        {
-            autoCorr[i][j] = new double[halfX];
-        }
-    }
+    //double*** autoCorr = new double**[timesteps];
+    //for (int i = 0; i < timesteps; i++)
+    //{
+        //autoCorr[i] = new double*[sizeY];
+        //for (int j = 0; j < sizeY; j++)
+        //{
+            //autoCorr[i][j] = new double[halfX];
+        //}
+    //}
 
     cout << "Writing metadata" << endl;
     metadata(startRecord, interval, steps);
@@ -637,20 +637,20 @@ void LatticeMLRPS::specAnalysisRun(int steps, int interval, int startRecord, int
 
             if (monteCarloStep >= startRecord)
             {
-                //if (run == 0)
-                //{
-                //}
-                // Writes the current lattice state to a csv
-                dataOutput(0);
+                if (run == 0)
+                {
+                    // Writes the current lattice state to a csv
+                    dataOutput(0);
+                }
 
                 // Writes the current population density
-                dataOutput(1);
+                //dataOutput(1);
 
                 // Writes the currrent binned predation rate
-                dataOutput(5);
+                //dataOutput(5);
 
                 // Writes the currrent binned breeding rate
-                dataOutput(6);
+                //dataOutput(6);
 
                 // Writes the currrent binned diffusion rate
                 //dataOutput(7);
@@ -658,34 +658,34 @@ void LatticeMLRPS::specAnalysisRun(int steps, int interval, int startRecord, int
                 if (idx < timesteps)
                 {
                     times[idx] = monteCarloStep;
-                    //temporalData[idx] = globalDensity();
+
                     //double A = 0.0;
+                    for (int yIdx = 0; yIdx < sizeY; yIdx++)
+                    {
+                        temporalData[yIdx][idx] = density1[0][yIdx];
+                    }
+                    
+                    //temporalData[idx] = globalDensity();
                     //double B = 0.0;
                     //double C = 0.0;
-                    //for (int yIdx = 0; yIdx < sizeY; yIdx++)
-                    //{
-                        //A += density1[0][yIdx];
-                        //B += density1[1][yIdx];
-                        //C += density1[2][yIdx];
-                    //}
                     //A = A/sizeY;
                     //B = B/sizeY;
                     //C = C/sizeY;
                     //temporalData[idx] = (A + B + C);
-                    double ac;
-                    for (int y = 0; y < sizeY; y++)
-                    {
-                        for (int r = 0; r < halfX ; r++)
-                        {
-                            ac = autoCorrelator(0, y, r, 1) + 
-                                 autoCorrelator(1, y, r, 1) +
-                                 autoCorrelator(2, y, r, 1);
+                    //double ac;
+                    //for (int y = 0; y < sizeY; y++)
+                    //{
+                        //for (int r = 0; r < halfX ; r++)
+                        //{
+                            //ac = autoCorrelator(0, y, r, 1) + 
+                                 //autoCorrelator(1, y, r, 1) +
+                                 //autoCorrelator(2, y, r, 1);
                                 
                                  //autoCorrelator(1, y, r) + 
                                  //autoCorrelator(2, y, r);
-                            autoCorr[idx][y][r] = ac / 3;
-                        }
-                    }
+                            //autoCorr[idx][y][r] = ac / 3;
+                        //}
+                    //}
                 }
                 idx ++;
             }
@@ -803,64 +803,64 @@ void LatticeMLRPS::specAnalysisRun(int steps, int interval, int startRecord, int
     }
 
     */
-    //cout << "writing temporalData" << endl;
+    cout << "writing temporalData" << endl;
 
     stringstream ss;
     ss << filePath << "temporalData.csv";
-    //string fileName;
-    //fileName = ss.str();
+    string fileName;
+    fileName = ss.str();
 
-    //fstream data(fileName.c_str(), ofstream::out | ofstream::app | ofstream::in);
+    fstream data(fileName.c_str(), ofstream::out | ofstream::app | ofstream::in);
 
-    //for (int y = 0; y < sizeY; y++)
-    //{
-        //for (int t = 0; t < timesteps; t++)
-        //{
-            //data << temporalData[t];
-            //data << temporalData[y][t] - 0.26;
-            //if (t < timesteps - 1)
-            //{
-                //data << ",";
-            //}
-        //}
-        //if (y < sizeY - 1)
-        //{
-            //data << endl;
-        //}
-    //}
-
-    //data.close();
-
-    cout << "writing auto-correlation data" << endl;
-
-    for (int t = 0; t < timesteps; t++)
+    for (int y = 0; y < sizeY; y++)
     {
-        ss.str("");
-        ss << filePath << "autoCorr_" << times[t] << ".csv";
-        string fileName2 = ss.str();
-
-        fstream data2(fileName2.c_str(), ofstream::out | ofstream::app | ofstream::in);
-
-        for (int y = 0; y < sizeY; y++)
+        for (int t = 0; t < timesteps; t++)
         {
-            for (int r = 0; r < halfX; r++)
+            //data << temporalData[t];
+            data << temporalData[y][t];
+            if (t < timesteps - 1)
             {
-                data2 << autoCorr[t][y][r];
-                if (r < halfX - 1)
-                {
-                    data2 << ",";
-                }
-            }
-            if (y < sizeY - 1)
-            {
-                data2 << endl;
+                data << ",";
             }
         }
+        if (y < sizeY - 1)
+        {
+            data << endl;
+        }
+    }
+
+    data.close();
+
+    //cout << "writing auto-correlation data" << endl;
+
+    //for (int t = 0; t < timesteps; t++)
+    //{
+        //ss.str("");
+        //ss << filePath << "autoCorr_" << times[t] << ".csv";
+        //string fileName2 = ss.str();
+
+        //fstream data2(fileName2.c_str(), ofstream::out | ofstream::app | ofstream::in);
+
+        //for (int y = 0; y < sizeY; y++)
+        //{
+            //for (int r = 0; r < halfX; r++)
+            //{
+                //data2 << autoCorr[t][y][r];
+                //if (r < halfX - 1)
+                //{
+                    //data2 << ",";
+                //}
+            //}
+            //if (y < sizeY - 1)
+            //{
+                //data2 << endl;
+            //}
+        //}
 
         //cout << "?" << endl;
-        data2.close();
+        //data2.close();
         //cout << "??" << endl;
-    }
+    //}
 
 
     /*
@@ -892,26 +892,27 @@ void LatticeMLRPS::specAnalysisRun(int steps, int interval, int startRecord, int
     */
 
     //cout << "?" << endl;
-    //for (int y = 0; y < sizeY; y++)
-    //{
-        //delete[] temporalData[y];
-    //}
-    //delete[] temporalData;
+    for (int y = 0; y < sizeY; y++)
+    {
+        delete[] temporalData[y];
+    }
+    delete[] temporalData;
 
     //cout << "??" << endl;
-    for (int i = 0; i < timesteps; i++)
-    {
+    //for (int i = 0; i < timesteps; i++)
+    //{
         //cout << "i=" << i;
         //for (int j = 0; j < sizeY; j++)
         //{
             //delete[] autoCorr[i][j];
         //}
         //cout << "!" << endl;
-        delete[] autoCorr[i];
-    }
+        //delete[] autoCorr[i];
+    //}
     //cout << "???" << endl;
     //delete[] autoCorr;
     //cout << "????" << endl;
+
     delete[] times;
 
     cout << endl << "Simulation Complete" << endl;
