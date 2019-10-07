@@ -19,7 +19,18 @@ def fourierTransform(array):
 def combineData(args):
     targ = args.prefix + '0'
     arr = np.genfromtxt(targ + "/" +  args.filename, dtype=float, delimiter=',')
-    stacked = fft(arr , n=(arr.shape[-1] + args.pad))[:,args.idx_0:args.idx_1]
+    N = arr.shape[-1]
+    
+    spec = 2.0 * fft(arr , n=(arr.shape[-1] + args.pad))[:,0:N//2] / N
+
+    stacked = np.zeros(spec.shape)
+    if args.real:
+        if args.abs:
+            stacked = np.abs(np.real(spec))
+        else:
+            stacked = np.real(spec)
+    else:
+        stacked = np.abs(spec)
 
     for run in range(1, args.runs):
         targ = args.prefix + str(run);
@@ -29,14 +40,26 @@ def combineData(args):
         offset = np.zeros(mean.shape)
         if args.offset:
             offset = mean
-        new_array = fft(arr - offset, n=(arr.shape[-1] + args.pad))[:,args.idx_0:args.idx_1]
-        stacked = np.dstack((stacked, new_array))
+        new_array = 2.0 * fft(arr - offset, n=(arr.shape[-1] + args.pad))[:,0:N//2] / N
 
-    if args.abs:
-        spec_data = np.mean(np.abs(stacked), axis=2)
-    else:
-        spec_data = np.mean(np.real(stacked), axis=2)
-    freq = fftfreq(arr.shape[-1] + args.pad)[args.idx_0:args.idx_1]
+        spec2 = np.zeros(new_array.shape)
+        if args.real:
+            if args.abs:
+                spec2 = np.abs(np.real(new_array))
+            else:
+                spec2 = np.real(new_array)
+        else:
+            spec2 = np.abs(new_array)
+
+        stacked = np.dstack((stacked, spec2))
+
+    spec_data = np.mean(stacked, axis=2)
+
+    #if args.abs:
+        #spec_data = np.mean(np.abs(stacked), axis=2)
+    #else:
+        #spec_data = np.mean(np.real(stacked), axis=2)
+    freq = fftfreq(arr.shape[-1] + args.pad)[0:N//2]
     output = np.vstack((freq, spec_data))
     return output
 
@@ -47,18 +70,32 @@ def plotSpectrograph(args):
     num_cols = spec_data.shape[-1]
     print(spec_data.shape)
 
-    print(args.aspect)
+    fmax = freq.shape[-1]
+    pmax = spec_data.shape[-1]
+
+    if (args.max_freq != 0):
+        fmax = args.max_freq
+    if (args.max_pos != 0):
+        pmax = args.max_pos
+
     fig, ax = plt.subplots()
-    con = ax.imshow(spec_data, cmap='inferno')
+    con = ax.imshow(spec_data[1:fmax, :pmax], cmap='inferno')
     #con = ax.imshow(spec_data[::-1,:], cmap='inferno')
     #, extent=[ -0.5, num_cols -0.5, 0, freq[-1] ])
-    ax.set_aspect(spec_data.shape[1] / (1.0*spec_data.shape[0]))
+    ax.set_aspect(pmax / (1.0 * fmax))
     if len(args.vlines) > 0:
         for x_line in args.vlines:
             ax.axvline(x=x_line, color='k')
         #ax.vlines(args.vlines, 0, (args.idx_1 - args.idx_0) - 1, zorder=3)
 
-    ax.set_ylim(0, args.idx_1 - 1)
+    ticks = np.linspace(0, fmax-1, fmax//5)
+    print(ticks.shape)
+    print(freq[1:fmax:fmax//5].shape)
+    #ticklabels = ["6.2f".format(freq[i+1]) for i in ticks]
+
+    ax.set_yticks(ticks)
+    ax.set_yticklabels(freq[1:fmax:fmax//5])
+    #ax.set_ylim(0, args.idx_1 - 1)
     cb = fig.colorbar(con, ax=ax)
     fig.set_tight_layout(True)
 
@@ -148,9 +185,12 @@ parser.add_argument('--idx_0', type=int, default=0)
 parser.add_argument('--aspect', '-a', type=float, default=1.0)
 parser.add_argument('--position', '-p', type=int)
 parser.add_argument('--abs', '-A', action='store_true')
+parser.add_argument('--real', '-R', action='store_true')
 parser.add_argument('--offset', '-o', action='store_true')
 parser.add_argument('--write_csv', '-w', action='store_true')
 parser.add_argument('--write_csv_dest', '-d', default='output.csv')
+parser.add_argument('--max_freq', type=int, default=0)
+parser.add_argument('--max_pos', type=int, default=0)
 
 parser.add_argument('--vlines', '-v', type=int, nargs='+', default=[])
 parser.add_argument('--dpi', type=int, default=100)

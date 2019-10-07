@@ -1,4 +1,4 @@
-base="data/spectralData1"
+base="data/spectralData2"
 rate_prefix="rate_"
 dir_suffix="run_"
 prefix="latt_"
@@ -8,7 +8,7 @@ lims="-0.05 0.05"
 vlines="64 511"
 xSize="512"
 #xSizes=('256','384', '512', '640', '768')
-ySize="512"
+ySize="300"
 ylims="0 $ySize"
 binWidth="1"
 binLim="128"
@@ -22,8 +22,8 @@ RPSMobility="5.0"
 #rps_mobility="2.5"
 mobilities=('0.1' '2.5' '5.0' '10.0')
 #RPSMobilities=('0.01' '0.1' '1.0' '2.5' '5.0' '10.0' '100' '1000') 
-RPSMobilities=('0.1' '2.5' '5.0' '10.0' '20.0' '25.0' '26.0' '30.0' '100.0') 
-steps="5049"
+RPSMobilities=('10.0' '20.0' '25.0' '26.0' '27.0' '100.0') 
+steps="8193"
 interval="1"
 #interval="10"
 start_t="3000"
@@ -35,14 +35,16 @@ species=('a' 'b' 'c')
 units="p r"
 pad=('0' '2500' '5000')
 
-output="specData.png"
+outputA="specDataA.png"
+outputAR="specDataAR.png"
+outputR="specDataR.png"
 normOut="normSpecData.png"
 hwhmOut="HalfWidthHalfMax.png"
 
-for k in {0..3}; do
+for k in {0..8}; do
     targ="${base}/${rate_prefix}${k}"
-    #for n in {0..499}; do
-    for n in {0..24}; do
+    for n in {0..99}; do
+    #for n in {0..0}; do
         n0=$( expr 2 \* $n )
         n1=$( expr 2 \* $n + 1 )
         #n2=$( expr 3 \* $n + 2 )
@@ -90,7 +92,9 @@ for k in {0..3}; do
     done
     #python corrLen.py $targ $dir_suffix autoCorr_3995.csv avg_auto_corr.csv 200
 
-    python3 fourierAnalysis.py $targ temporalData.csv $output $dir_suffix 1024 50 s ${pad[0]} --dpi $dpi -a 10.0 -w
+    python3 fourierAnalysis.py $targ temporalData.csv $outputA $dir_suffix 256 50 s ${pad[0]} -w -d "outputA.csv" --max_freq 100 --max_pos 288 --dpi $dpi -A #-a 10.0 -w
+    python3 fourierAnalysis.py $targ temporalData.csv $outputAR $dir_suffix 256 50 s ${pad[0]} -w -d "outputAR.csv" --max_freq 100 --max_pos 288 --dpi $dpi -A -R #-a 10.0 -w
+    #python3 fourierAnalysis.py $targ temporalData.csv $outputR $dir_suffix 256 50 s ${pad[0]} -w -d "outputR.csv" --max_freq 100 --max_pos 288 --dpi $dpi -R #-a 10.0 -w
     #python3 fourierAnalysis.py $targ temporalData.csv $normOut $dir_suffix 100 15 s ${pad[$n]} -v $vlines --dpi $dpi -a 10.0 --abs
     #python3 fourierAnalysis.py $targ temporalData.csv $normOut $dir_suffix 100 5 s ${pad[2]} -v $vlines --dpi $dpi -a 10.0 --abs -o -w -d "spectrograph.csv"
     #python3 fourierAnalysis.py $targ temporalData.csv $normOut $dir_suffix 100 5 s ${pad[2]} -v $vlines --dpi $dpi -a 10.0 --abs -o -w -d "hwhm.csv"
