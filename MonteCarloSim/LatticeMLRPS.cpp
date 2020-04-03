@@ -188,7 +188,7 @@ void LatticeMLRPS::metadata(int start, int interval, int stop, int startDrive, i
     data.close();
 }
 
-double LatticeMLRPS::autoCorrelator(int spec, int y, int r, int mode)
+double LatticeMLRPS::autoCorrelator(int spec, int y, int r, int mode, int symmetry)
 {
     double sum = 0.0;
     for (int i = 0; i < sizeX; ++i) 
@@ -197,7 +197,25 @@ double LatticeMLRPS::autoCorrelator(int spec, int y, int r, int mode)
         {
             sum += 1.0;
         }
+
+        if (symmetry == 1)
+        {
+            int targ = i - r; 
+            
+            if (targ < 0)
+            {
+                targ = sizeX - targ;
+            }
+
+            if (latt[i][y].getSpecies() == spec && latt[(targ) % sizeX][y].getSpecies() == spec)
+            {
+                sum += 1.0;
+            }
+
+            sum = sum / 2.0;
+        }
     }
+
     double output;
 
     if ( mode == 1 )
@@ -210,6 +228,73 @@ double LatticeMLRPS::autoCorrelator(int spec, int y, int r, int mode)
     }
 
     return output;
+}
+
+void LatticeMLRPS::outputAutoCorr(int spec, int subMode, int symmetry)
+{
+    //double** autoCorr = new double*[sizeY];
+    //for (int i = 0; i < sizeY; i++)
+    //{
+        //autoCorr[i] = new double[halfX];
+    //}
+
+    using namespace std;
+    stringstream ss;
+
+    const char *prefixes[] = {"autoCorrA_", "autoCorrB_", "autoCorrC_", "autoCorrAvg_"};
+
+    if (spec > 3)
+    {
+        ss << filePath << prefixes[0] << monteCarloStep << ".csv" ;
+    }
+    else 
+    {
+        ss << filePath << prefixes[spec] << monteCarloStep << ".csv" ;
+    }
+        
+    string fileName;
+    fileName = ss.str();
+
+    fstream data(fileName.c_str(), ofstream::out | ofstream::app | ofstream::in);
+
+    int halfX = sizeX/2;
+
+    for (int y = 0; y < sizeY; y++)
+    {
+        for (int r = 0; r < halfX; r++)
+        {
+            double corr = 0.0;
+            if (spec > 3)
+            {
+                corr = autoCorrelator(0, y, r, subMode, symmetry);
+            }
+            else if (spec == 3)
+            {
+                corr = autoCorrelator(0, y, r, subMode, symmetry) 
+                     + autoCorrelator(1, y, r, subMode, symmetry)
+                     + autoCorrelator(2, y, r, subMode, symmetry);
+                corr = corr / 3.0;
+            }
+            else
+            {
+                corr = autoCorrelator(spec, y, r, subMode, symmetry);
+            }
+
+            data << corr; 
+
+            if (r < halfX - 1)
+            {
+                data << ",";
+            }
+        }
+
+        if (y < sizeY - 1)
+        {
+            data << endl;
+        }
+    }
+    
+    data.close();
 }
 
 // Implements the RPS model reaction.
@@ -595,33 +680,24 @@ void LatticeMLRPS::specAnalysisRun(int steps, int interval, int startRecord, int
     //double norm = (fracRPS * normRPS) + ((1 - fracRPS) * normML);
 
     int p = sizeX * sizeY;
-    int halfX = sizeX / 2;
+    //int halfX = sizeX / 2;
 
     //double deltaT = 1.0 / (norm * p);
 
     double deltaT = 1.0 / p;
 
-    int timesteps = (steps - startRecord) / interval;
-    int idx = 0;
+    //int timesteps = (steps - startRecord) / interval;
+    //int idx = 0;
 
-    double** temporalData = new double*[sizeY];
+    //double** temporalData = new double*[sizeY];
     //double* temporalData = new double[timesteps];
     //double** temporalData = new double[timesteps];
-    for (int y = 0; y < sizeY; y++)
-    {
-        temporalData[y] = new double[timesteps];
-    }
-
-    int* times = new int[timesteps];
-    //double*** autoCorr = new double**[timesteps];
-    //for (int i = 0; i < timesteps; i++)
+    //for (int y = 0; y < sizeY; y++)
     //{
-        //autoCorr[i] = new double*[sizeY];
-        //for (int j = 0; j < sizeY; j++)
-        //{
-            //autoCorr[i][j] = new double[halfX];
-        //}
+        //temporalData[y] = new double[timesteps];
     //}
+
+    //int* times = new int[timesteps];
 
     cout << "Writing metadata" << endl;
     metadata(startRecord, interval, steps);
@@ -632,8 +708,11 @@ void LatticeMLRPS::specAnalysisRun(int steps, int interval, int startRecord, int
     {
         if (monteCarloStep % interval == 0 && timestep == 0.0)
         {
-            float progress = (1.0 * monteCarloStep) / (steps - 1);
-            progressBar(progress);
+            if (run == 0)
+            {
+                float progress = (1.0 * monteCarloStep) / (steps - 1);
+                progressBar(progress);
+            }
 
             if (monteCarloStep >= startRecord)
             {
@@ -643,8 +722,13 @@ void LatticeMLRPS::specAnalysisRun(int steps, int interval, int startRecord, int
                     dataOutput(0);
                 }
 
+            }
+
                 // Writes the current population density
-                //dataOutput(1);
+                dataOutput(1);
+
+                //outputAutoCorr(0, 1, 1);
+                outputAutoCorr(3, 1, 1);
 
                 // Writes the currrent binned predation rate
                 //dataOutput(5);
@@ -655,15 +739,15 @@ void LatticeMLRPS::specAnalysisRun(int steps, int interval, int startRecord, int
                 // Writes the currrent binned diffusion rate
                 //dataOutput(7);
 
-                if (idx < timesteps)
-                {
-                    times[idx] = monteCarloStep;
+                //if (idx < timesteps)
+                //{
+                    //times[idx] = monteCarloStep;
 
                     //double A = 0.0;
-                    for (int yIdx = 0; yIdx < sizeY; yIdx++)
-                    {
-                        temporalData[yIdx][idx] = density1[0][yIdx];
-                    }
+                    //for (int yIdx = 0; yIdx < sizeY; yIdx++)
+                    //{
+                        //temporalData[yIdx][idx] = density1[0][yIdx];
+                    //}
                     
                     //temporalData[idx] = globalDensity();
                     //double B = 0.0;
@@ -686,10 +770,10 @@ void LatticeMLRPS::specAnalysisRun(int steps, int interval, int startRecord, int
                             //autoCorr[idx][y][r] = ac / 3;
                         //}
                     //}
-                }
-                idx ++;
-            }
-            clearBinnedReactionCount();
+                //}
+                //idx ++;
+            //}
+            //clearBinnedReactionCount();
         }
         
         int x = xCoordDist(rng);
@@ -764,72 +848,31 @@ void LatticeMLRPS::specAnalysisRun(int steps, int interval, int startRecord, int
 
     cout << endl << "Simulation Complete" << endl;
 
-    /*double** spectralData = new double*[sizeY];
-    double** normSpecData = new double*[sizeY];
-    for (int y = 0; y < sizeY; y++)
-    {
-        spectralData[y] = new double[timesteps];
-        normSpecData[y] = new double[timesteps];
-    }
+    //stringstream ss;
+    //ss << filePath << "temporalData.csv";
+    //string fileName;
+    //fileName = ss.str();
 
-    cout << "performing spectral analysis" << endl;
-    for (int y = 0; y < sizeY; y++)
-    {
-        double *in;
-        fftw_complex *out;
-        fftw_plan plan;
+    //fstream data(fileName.c_str(), ofstream::out | ofstream::app | ofstream::in);
 
-        in = fftw_alloc_real(timesteps);
-        out = fftw_alloc_complex(timesteps);
-
-        for (int t = 0; t < timesteps; t++)
-        {
-            in[t] = temporalData[y][t];
-        }
-
-        plan = fftw_plan_dft_r2c_1d(timesteps, in, out, FFTW_ESTIMATE);
-
-        fftw_execute(plan);
-        
-        for (int t = 0; t < timesteps; t++)
-        {
-            spectralData[y][t] = out[t][0];
-            normSpecData[y][t] = sqrt(pow(out[t][0], 2) + pow(out[t][1], 2));
-        }
-
-        fftw_destroy_plan(plan);
-        fftw_free(in);
-        fftw_free(out);
-    }
-
-    */
-    cout << "writing temporalData" << endl;
-
-    stringstream ss;
-    ss << filePath << "temporalData.csv";
-    string fileName;
-    fileName = ss.str();
-
-    fstream data(fileName.c_str(), ofstream::out | ofstream::app | ofstream::in);
-
-    for (int y = 0; y < sizeY; y++)
-    {
-        for (int t = 0; t < timesteps; t++)
-        {
+    //for (int y = 0; y < sizeY; y++)
+    //{
+        //for (int t = 0; t < timesteps; t++)
+        //{
             //data << temporalData[t];
-            data << temporalData[y][t];
-            if (t < timesteps - 1)
-            {
-                data << ",";
-            }
-        }
-        if (y < sizeY - 1)
-        {
-            data << endl;
-        }
-    }
+            //data << temporalData[y][t];
+            //if (t < timesteps - 1)
+            //{
+                //data << ",";
+            //}
+        //}
+        //if (y < sizeY - 1)
+        //{
+            //data << endl;
+        //}
+    //}
 
-    data.close();
+    //data.close();
 
     //cout << "writing auto-correlation data" << endl;
 
@@ -892,11 +935,11 @@ void LatticeMLRPS::specAnalysisRun(int steps, int interval, int startRecord, int
     */
 
     //cout << "?" << endl;
-    for (int y = 0; y < sizeY; y++)
-    {
-        delete[] temporalData[y];
-    }
-    delete[] temporalData;
+    //for (int y = 0; y < sizeY; y++)
+    //{
+        //delete[] temporalData[y];
+    //}
+    //delete[] temporalData;
 
     //cout << "??" << endl;
     //for (int i = 0; i < timesteps; i++)
@@ -913,7 +956,7 @@ void LatticeMLRPS::specAnalysisRun(int steps, int interval, int startRecord, int
     //delete[] autoCorr;
     //cout << "????" << endl;
 
-    delete[] times;
+    //delete[] times;
 
     cout << endl << "Simulation Complete" << endl;
 }

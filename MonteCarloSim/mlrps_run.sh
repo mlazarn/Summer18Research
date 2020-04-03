@@ -1,4 +1,4 @@
-base="data/spectralData2"
+base="data/dataRun_020420_3"
 rate_prefix="rate_"
 dir_suffix="run_"
 prefix="latt_"
@@ -6,9 +6,9 @@ density_pfx="density_"
 flux_pfx="flux_"
 lims="-0.05 0.05"
 vlines="64 511"
-xSize="512"
+xSize="256"
 #xSizes=('256','384', '512', '640', '768')
-ySize="300"
+ySize="256"
 ylims="0 $ySize"
 binWidth="1"
 binLim="128"
@@ -18,15 +18,15 @@ binDiffCountLim="0 250"
 binNetDiffCountLim="0 750"
 intDist="64"
 mobility="5.0"
-RPSMobility="5.0"
+RPSMobility="0.1"
 #rps_mobility="2.5"
 mobilities=('0.1' '2.5' '5.0' '10.0')
 #RPSMobilities=('0.01' '0.1' '1.0' '2.5' '5.0' '10.0' '100' '1000') 
 RPSMobilities=('10.0' '20.0' '25.0' '26.0' '27.0' '100.0') 
-steps="8193"
+steps="2048"
 interval="1"
 #interval="10"
-start_t="3000"
+start_t="0"
 subdiv="16"
 dpi="200"
 fps="30"
@@ -41,31 +41,31 @@ outputR="specDataR.png"
 normOut="normSpecData.png"
 hwhmOut="HalfWidthHalfMax.png"
 
-for k in {0..8}; do
+for k in {0..0}; do
     targ="${base}/${rate_prefix}${k}"
-    for n in {0..99}; do
+    for n in {0..0}; do
     #for n in {0..0}; do
         n0=$( expr 2 \* $n )
-        n1=$( expr 2 \* $n + 1 )
+        #n1=$( expr 2 \* $n + 1 )
         #n2=$( expr 3 \* $n + 2 )
 
         #target="$targ/${dir_suffix}${n}"
         target0="$targ/${dir_suffix}${n0}"
-        target1="$targ/${dir_suffix}${n1}"
+        #target1="$targ/${dir_suffix}${n1}"
         #target2="$targ/${dir_suffix}${n2}"
         #rm $target/animation.mp4
         #mkdir -p -v $target
         mkdir -p -v $target0
-        mkdir -p -v $target1
+        #mkdir -p -v $target1
         #mkdir -p -v $target2
         #                  targ     o t xSize  ySize  mob       rps_mob              intDist  bin_w     steps  interval  start_t  run
         #                  1        2 3 4      5      6         7                    8        9         10     11        12       13
-        ./LatticeMLRPSTest $target0 0 1 $xSize $ySize $mobility ${RPSMobilities[$k]} $intDist $binWidth $steps $interval $start_t $n0 &
-        ./LatticeMLRPSTest $target1 0 1 $xSize $ySize $mobility ${RPSMobilities[$k]} $intDist $binWidth $steps $interval $start_t $n1 &
+        ./LatticeMLRPSTest $target0 0 1 $xSize $ySize $mobility ${RPSMobilities[$k]} $intDist $binWidth $steps $interval $start_t $n0 
+        #./LatticeMLRPSTest $target1 0 1 $xSize $ySize $mobility ${RPSMobilities[$k]} $intDist $binWidth $steps $interval $start_t $n1 &
         #./LatticeMLRPSTest $target2 0 1 $xSize $ySize $mobility ${RPSMobilities[$k]} $intDist $binWidth $steps $interval $start_t $n2 &
-        wait
+        #wait
 
-        #python3 videoConverter.py ${target} $prefix $start_t $interval $steps -v $vlines -o animation.mp4 -a $author -f $fps --dpi $dpi
+        #python3 videoConverter.py ${target0} $prefix $start_t $interval $steps -v $vlines -o animation.mp4 -a $author -f $fps --dpi $dpi
 
         #rm $target/density_net_newer.mp4
 
@@ -92,8 +92,8 @@ for k in {0..8}; do
     done
     #python corrLen.py $targ $dir_suffix autoCorr_3995.csv avg_auto_corr.csv 200
 
-    python3 fourierAnalysis.py $targ temporalData.csv $outputA $dir_suffix 256 50 s ${pad[0]} -w -d "outputA.csv" --max_freq 100 --max_pos 288 --dpi $dpi -A #-a 10.0 -w
-    python3 fourierAnalysis.py $targ temporalData.csv $outputAR $dir_suffix 256 50 s ${pad[0]} -w -d "outputAR.csv" --max_freq 100 --max_pos 288 --dpi $dpi -A -R #-a 10.0 -w
+    #python3 fourierAnalysis.py $targ temporalData.csv $outputA $dir_suffix 256 50 s ${pad[0]} -w -d "outputA.csv" --max_freq 100 --max_pos 288 --dpi $dpi -A #-a 10.0 -w
+    #python3 fourierAnalysis.py $targ temporalData.csv $outputAR $dir_suffix 256 50 s ${pad[0]} -w -d "outputAR.csv" --max_freq 100 --max_pos 288 --dpi $dpi -A -R #-a 10.0 -w
     #python3 fourierAnalysis.py $targ temporalData.csv $outputR $dir_suffix 256 50 s ${pad[0]} -w -d "outputR.csv" --max_freq 100 --max_pos 288 --dpi $dpi -R #-a 10.0 -w
     #python3 fourierAnalysis.py $targ temporalData.csv $normOut $dir_suffix 100 15 s ${pad[$n]} -v $vlines --dpi $dpi -a 10.0 --abs
     #python3 fourierAnalysis.py $targ temporalData.csv $normOut $dir_suffix 100 5 s ${pad[2]} -v $vlines --dpi $dpi -a 10.0 --abs -o -w -d "spectrograph.csv"
@@ -105,7 +105,7 @@ for k in {0..8}; do
     #python3 videoConverter.py ${targ}/${dir_suffix}0 $prefix $start_t $interval $steps -o animation.mp4 -a $author -f $fps --dpi $dpi
 done
 
-tar -zcvf $base.tar.gz $base/*/*
+#tar -zcvf $base.tar.gz $base/*/*
 
 #base_dir="data/multi_test/type/"
 #base="/density_runx"

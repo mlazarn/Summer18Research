@@ -50,6 +50,8 @@ INPUT /usr/share/texmf-dist/tex/latex/ms/everyshi.sty
 INPUT /usr/share/texmf-dist/tex/latex/ms/everyshi.sty
 INPUT /usr/share/texmf-dist/tex/generic/pgf/utilities/pgfrcs.code.tex
 INPUT /usr/share/texmf-dist/tex/generic/pgf/utilities/pgfrcs.code.tex
+INPUT /usr/share/texmf-dist/tex/generic/pgf/pgf.revision.tex
+INPUT /usr/share/texmf-dist/tex/generic/pgf/pgf.revision.tex
 INPUT /usr/share/texmf-dist/tex/generic/pgf/systemlayer/pgfsys.code.tex
 INPUT /usr/share/texmf-dist/tex/generic/pgf/systemlayer/pgfsys.code.tex
 INPUT /usr/share/texmf-dist/tex/generic/pgf/utilities/pgfkeys.code.tex
@@ -98,6 +100,7 @@ INPUT /usr/share/texmf-dist/tex/generic/pgf/basiclayer/pgfcoreexternal.code.tex
 INPUT /usr/share/texmf-dist/tex/generic/pgf/basiclayer/pgfcorelayers.code.tex
 INPUT /usr/share/texmf-dist/tex/generic/pgf/basiclayer/pgfcoretransparency.code.tex
 INPUT /usr/share/texmf-dist/tex/generic/pgf/basiclayer/pgfcorepatterns.code.tex
+INPUT /usr/share/texmf-dist/tex/generic/pgf/basiclayer/pgfcorerdf.code.tex
 INPUT /usr/share/texmf-dist/tex/latex/pgf/utilities/xxcolor.sty
 INPUT /usr/share/texmf-dist/tex/latex/pgf/utilities/xxcolor.sty
 INPUT /usr/share/texmf-dist/tex/generic/oberdiek/atbegshi.sty

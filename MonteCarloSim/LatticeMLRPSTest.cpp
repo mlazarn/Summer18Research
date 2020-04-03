@@ -73,7 +73,7 @@ int main(int argc, char *argv[])
     //cout << "< " << ySize << "< " << mobility << "< " << mobilityRPS << "< ";
     //cout << interfaceDistance << "< " << steps << "< " << interval << "< " << start << endl;
     cout << "starting run" << endl;
-    testLattice.binMidpointsOutput();
+    //testLattice.binMidpointsOutput();
     testLattice.specAnalysisRun(steps, interval, start, run);
     //testLattice.monteCarloRun(steps, interval, start, swapTime, swapInterval);
     //testLattice.drivenMonteCarloRun(steps, interval, start, startDrive, driveFrequency, pulseWidth);
