@@ -424,7 +424,7 @@ void Lattice::progressBar(float progress)
             else cout << " ";
 
         }
-        cout << "] " << int(progress * 100.0) << " %\r" << " t=" << monteCarloStep;
+        cout << "] " << int(progress * 100.0) << " %" << " t=" << monteCarloStep << "\r";
         cout.flush();
     }
 }
@@ -559,48 +559,60 @@ void Lattice::dataOutput(int outputType)
     string fileName;
     fileName = ss.str();
 
-    fstream data(fileName.c_str(), ofstream::out | ofstream::app | ofstream::in);
+    ofstream data(fileName.c_str(), ofstream::out | ofstream::app );
+
+    ss.str("");
+    ss.clear();
 
     if (outputType == 0)
     {
         for (int x = 0; x < sizeX; x++)
         {
+            ss.str("");
+            ss.clear();
             for (int y = 0; y < sizeY; y++)
             {
                 int spec = latt[x][y].getSpecies();
 
-                data << spec;
+                ss << spec;
 
                 if (y < sizeY - 1)
                 {
-                    data << ",";
+                    ss << ",";
                 }
             }
 
-            data << endl;
+            data << ss.str();
+            if (x < sizeX - 1)
+            {
+                data << endl;
+            }
         }
     }
     else if (outputType == 1 || outputType == 2)
     {
         for (int i = 0; i < 3; i++)
         {
+            ss.str("");
+            ss.clear();
             for (int y = 0; y < sizeY; y++)
             {
                 switch (outputType) 
                 {
                     case 1:
-                        data << density1[i][y];
+                        ss << density1[i][y];
                         break;
                     case 2:
-                        data << flux[i][y];
+                        ss << flux[i][y];
                         break;
                 }
 
                 if (y < sizeY - 1)
                 {
-                    data << ",";
+                    ss << ",";
                 }
             }
+            data << ss.str();
             data << endl;
         }
     }
@@ -608,32 +620,36 @@ void Lattice::dataOutput(int outputType)
     {
         for (int i = 0; i < 3; i++)
         {
+            ss.str("");
+            ss.clear();
             for (int binY = 0; binY < binnedArraySize; binY++)
             {
                 switch (outputType) 
                 {
                         case 3:
-                            data << binnedDensity1[i][binY];
+                            ss << binnedDensity1[i][binY];
                             break;
                         case 4:
-                            data << binnedFlux[i][binY];
+                            ss << binnedFlux[i][binY];
                             break;
                         case 5:
-                            data << binnedDeathCounts[i][binY];
+                            ss << binnedDeathCounts[i][binY];
                             break;
                         case 6:
-                            data << binnedBirthCounts[i][binY];
+                            ss << binnedBirthCounts[i][binY];
                             break;
                         case 7:
-                            data << binnedDiffusionCounts[i][binY];
+                            ss << binnedDiffusionCounts[i][binY];
                             break;
-                    }
-
-                    if (binY < binnedArraySize - 1)
-                    {
-                        data << ",";
-                    }
                 }
+
+                if (binY < binnedArraySize - 1)
+                {
+                    ss << ",";
+                }
+            }
+
+            data << ss.str();
             data << endl;
         }
     }

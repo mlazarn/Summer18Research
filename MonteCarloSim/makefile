@@ -1,5 +1,6 @@
-CXXFLAGS= -Wall -g -I/home/micarn/boost_1_67_0 -std=c++11
-LDFLAGS= -L/home/micarn/boost_1_67_0/stage/lib -L/home/micarn/usr/lib/
+CXXFLAGS= -Wall -g -std=c++11 
+#-I/home/micarn/boost_1_67_0 -std=c++11
+LDFLAGS= -L/usr/local/lib
 #COMPOPT=
 
 
@@ -18,7 +19,7 @@ LatticeTest.o: LatticeTest.cpp Lattice.hpp Cell.hpp
 	$(CXX) $(CXXFLAGS) $(LDFLAGS) -c LatticeTest.cpp
 
 LatticeMLRPSTest: LatticeMLRPSTest.o LatticeMLRPS.o Lattice.o Cell.o
-	$(CXX) $(CXXFLAGS) $(LDFLAGS) -o LatticeMLRPSTest LatticeMLRPSTest.o LatticeMLRPS.o Lattice.o Cell.o -lm #-lfftw3
+	$(CXX) $(CXXFLAGS) $(LDFLAGS) -o LatticeMLRPSTest LatticeMLRPSTest.o LatticeMLRPS.o Lattice.o Cell.o -lm -lcnpy -lz 
 
 LatticeMLRSPTest.o: LatticeMLRPSTest.cpp LatticeMLRPS.hpp Lattice.hpp Cell.hpp
 	$(CXX) $(CXXFLAGS) $(LDFLAGS) -c LatticeMLRPSTest.cpp

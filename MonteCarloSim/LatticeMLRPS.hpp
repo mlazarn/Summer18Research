@@ -1,6 +1,7 @@
 #include "Cell.hpp"
 #include "Lattice.hpp"
 
+//#include <cnpy.h>
 #include <boost/random/mersenne_twister.hpp> 
 #include <boost/random/uniform_int_distribution.hpp>
 #include <boost/random/discrete_distribution.hpp>
@@ -65,7 +66,7 @@ class LatticeMLRPS : public Lattice
         // @param int symmetry  1 if <a(x, y).a(x+r, y> should be calculated in
         //                      both directions, 0 if it should only be calculated
         //                      in the positive direction.
-        double autoCorrelator(int spec, int y, int r, int mode, int symmetry);
+        double autoCorrelator(int spec, int y, int r, int mode);
 
         // Calculates and writes to a file the autocorrelation function C(r).
         //
@@ -79,7 +80,7 @@ class LatticeMLRPS : public Lattice
         // @param int symmetry  1 if <a(x, y).a(x+r, y> should be calculated in
         //                      both directions, 0 if it should only be calculated
         //                      in the positive direction.
-        void outputAutoCorr(int spec, int subMode, int symmetry);
+        //void outputAutoCorr(int spec, int rMin, int rMax, int subMode);
 
         void RPSReaction(int x, int y);
         virtual void monteCarloRun(int steps, int interval, int start);
