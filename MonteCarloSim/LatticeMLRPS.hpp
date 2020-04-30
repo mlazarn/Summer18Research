@@ -4,7 +4,7 @@
 #include <boost/random/mersenne_twister.hpp> 
 #include <boost/random/uniform_int_distribution.hpp>
 #include <boost/random/discrete_distribution.hpp>
-#include <fftw3.h>
+//#include <fftw3.h>
 
 #include <iostream>
 #include <fstream>
@@ -61,8 +61,25 @@ class LatticeMLRPS : public Lattice
         
         // Calculates the vertical autocorrelator (C_{spec spec} for some 
         // distance r and some column y.
-        // @param int mode  1 if subtract density square, 0 otherwise
-        double autoCorrelator(int spec, int y, int r, int mode);
+        // @param int mode      1 if subtract density square, 0 otherwise
+        // @param int symmetry  1 if <a(x, y).a(x+r, y> should be calculated in
+        //                      both directions, 0 if it should only be calculated
+        //                      in the positive direction.
+        double autoCorrelator(int spec, int y, int r, int mode, int symmetry);
+
+        // Calculates and writes to a file the autocorrelation function C(r).
+        //
+        // @param int spec      The species for which the autocorrelation function 
+        //                      is calculated. Use spec=3 to calculate the 
+        //                      autocorrelation averaged over all three species.
+        //
+        // @param int subMode   1 if subtract density square, 0 otherwise. Is 
+        //                      passed directly to autoCorrelator(spec, y, r, mode)
+        //                      as the value for mode.
+        // @param int symmetry  1 if <a(x, y).a(x+r, y> should be calculated in
+        //                      both directions, 0 if it should only be calculated
+        //                      in the positive direction.
+        void outputAutoCorr(int spec, int subMode, int symmetry);
 
         void RPSReaction(int x, int y);
         virtual void monteCarloRun(int steps, int interval, int start);

@@ -28,6 +28,15 @@ Lattice::Lattice() : rng(std::time(0)), xCoordDist(0, 256), yCoordDist(0, 256), 
 
 /*
  * The square constructor for the lattice. 
+ *
+ * @param path       string      the directory where output files will be 
+ *                               written
+ * @param lattSize   int         the number of rows and columns in the 
+ *                               lattice
+ * @param mobility   double      the mobility rate of the cells in the 
+ *                               lattice. Use values greater than or equal 
+ *                               to 0.
+ * @param binSize    int         the width of bins for data reduction.
  */
 Lattice::Lattice(string path, int lattSize, double mobility, int binSize) : rng(std::time(0)), xCoordDist(0, lattSize - 1), yCoordDist(0, lattSize - 1), neighDist(0, 3), actionDist()
 {
@@ -52,7 +61,16 @@ Lattice::Lattice(string path, int lattSize, double mobility, int binSize) : rng(
     updateBinnedDensity();
 }
 
-//rectangular constructor for the lattice.
+/*
+ * The rectangular constructor for the lattice.
+ *
+ * @param path      string  the directory where output files will be written
+ * @param xSize     int     the number of rows in the lattice
+ * @param ySize     int     the number of rows in the lattice
+ * @param mobility  double  the mobility rate of the cells in the lattice. Use 
+ *                          values greater than or equal to 0.
+ * @param binSize   int     the width of bins for data reduction.
+ */
 Lattice::Lattice(string path, int xSize, int ySize, double mobility, int binSize) : rng(std::time(0)), xCoordDist(0, xSize - 1), yCoordDist(0, ySize - 1), neighDist(0, 3), actionDist()
 {
     sizeX = xSize;
@@ -406,7 +424,7 @@ void Lattice::progressBar(float progress)
             else cout << " ";
 
         }
-        cout << "] " << int(progress * 100.0) << " %\r";
+        cout << "] " << int(progress * 100.0) << " %\r" << " t=" << monteCarloStep;
         cout.flush();
     }
 }
