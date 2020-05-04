@@ -19,7 +19,7 @@ LatticeTest.o: LatticeTest.cpp Lattice.hpp Cell.hpp
 	$(CXX) $(CXXFLAGS) $(LDFLAGS) -c LatticeTest.cpp
 
 LatticeMLRPSTest: LatticeMLRPSTest.o LatticeMLRPS.o Lattice.o Cell.o
-	$(CXX) $(CXXFLAGS) $(LDFLAGS) -o LatticeMLRPSTest LatticeMLRPSTest.o LatticeMLRPS.o Lattice.o Cell.o -lm -lcnpy -lz 
+	$(CXX) $(CXXFLAGS) $(LDFLAGS) -o LatticeMLRPSTest LatticeMLRPSTest.o LatticeMLRPS.o Lattice.o Cell.o -lm -lz 
 
 LatticeMLRSPTest.o: LatticeMLRPSTest.cpp LatticeMLRPS.hpp Lattice.hpp Cell.hpp
 	$(CXX) $(CXXFLAGS) $(LDFLAGS) -c LatticeMLRPSTest.cpp
