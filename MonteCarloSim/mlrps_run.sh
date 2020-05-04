@@ -1,4 +1,4 @@
-base="data/dataRun_130420_0"
+base="data/dataRun_300420_0"
 rate_prefix="rate_"
 dir_suffix="run_"
 prefix="latt_"
@@ -23,7 +23,7 @@ RPSMobility="0.1"
 mobilities=('0.1' '2.5' '5.0' '10.0')
 #RPSMobilities=('0.01' '0.1' '1.0' '2.5' '5.0' '10.0' '100' '1000') 
 RPSMobilities=('0.1' '2.5' '5.0' '10.0' '25.0' '50.0' '100.0') 
-steps="4024"
+steps="3256"
 interval="1"
 #interval="10"
 start_t="3000"
@@ -41,17 +41,20 @@ outputR="specDataR.png"
 normOut="normSpecData.png"
 hwhmOut="HalfWidthHalfMax.png"
 
-for k in {3..6}; do
+for k in {0..6}; do
     targ="${base}/${rate_prefix}${k}"
-    for n in {0..16}; do
+    for n in {0..8}; do
     #for n in {0..0}; do
-        n0=$( expr 2 \* $n )
-        n1=$( expr 2 \* $n + 1 )
-        #n2=$( expr 3 \* $n + 2 )
+        n0=$( expr 4 \* $n )
+        n1=$( expr 4 \* $n + 1 )
+        n2=$( expr 4 \* $n + 2 )
+        n3=$( expr 4 \* $n + 3 )
 
         #target="$targ/${dir_suffix}${n}"
         target0="$targ/${dir_suffix}${n0}"
         target1="$targ/${dir_suffix}${n1}"
+        target2="$targ/${dir_suffix}${n2}"
+        target3="$targ/${dir_suffix}${n3}"
         #target2="$targ/${dir_suffix}${n2}"
         #rm $target/animation.mp4
         #mkdir -p -v $target
@@ -66,7 +69,12 @@ for k in {3..6}; do
         #wait
 
         #python3 videoConverter.py ${target0} $prefix $start_t $interval $steps -v $vlines -o animation.mp4 -a $author -f $fps --dpi $dpi
-        python3 correlationcalc.py ${target0} $prefix $start_t $steps 
+        echo $target0
+        python3 correlationcalc.py ${target0} $prefix $start_t $steps -p &
+        python3 correlationcalc.py ${target1} $prefix $start_t $steps &
+        python3 correlationcalc.py ${target2} $prefix $start_t $steps &
+        python3 correlationcalc.py ${target3} $prefix $start_t $steps &
+        wait
 
         #rm $target/density_net_newer.mp4
 
@@ -91,6 +99,7 @@ for k in {3..6}; do
         #binned diffusion count net
         #python3 densityCalculator.py a $target 'binned_diffusion_net.mp4' p r 0 $binLim -c -1 -p binned_diffusion_counts_ -l $binNetDiffCountLim -v $vlines -s $start_t -i $interval -S $steps -a $author -f $fps --binned -g
     done
+    tar -zcvf $targ.tar.gz $targ/*/*.tsv
     #python3 videoConverter.py "$targ/${dir_suffix}0" $prefix $start_t $interval $steps -v $vlines -o animation.mp4 -a $author -f $fps --dpi $dpi
     #python corrLen.py $targ $dir_suffix autoCorr_3995.csv avg_auto_corr.csv 200
 
@@ -107,7 +116,7 @@ for k in {3..6}; do
     #python3 videoConverter.py ${targ}/${dir_suffix}0 $prefix $start_t $interval $steps -o animation.mp4 -a $author -f $fps --dpi $dpi
 done
 
-#tar -zcvf $base.tar.gz $base/*/*
+tar -zcvf $base.tar.gz $base/*/*/*.tsv
 
 #base_dir="data/multi_test/type/"
 #base="/density_runx"
