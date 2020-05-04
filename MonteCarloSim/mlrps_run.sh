@@ -1,4 +1,4 @@
-base="data/dataRun_020420_3"
+base="data/dataRun_130420_1"
 rate_prefix="rate_"
 dir_suffix="run_"
 prefix="latt_"
@@ -6,9 +6,9 @@ density_pfx="density_"
 flux_pfx="flux_"
 lims="-0.05 0.05"
 vlines="64 511"
-xSize="256"
+xSize="512"
 #xSizes=('256','384', '512', '640', '768')
-ySize="256"
+ySize="512"
 ylims="0 $ySize"
 binWidth="1"
 binLim="128"
@@ -23,7 +23,7 @@ RPSMobility="0.1"
 mobilities=('0.1' '2.5' '5.0' '10.0')
 #RPSMobilities=('0.01' '0.1' '1.0' '2.5' '5.0' '10.0' '100' '1000') 
 RPSMobilities=('10.0' '20.0' '25.0' '26.0' '27.0' '100.0') 
-steps="2048"
+steps="6144"
 interval="1"
 #interval="10"
 start_t="0"
@@ -60,12 +60,12 @@ for k in {0..0}; do
         #mkdir -p -v $target2
         #                  targ     o t xSize  ySize  mob       rps_mob              intDist  bin_w     steps  interval  start_t  run
         #                  1        2 3 4      5      6         7                    8        9         10     11        12       13
-        ./LatticeMLRPSTest $target0 0 1 $xSize $ySize $mobility ${RPSMobilities[$k]} $intDist $binWidth $steps $interval $start_t $n0 
+        #./LatticeMLRPSTest $target0 0 1 $xSize $ySize $mobility ${RPSMobilities[$k]} $intDist $binWidth $steps $interval $start_t $n0 
         #./LatticeMLRPSTest $target1 0 1 $xSize $ySize $mobility ${RPSMobilities[$k]} $intDist $binWidth $steps $interval $start_t $n1 &
         #./LatticeMLRPSTest $target2 0 1 $xSize $ySize $mobility ${RPSMobilities[$k]} $intDist $binWidth $steps $interval $start_t $n2 &
         #wait
 
-        #python3 videoConverter.py ${target0} $prefix $start_t $interval $steps -v $vlines -o animation.mp4 -a $author -f $fps --dpi $dpi
+        python3 videoConverter.py ${target0} $prefix $start_t $interval $steps -v $vlines -o animation.mp4 -a $author -f $fps --dpi $dpi
 
         #rm $target/density_net_newer.mp4
 
