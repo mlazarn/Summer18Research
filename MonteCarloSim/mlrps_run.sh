@@ -1,4 +1,4 @@
-base="data/dataRun_130420_1"
+base="data/dataRun_130420_0"
 rate_prefix="rate_"
 dir_suffix="run_"
 prefix="latt_"
@@ -55,17 +55,18 @@ for k in {0..6}; do
         #target2="$targ/${dir_suffix}${n2}"
         #rm $target/animation.mp4
         #mkdir -p -v $target
-        mkdir -p -v $target0
-        mkdir -p -v $target1
+        #mkdir -p -v $target0
+        #mkdir -p -v $target1
         #mkdir -p -v $target2
         #                  targ     o t xSize  ySize  mob       rps_mob              intDist  bin_w     steps  interval  start_t  run
         #                  1        2 3 4      5      6         7                    8        9         10     11        12       13
-        ./LatticeMLRPSTest $target0 0 1 $xSize $ySize $mobility ${RPSMobilities[$k]} $intDist $binWidth $steps $interval $start_t $n0 &
-        ./LatticeMLRPSTest $target1 0 1 $xSize $ySize $mobility ${RPSMobilities[$k]} $intDist $binWidth $steps $interval $start_t $n1 &
+        #./LatticeMLRPSTest $target0 0 1 $xSize $ySize $mobility ${RPSMobilities[$k]} $intDist $binWidth $steps $interval $start_t $n0 &
+        #./LatticeMLRPSTest $target1 0 1 $xSize $ySize $mobility ${RPSMobilities[$k]} $intDist $binWidth $steps $interval $start_t $n1 &
         #./LatticeMLRPSTest $target2 0 1 $xSize $ySize $mobility ${RPSMobilities[$k]} $intDist $binWidth $steps $interval $start_t $n2 &
-        wait
+        #wait
 
-        python3 videoConverter.py ${target0} $prefix $start_t $interval $steps -v $vlines -o animation.mp4 -a $author -f $fps --dpi $dpi
+        #python3 videoConverter.py ${target0} $prefix $start_t $interval $steps -v $vlines -o animation.mp4 -a $author -f $fps --dpi $dpi
+        python3 correlationcalc.py ${target0} $prefix $start_t $steps 
 
         #rm $target/density_net_newer.mp4
 
@@ -90,7 +91,7 @@ for k in {0..6}; do
         #binned diffusion count net
         #python3 densityCalculator.py a $target 'binned_diffusion_net.mp4' p r 0 $binLim -c -1 -p binned_diffusion_counts_ -l $binNetDiffCountLim -v $vlines -s $start_t -i $interval -S $steps -a $author -f $fps --binned -g
     done
-    python3 videoConverter.py "$targ/${dir_suffix}0" $prefix $start_t $interval $steps -v $vlines -o animation.mp4 -a $author -f $fps --dpi $dpi
+    #python3 videoConverter.py "$targ/${dir_suffix}0" $prefix $start_t $interval $steps -v $vlines -o animation.mp4 -a $author -f $fps --dpi $dpi
     #python corrLen.py $targ $dir_suffix autoCorr_3995.csv avg_auto_corr.csv 200
 
     #python3 fourierAnalysis.py $targ temporalData.csv $outputA $dir_suffix 256 50 s ${pad[0]} -w -d "outputA.csv" --max_freq 100 --max_pos 288 --dpi $dpi -A #-a 10.0 -w
