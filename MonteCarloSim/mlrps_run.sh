@@ -1,4 +1,4 @@
-base="data/dataRun_300420_0"
+base="data/dataRun_130420_1"
 rate_prefix="rate_"
 dir_suffix="run_"
 prefix="latt_"
@@ -41,9 +41,9 @@ outputR="specDataR.png"
 normOut="normSpecData.png"
 hwhmOut="HalfWidthHalfMax.png"
 
-for k in {0..6}; do
+for k in {3..6}; do
     targ="${base}/${rate_prefix}${k}"
-    for n in {0..32}; do
+    for n in {0..16}; do
     #for n in {0..0}; do
         n0=$( expr 2 \* $n )
         n1=$( expr 2 \* $n + 1 )
@@ -65,7 +65,7 @@ for k in {0..6}; do
         #./LatticeMLRPSTest $target2 0 1 $xSize $ySize $mobility ${RPSMobilities[$k]} $intDist $binWidth $steps $interval $start_t $n2 &
         wait
 
-        #python3 videoConverter.py ${target0} $prefix $start_t $interval $steps -v $vlines -o animation.mp4 -a $author -f $fps --dpi $dpi
+        python3 videoConverter.py ${target0} $prefix $start_t $interval $steps -v $vlines -o animation.mp4 -a $author -f $fps --dpi $dpi
 
         #rm $target/density_net_newer.mp4
 
