@@ -41,9 +41,9 @@ outputR="specDataR.png"
 normOut="normSpecData.png"
 hwhmOut="HalfWidthHalfMax.png"
 
-for k in {0..6}; do
+for k in {3..6}; do
     targ="${base}/${rate_prefix}${k}"
-    for n in {0..32}; do
+    for n in {0..16}; do
     #for n in {0..0}; do
         n0=$( expr 2 \* $n )
         n1=$( expr 2 \* $n + 1 )
