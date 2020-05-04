@@ -188,32 +188,35 @@ void LatticeMLRPS::metadata(int start, int interval, int stop, int startDrive, i
     data.close();
 }
 
-double LatticeMLRPS::autoCorrelator(int spec, int y, int r, int mode, int symmetry)
+double LatticeMLRPS::autoCorrelator(int spec, int y, int r, int mode)
 {
     double sum = 0.0;
     for (int i = 0; i < sizeX; ++i) 
     {
-        if (latt[i][y].getSpecies() == spec && latt[(i+r) % sizeX][y].getSpecies() == spec)
+        int targ = i - r;
+
+        if (targ < 0)
+        {
+            targ = sizeX - targ;
+        }
+        
+        if (latt[i][y].getSpecies() == spec && latt[(targ) % sizeX][y].getSpecies() == spec)
         {
             sum += 1.0;
         }
 
-        if (symmetry == 1)
-        {
-            int targ = i - r; 
+        //if (symmetry == 1)
+        //{
+            //int targ = i - r; 
             
-            if (targ < 0)
-            {
-                targ = sizeX - targ;
-            }
 
-            if (latt[i][y].getSpecies() == spec && latt[(targ) % sizeX][y].getSpecies() == spec)
-            {
-                sum += 1.0;
-            }
+            //if (latt[i][y].getSpecies() == spec && latt[(targ) % sizeX][y].getSpecies() == spec)
+            //{
+                //sum += 1.0;
+            //}
 
-            sum = sum / 2.0;
-        }
+            //sum = sum / 2.0;
+        //}
     }
 
     double output;
@@ -230,72 +233,98 @@ double LatticeMLRPS::autoCorrelator(int spec, int y, int r, int mode, int symmet
     return output;
 }
 
-void LatticeMLRPS::outputAutoCorr(int spec, int subMode, int symmetry)
-{
+//void LatticeMLRPS::outputAutoCorr(int spec, int rMin, int rMax, int subMode)
+//{
     //double** autoCorr = new double*[sizeY];
     //for (int i = 0; i < sizeY; i++)
     //{
         //autoCorr[i] = new double[halfX];
     //}
 
-    using namespace std;
-    stringstream ss;
+    //using namespace std;
+    //stringstream ss;
 
-    const char *prefixes[] = {"autoCorrA_", "autoCorrB_", "autoCorrC_", "autoCorrAvg_"};
+    //const char *prefixes[] = {"autoCorrA_", "autoCorrB_", "autoCorrC_", "autoCorrAvg_"};
 
-    if (spec > 3)
-    {
-        ss << filePath << prefixes[0] << monteCarloStep << ".csv" ;
-    }
-    else 
-    {
-        ss << filePath << prefixes[spec] << monteCarloStep << ".csv" ;
-    }
+    //int rSize = rMax - rMin;
+    //vector<double> corr_function (rSize * sizeY);
+
+
+    //ofstream data(fileName.c_str(), ofstream::out | ofstream::trunc);
+
+    //int halfX = sizeX/2;
+    //ss.precision(6);
+
+
+    //int rTarg;
+    //int targ;
+    //double corr;
+    //for (int y = 0; y < sizeY; y++)
+    //{
+        //ss.str("");
+        //ss.clear();
         
-    string fileName;
-    fileName = ss.str();
+        //for (int r = rMin; r < rMax; r++)
+        //{
+            //corr = 0.0;
+            //if (spec > 3)
+            //{
+                //corr = autoCorrelator(0, y, r, subMode);
+            //}
+            //else if (spec == 3)
+            //{
+                //corr = autoCorrelator(0, y, r, subMode) 
+                     //+ autoCorrelator(1, y, r, subMode)
+                     //+ autoCorrelator(2, y, r, subMode);
+                //corr = corr / 3.0;
+            //}
+            //else
+            //{
+                //corr = autoCorrelator(spec, y, r, subMode);
+            //}
 
-    fstream data(fileName.c_str(), ofstream::out | ofstream::app | ofstream::in);
+            
+            //rTarg = r - rMin;
 
-    int halfX = sizeX/2;
+            //targ = (y * rSize) + rTarg;
+            //corr_function[targ] = corr;
 
-    for (int y = 0; y < sizeY; y++)
-    {
-        for (int r = 0; r < halfX; r++)
-        {
-            double corr = 0.0;
-            if (spec > 3)
-            {
-                corr = autoCorrelator(0, y, r, subMode, symmetry);
-            }
-            else if (spec == 3)
-            {
-                corr = autoCorrelator(0, y, r, subMode, symmetry) 
-                     + autoCorrelator(1, y, r, subMode, symmetry)
-                     + autoCorrelator(2, y, r, subMode, symmetry);
-                corr = corr / 3.0;
-            }
-            else
-            {
-                corr = autoCorrelator(spec, y, r, subMode, symmetry);
-            }
 
-            data << corr; 
 
-            if (r < halfX - 1)
-            {
-                data << ",";
-            }
-        }
+            //ss << corr; 
 
-        if (y < sizeY - 1)
-        {
-            data << endl;
-        }
-    }
+            //if (r < halfX - 1)
+            //{
+                //ss << ",";
+            //}
+        //}
+
+        //data << ss.str();
+        //if (y < sizeY - 1)
+        //{
+            //data << endl;
+            //ss << "\r";
+            //ss << endl;
+        //}
+
+    //}
     
-    data.close();
-}
+    //if (spec > 3)
+    //{
+        //ss << filePath << prefixes[0] << monteCarloStep << ".npy" ;
+    //}
+    //else 
+    //{
+        //ss << filePath << prefixes[spec] << monteCarloStep << ".npy" ;
+    //}
+        
+    //string fileName;
+    //fileName = ss.str();
+
+    //cnpy::npy_save(fileName, &corr_function[0], {sizeY, rSize}, "w");
+    
+    //data.close();
+//}
 
 // Implements the RPS model reaction.
 void LatticeMLRPS::RPSReaction(int x, int y)
@@ -680,7 +709,9 @@ void LatticeMLRPS::specAnalysisRun(int steps, int interval, int startRecord, int
     //double norm = (fracRPS * normRPS) + ((1 - fracRPS) * normML);
 
     int p = sizeX * sizeY;
-    //int halfX = sizeX / 2;
+    int halfX = sizeX / 2;
+    int rMax = halfX;
+    int rMin = (-1 * halfX) - 1;
 
     //double deltaT = 1.0 / (norm * p);
 
@@ -704,7 +735,9 @@ void LatticeMLRPS::specAnalysisRun(int steps, int interval, int startRecord, int
 
     cout << "Starting Monte Carlo Run" << endl;
     updateDensity();
-    do
+    //do
+
+    while (monteCarloStep < steps)
     {
         if (monteCarloStep % interval == 0 && timestep == 0.0)
         {
@@ -716,19 +749,22 @@ void LatticeMLRPS::specAnalysisRun(int steps, int interval, int startRecord, int
 
             if (monteCarloStep >= startRecord)
             {
-                if (run == 0)
-                {
+                dataOutput(0);
+                //if (run == 0)
+                //{
                     // Writes the current lattice state to a csv
-                    dataOutput(0);
-                }
+                    //dataOutput(0);
+                //}
 
-            }
 
                 // Writes the current population density
-                dataOutput(1);
+                //dataOutput(1);
 
-                //outputAutoCorr(0, 1, 1);
-                outputAutoCorr(3, 1, 1);
+                
+                //outputAutoCorr(0, rMin, rMax, 1);
+                //outputAutoCorr(3, 1, 1);
+            }
+
 
                 // Writes the currrent binned predation rate
                 //dataOutput(5);
@@ -780,13 +816,14 @@ void LatticeMLRPS::specAnalysisRun(int steps, int interval, int startRecord, int
         int y = yCoordDist(rng);
         timestep += deltaT;
 
-        do 
+        //do 
+        while (latt[x][y].getSpecies() > 2)
         {
             x = xCoordDist(rng);
             y = yCoordDist(rng);
             timestep += deltaT;
         }
-        while (latt[x][y].getSpecies() > 2);
+        //while (latt[x][y].getSpecies() > 2);
  
         // Decides whether to use reaction(x, y) or reactionRPS(x, y)
         if ( (y >= RPSMin && y < RPSMax) ) 
@@ -844,9 +881,9 @@ void LatticeMLRPS::specAnalysisRun(int steps, int interval, int startRecord, int
         }
 
     }
-    while (monteCarloStep < steps);
+    //while (monteCarloStep < steps);
 
-    cout << endl << "Simulation Complete" << endl;
+    //cout << endl << "Simulation Complete" << endl;
 
     //stringstream ss;
     //ss << filePath << "temporalData.csv";

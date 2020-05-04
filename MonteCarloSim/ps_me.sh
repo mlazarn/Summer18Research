@@ -1,1 +1,1 @@
-ps -ef | grep micarn
+ps -ef | grep $USER
