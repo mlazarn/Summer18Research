@@ -43,7 +43,7 @@ hwhmOut="HalfWidthHalfMax.png"
 
 for k in {0..6}; do
     targ="${base}/${rate_prefix}${k}"
-    for n in {0..8}; do
+    for n in {3..3}; do
     #for n in {0..0}; do
         n0=$( expr 4 \* $n )
         n1=$( expr 4 \* $n + 1 )
@@ -116,7 +116,7 @@ for k in {0..6}; do
     #python3 videoConverter.py ${targ}/${dir_suffix}0 $prefix $start_t $interval $steps -o animation.mp4 -a $author -f $fps --dpi $dpi
 done
 
-tar -zcvf $base.tar.gz $base/*/*/*.tsv
+#tar -zcvf $base.tar.gz $base/*/*/*.tsv
 
 #base_dir="data/multi_test/type/"
 #base="/density_runx"
