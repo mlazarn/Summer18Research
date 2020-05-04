@@ -41,20 +41,65 @@ outputR="specDataR.png"
 normOut="normSpecData.png"
 hwhmOut="HalfWidthHalfMax.png"
 
-for k in {0..6}; do
+for k in {4..4}; do
     targ="${base}/${rate_prefix}${k}"
-    for n in {0..8}; do
+    for n in {32..33}; do
     #for n in {0..0}; do
-        n0=$( expr 4 \* $n )
-        n1=$( expr 4 \* $n + 1 )
-        n2=$( expr 4 \* $n + 2 )
-        n3=$( expr 4 \* $n + 3 )
+        n0=$( expr 16 \* $n )
+        n1=$( expr 16 \* $n + 1 )
+        n2=$( expr 16 \* $n + 2 )
+        n3=$( expr 16 \* $n + 3 )
+        n4=$( expr 16 \* $n + 4)
+        n5=$( expr 16 \* $n + 5 )
+        n6=$( expr 16 \* $n + 6 )
+        n7=$( expr 16 \* $n + 7 )
+        n8=$( expr 16 \* $n + 8 )
+        n9=$( expr 16 \* $n + 9 )
+        n10=$( expr 16 \* $n + 10 )
+        n11=$( expr 16 \* $n + 11 )
+        n12=$( expr 16 \* $n + 12 )
+        n13=$( expr 16 \* $n + 13 )
+        n14=$( expr 16 \* $n + 14 )
+        n15=$( expr 16 \* $n + 15 )
 
-        #target="$targ/${dir_suffix}${n}"
+        target="$targ/${dir_suffix}${n}"
+        rm -r -f -v $target
+        
         target0="$targ/${dir_suffix}${n0}"
         target1="$targ/${dir_suffix}${n1}"
         target2="$targ/${dir_suffix}${n2}"
         target3="$targ/${dir_suffix}${n3}"
+        target4="$targ/${dir_suffix}${n4}"
+        target5="$targ/${dir_suffix}${n5}"
+        target6="$targ/${dir_suffix}${n6}"
+        target7="$targ/${dir_suffix}${n7}"
+        target8="$targ/${dir_suffix}${n8}"
+        target9="$targ/${dir_suffix}${n9}"
+        target10="$targ/${dir_suffix}${n10}"
+        target11="$targ/${dir_suffix}${n11}"
+        target12="$targ/${dir_suffix}${n12}"
+        target13="$targ/${dir_suffix}${n13}"
+        target14="$targ/${dir_suffix}${n14}"
+        target15="$targ/${dir_suffix}${n15}"
+
+        #for i in {0..15};do
+            #direc="$targ/${dir_suffix}$( expr 16 \* $n + $i )"
+            #cd $direc
+            #pwd
+            #ls | grep tsv
+            #mkdir safe
+            
+            #mv average_density.tsv safe/average_density.tsv
+            #mv correlation_function safe/correlation_function
+            #mv correlation_length safe/correlation_length
+
+            #ls safe
+
+            #rm -f -v latt_*.csv
+            #ls
+            #cd ~/L/Summer18Research/MonteCarloSim
+        #done
+
         #target2="$targ/${dir_suffix}${n2}"
         #rm $target/animation.mp4
         #mkdir -p -v $target
@@ -69,12 +114,34 @@ for k in {0..6}; do
         #wait
 
         #python3 videoConverter.py ${target0} $prefix $start_t $interval $steps -v $vlines -o animation.mp4 -a $author -f $fps --dpi $dpi
-        echo $target0
-        python3 correlationcalc.py ${target0} $prefix $start_t $steps -p &
-        python3 correlationcalc.py ${target1} $prefix $start_t $steps &
-        python3 correlationcalc.py ${target2} $prefix $start_t $steps &
-        python3 correlationcalc.py ${target3} $prefix $start_t $steps &
-        wait
+
+        #@cd $target4
+        #pwd
+        #for t in {3000..4023}; do
+            #ed -s "latt_${t}.csv" <<< $'-510,$d\nwq'
+            #ed -s "latt_${t}.csv" <<< $'$s/.\{1023\}$//\nwq'
+        #done
+        #cd ~/L/Summer18Research/MonteCarloSim
+        #pwd
+
+        #echo $target0
+        #python3 correlationcalc.py ${target0} $prefix $start_t $steps -p &
+        #python3 correlationcalc.py ${target1} $prefix $start_t $steps &
+        #python3 correlationcalc.py ${target2} $prefix $start_t $steps &
+        #python3 correlationcalc.py ${target3} $prefix $start_t $steps &
+        #python3 correlationcalc.py ${target4} $prefix $start_t $steps &
+        #python3 correlationcalc.py ${target5} $prefix $start_t $steps &
+        #python3 correlationcalc.py ${target6} $prefix $start_t $steps &
+        #python3 correlationcalc.py ${target7} $prefix $start_t $steps &
+        #python3 correlationcalc.py ${target8} $prefix $start_t $steps &
+        #python3 correlationcalc.py ${target9} $prefix $start_t $steps &
+        #python3 correlationcalc.py ${target10} $prefix $start_t $steps &
+        #python3 correlationcalc.py ${target11} $prefix $start_t $steps &
+        #python3 correlationcalc.py ${target12} $prefix $start_t $steps &
+        #python3 correlationcalc.py ${target13} $prefix $start_t $steps &
+        #python3 correlationcalc.py ${target14} $prefix $start_t $steps &
+        #python3 correlationcalc.py ${target15} $prefix $start_t $steps &
+        #wait
 
         #rm $target/density_net_newer.mp4
 
@@ -116,7 +183,7 @@ for k in {0..6}; do
     #python3 videoConverter.py ${targ}/${dir_suffix}0 $prefix $start_t $interval $steps -o animation.mp4 -a $author -f $fps --dpi $dpi
 done
 
-tar -zcvf $base.tar.gz $base/*/*/*.tsv
+tar -zcvf $base.tar.gz $base/*/*
 
 #base_dir="data/multi_test/type/"
 #base="/density_runx"
