@@ -22,7 +22,7 @@ RPSMobility="0.1"
 #rps_mobility="2.5"
 mobilities=('0.1' '2.5' '5.0' '10.0')
 #RPSMobilities=('0.01' '0.1' '1.0' '2.5' '5.0' '10.0' '100' '1000') 
-RPSMobilities=('0.1' '2.5' '5.0' '10.0' '25.0' '50.0' '100.0' '20.0' '30.0') 
+RPSMobilities=('0.1' '2.5' '5.0' '10.0' '25.0' '50.0' '100.0' '20.0' '21.0' '22.0' '23.0' '24.0' '30.0') 
 steps="4023"
 interval="1"
 #interval="10"
@@ -41,9 +41,9 @@ outputR="specDataR.png"
 normOut="normSpecData.png"
 hwhmOut="HalfWidthHalfMax.png"
 
-for k in {7..7}; do
+for k in {8..12}; do
     targ="${base}/${rate_prefix}${k}"
-    for n in {0..7}; do
+    for n in {0..0}; do
     #for n in {0..0}; do
         n0=$( expr 4 \* $n )
         n1=$( expr 4 \* $n + 1 )
@@ -151,10 +151,10 @@ for k in {7..7}; do
         #cd ~/L/Summer18Research/MonteCarloSim
 
         #echo $target0
-        python3 correlationcalc.py ${target0} $prefix $start_t $steps -p &
-        python3 correlationcalc.py ${target1} $prefix $start_t $steps &
-        python3 correlationcalc.py ${target2} $prefix $start_t $steps &
-        python3 correlationcalc.py ${target3} $prefix $start_t $steps &
+        #python3 correlationcalc.py ${target0} $prefix $start_t $steps -p &
+        #python3 correlationcalc.py ${target1} $prefix $start_t $steps &
+        #python3 correlationcalc.py ${target2} $prefix $start_t $steps &
+        #python3 correlationcalc.py ${target3} $prefix $start_t $steps &
         #python3 correlationcalc.py ${target4} $prefix $start_t $steps &
         #python3 correlationcalc.py ${target5} $prefix $start_t $steps &
         #python3 correlationcalc.py ${target6} $prefix $start_t $steps &
@@ -195,7 +195,7 @@ for k in {7..7}; do
     #cd $targ
     #pwd
     python3 videoConverter.py "${targ}/${dir_suffix}0" $prefix $start_t $interval $steps -v $vlines -o animation.mp4 -a $author -f $fps --dpi $dpi
-    tar -zcvf $targ.tar.gz $targ/*/*.tsv $targ/*/*.mp4
+    #tar -zcvf $targ.tar.gz $targ/*/*.tsv $targ/*/*.mp4
     #cd ~/Research/Summer18Research/MonteCarloSim
     #python corrLen.py $targ $dir_suffix autoCorr_3995.csv avg_auto_corr.csv 200
 

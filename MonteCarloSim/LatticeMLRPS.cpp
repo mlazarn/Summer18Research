@@ -738,6 +738,13 @@ void LatticeMLRPS::specAnalysisRun(int steps, int interval, int startRecord, int
     //do
 
     double ** avgAC = new double*[sizeY];
+    double ** avgDen = new double*[4];
+
+    for (int i = 0; i < 4; ++i) 
+    {
+        avgDen[i] = new double[sizeY];
+    }
+
     for (int y = 0; y < sizeY; y++)
     {
         avgAC[y] = new double[300];
@@ -762,6 +769,10 @@ void LatticeMLRPS::specAnalysisRun(int steps, int interval, int startRecord, int
             {
                 for (int y = 0; y < sizeY; y++)
                 {
+                    for (int i = 0; i < 4; ++i) 
+                    {
+                        avgDen[i][y] = avgDen[i][y] + (density0[i][y] / (1.0 * timesteps));
+                    }
                     for (int r = 0; r < 300; r++)
                     {
                         avgAC[y][r] = avgAC[y][r] + (autoCorrelator(0, y, r, 1) / (1.0 * timesteps));
@@ -903,7 +914,7 @@ void LatticeMLRPS::specAnalysisRun(int steps, int interval, int startRecord, int
     //cout << endl << "Simulation Complete" << endl;
 
     stringstream ss;
-    ss << filePath << "average_density.tsv";
+    ss << filePath << "correlation_function.tsv";
     string fileName;
     fileName = ss.str();
 
@@ -916,7 +927,7 @@ void LatticeMLRPS::specAnalysisRun(int steps, int interval, int startRecord, int
         {
             //data << temporalData[t];
             data << avgAC[y][r];
-            if (r < timesteps - 1)
+            if (r < 299)
             {
                 data << ",";
             }
@@ -935,6 +946,36 @@ void LatticeMLRPS::specAnalysisRun(int steps, int interval, int startRecord, int
     }
     delete[] avgAC;
 
+    ss.str("");
+    ss << filePath << "average_density.tsv";
+    fileName = ss.str();
+
+    fstream data2(fileName.c_str(), ofstream::out | ofstream::app | ofstream::in);
+
+    for (int i = 0; i < 4; ++i) 
+    {
+        for (int y = 0; y < sizeY; ++y) 
+        {
+            data << avgDen[i][y];
+
+            if (y < sizeY - 1) 
+            {
+                data << ",";
+            }
+        }
+        if (i < 3) 
+        {
+            data << endl;
+        }
+    }
+
+    for (int i = 0; i < 4; ++i) 
+    {
+        delete[] avgDen[i];
+    }
+    delete[] avgDen;
+
+    data2.close();
     //for (int t = 0; t < timesteps; t++)
     //{
         //ss.str("");
