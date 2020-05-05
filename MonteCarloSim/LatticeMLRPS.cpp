@@ -717,7 +717,7 @@ void LatticeMLRPS::specAnalysisRun(int steps, int interval, int startRecord, int
 
     double deltaT = 1.0 / p;
 
-    //int timesteps = (steps - startRecord) / interval;
+    int timesteps = (steps - startRecord) / interval;
     //int idx = 0;
 
     //double** temporalData = new double*[sizeY];
@@ -737,6 +737,16 @@ void LatticeMLRPS::specAnalysisRun(int steps, int interval, int startRecord, int
     updateDensity();
     //do
 
+    double ** avgAC = new double*[sizeY];
+    for (int y = 0; y < sizeY; y++)
+    {
+        avgAC[y] = new double[300];
+        for (int r = 0; r < 300; r++)
+        {
+            avgAC[y][r] = 0.0;
+        }
+    }
+
     while (monteCarloStep < steps)
     {
         if (monteCarloStep % interval == 0 && timestep == 0.0)
@@ -745,11 +755,18 @@ void LatticeMLRPS::specAnalysisRun(int steps, int interval, int startRecord, int
             {
                 float progress = (1.0 * monteCarloStep) / (steps - 1);
                 progressBar(progress);
+                dataOutput(0);
             }
 
             if (monteCarloStep >= startRecord)
             {
-                dataOutput(0);
+                for (int y = 0; y < sizeY; y++)
+                {
+                    for (int r = 0; r < 300; r++)
+                    {
+                        avgAC[y][r] = avgAC[y][r] + (autoCorrelator(0, y, r, 1) / (1.0 * timesteps));
+                    }
+                }
                 //if (run == 0)
                 //{
                     // Writes the current lattice state to a csv
@@ -885,33 +902,38 @@ void LatticeMLRPS::specAnalysisRun(int steps, int interval, int startRecord, int
 
     //cout << endl << "Simulation Complete" << endl;
 
-    //stringstream ss;
-    //ss << filePath << "temporalData.csv";
-    //string fileName;
-    //fileName = ss.str();
+    stringstream ss;
+    ss << filePath << "average_density.tsv";
+    string fileName;
+    fileName = ss.str();
 
-    //fstream data(fileName.c_str(), ofstream::out | ofstream::app | ofstream::in);
+    fstream data(fileName.c_str(), ofstream::out | ofstream::app | ofstream::in);
 
-    //for (int y = 0; y < sizeY; y++)
-    //{
-        //for (int t = 0; t < timesteps; t++)
-        //{
+    cout << "writing auto-correlation data" << endl;
+    for (int y = 0; y < sizeY; y++)
+    {
+        for (int r = 0; r < timesteps; r++)
+        {
             //data << temporalData[t];
-            //data << temporalData[y][t];
-            //if (t < timesteps - 1)
-            //{
-                //data << ",";
-            //}
-        //}
-        //if (y < sizeY - 1)
-        //{
-            //data << endl;
-        //}
-    //}
+            data << avgAC[y][r];
+            if (r < timesteps - 1)
+            {
+                data << ",";
+            }
+        }
+        if (y < sizeY - 1)
+        {
+            data << endl;
+        }
+    }
 
-    //data.close();
+    data.close();
 
-    //cout << "writing auto-correlation data" << endl;
+    for (int y = 0; y < sizeY; y++)
+    {
+        delete[] avgAC[y];
+    }
+    delete[] avgAC;
 
     //for (int t = 0; t < timesteps; t++)
     //{
@@ -972,11 +994,6 @@ void LatticeMLRPS::specAnalysisRun(int steps, int interval, int startRecord, int
     */
 
     //cout << "?" << endl;
-    //for (int y = 0; y < sizeY; y++)
-    //{
-        //delete[] temporalData[y];
-    //}
-    //delete[] temporalData;
 
     //cout << "??" << endl;
     //for (int i = 0; i < timesteps; i++)
