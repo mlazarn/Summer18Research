@@ -769,10 +769,12 @@ void LatticeMLRPS::specAnalysisRun(int steps, int interval, int startRecord, int
             {
                 for (int y = 0; y < sizeY; y++)
                 {
-                    for (int i = 0; i < 4; ++i) 
+                    for (int i = 0; i < 3; ++i) 
                     {
-                        avgDen[i][y] = avgDen[i][y] + (density0[i][y] / (1.0 * timesteps));
+                        avgDen[i][y] = avgDen[i][y] + (density1[i][y] / (1.0 * timesteps));
                     }
+                    double currDen = density0[0][y] + density1[1][y] + density1[2][y];
+                    avgDen[4][y] = avgDen[4][y] + (currDen/(1.0 * timesteps));
                     for (int r = 0; r < 300; r++)
                     {
                         avgAC[y][r] = avgAC[y][r] + (autoCorrelator(0, y, r, 1) / (1.0 * timesteps));

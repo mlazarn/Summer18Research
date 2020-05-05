@@ -43,7 +43,7 @@ hwhmOut="HalfWidthHalfMax.png"
 
 for k in {8..12}; do
     targ="${base}/${rate_prefix}${k}"
-    for n in {0..0}; do
+    for n in {0..7}; do
     #for n in {0..0}; do
         n0=$( expr 4 \* $n )
         n1=$( expr 4 \* $n + 1 )
@@ -195,7 +195,7 @@ for k in {8..12}; do
     #cd $targ
     #pwd
     python3 videoConverter.py "${targ}/${dir_suffix}0" $prefix $start_t $interval $steps -v $vlines -o animation.mp4 -a $author -f $fps --dpi $dpi
-    #tar -zcvf $targ.tar.gz $targ/*/*.tsv $targ/*/*.mp4
+    tar -zcvf $targ.tar.gz $targ/*/*.tsv $targ/*/*.mp4
     #cd ~/Research/Summer18Research/MonteCarloSim
     #python corrLen.py $targ $dir_suffix autoCorr_3995.csv avg_auto_corr.csv 200
 
