@@ -1,4 +1,4 @@
-base="data/dataRun_040520_0"
+base="data/dataRun_070520_0"
 rate_prefix="rate_"
 dir_suffix="run_"
 prefix="latt_"
@@ -22,9 +22,10 @@ RPSMobility="0.1"
 #rps_mobility="2.5"
 mobilities=('0.1' '2.5' '5.0' '10.0')
 #RPSMobilities=('0.01' '0.1' '1.0' '2.5' '5.0' '10.0' '100' '1000') 
-RPSMobilities=('0.1' '2.5' '5.0' '10.0' '25.0' '50.0' '100.0' '20.0' '21.0' '22.0' '23.0' '24.0' '30.0') 
-steps="4023"
-interval="1"
+#               0     1     2     3      4      5      6      7      8      9      10
+RPSMobilities=('0.1' '2.5' '5.0' '10.0' '20.0' '21.0' '22.0' '23.0' '24.0' '25.0' '30.0') 
+steps="4024"
+interval="4"
 #interval="10"
 start_t="3000"
 subdiv="16"
@@ -41,16 +42,16 @@ outputR="specDataR.png"
 normOut="normSpecData.png"
 hwhmOut="HalfWidthHalfMax.png"
 
-for k in {8..12}; do
+for k in {0..10}; do
     targ="${base}/${rate_prefix}${k}"
-    for n in {0..7}; do
+    for n in {0..9}; do
     #for n in {0..0}; do
-        n0=$( expr 4 \* $n )
-        n1=$( expr 4 \* $n + 1 )
-        n2=$( expr 4 \* $n + 2 )
-        n3=$( expr 4 \* $n + 3 )
-        #n4=$( expr 16 \* $n + 4)
-        #n5=$( expr 16 \* $n + 5 )
+        n0=$( expr 5 \* $n )
+        n1=$( expr 5 \* $n + 1 )
+        n2=$( expr 5 \* $n + 2 )
+        n3=$( expr 5 \* $n + 3 )
+        n4=$( expr 5 \* $n + 4)
+        #n5=$( expr 5 \* $n + 5 )
         #n6=$( expr 16 \* $n + 6 )
         #n7=$( expr 16 \* $n + 7 )
         ##n8=$( expr 16 \* $n + 8 )
@@ -69,7 +70,7 @@ for k in {8..12}; do
         target1="$targ/${dir_suffix}${n1}"
         target2="$targ/${dir_suffix}${n2}"
         target3="$targ/${dir_suffix}${n3}"
-        #target4="$targ/${dir_suffix}${n4}"
+        target4="$targ/${dir_suffix}${n4}"
         #target5="$targ/${dir_suffix}${n5}"
         #target6="$targ/${dir_suffix}${n6}"
         #target7="$targ/${dir_suffix}${n7}"
@@ -107,12 +108,15 @@ for k in {8..12}; do
         mkdir -p -v $target1
         mkdir -p -v $target2
         mkdir -p -v $target3
+        mkdir -p -v $target4
         #                  targ     o t xSize  ySize  mob       rps_mob              intDist  bin_w     steps  interval  start_t  run
         #                  1        2 3 4      5      6         7                    8        9         10     11        12       13
-        ./LatticeMLRPSTest $target0 0 1 $xSize $ySize $mobility ${RPSMobilities[$k]} $intDist $binWidth $steps $interval $start_t 0 &
+        #./LatticeMLRPSTest $target 0 1 $xSize $ySize $mobility ${RPSMobilities[$k]} $intDist $binWidth $steps $interval $start_t $n &
+        ./LatticeMLRPSTest $target0 0 1 $xSize $ySize $mobility ${RPSMobilities[$k]} $intDist $binWidth $steps $interval $start_t $n0 &
         ./LatticeMLRPSTest $target1 0 1 $xSize $ySize $mobility ${RPSMobilities[$k]} $intDist $binWidth $steps $interval $start_t $n1 &
         ./LatticeMLRPSTest $target2 0 1 $xSize $ySize $mobility ${RPSMobilities[$k]} $intDist $binWidth $steps $interval $start_t $n2 &
         ./LatticeMLRPSTest $target3 0 1 $xSize $ySize $mobility ${RPSMobilities[$k]} $intDist $binWidth $steps $interval $start_t $n3 &
+        ./LatticeMLRPSTest $target4 0 1 $xSize $ySize $mobility ${RPSMobilities[$k]} $intDist $binWidth $steps $interval $start_t $n4 &
         wait
 
         #python3 videoConverter.py ${target0} $prefix $start_t $interval $steps -v $vlines -o animation.mp4 -a $author -f $fps --dpi $dpi
@@ -195,7 +199,8 @@ for k in {8..12}; do
     #cd $targ
     #pwd
     python3 videoConverter.py "${targ}/${dir_suffix}0" $prefix $start_t $interval $steps -v $vlines -o animation.mp4 -a $author -f $fps --dpi $dpi
-    tar -zcvf $targ.tar.gz $targ/*/*.tsv $targ/*/*.mp4
+    tar -zcvf $targ.tar.gz $targ/*/*.tsv $targ/*/*.mp4 $targ/*/*/*.txt
+    #tar -zcvf $targ.tar.gz $targ/*/*.tsv 
     #cd ~/Research/Summer18Research/MonteCarloSim
     #python corrLen.py $targ $dir_suffix autoCorr_3995.csv avg_auto_corr.csv 200
 

@@ -11,6 +11,7 @@ LatticeMLRPS::LatticeMLRPS() : Lattice()
     orientation = 1;
     interfaceDistance = 64;
     mobilityRateRPS = 0.1;
+    recipSizeX = 1.0 / (1.0 * sizeX);
 
     for (int x = 0; x < sizeX; x++)
     {
@@ -37,6 +38,7 @@ LatticeMLRPS::LatticeMLRPS(string path, int orr, int latticeSize, double mobilit
     orientation = orr;
     topology = 0;
     mobilityRateRPS = mobilityRPS;
+    recipSizeX = 1.0 / (1.0 * sizeX);
 
     for (int x = 0; x < sizeX; x++)
     {
@@ -54,6 +56,7 @@ LatticeMLRPS::LatticeMLRPS(string path, int orr, int patchTopology, int xSize, i
     topology = patchTopology;
     interfaceDistance = intDist;
     mobilityRateRPS = mobilityRPS;
+    recipSizeX = 1.0 / (1.0 * sizeX);
 
     if (topology == 1)
     {
@@ -193,14 +196,14 @@ double LatticeMLRPS::autoCorrelator(int spec, int y, int r, int mode)
     double sum = 0.0;
     for (int i = 0; i < sizeX; ++i) 
     {
-        int targ = i - r;
+        int targ = i + r;
 
         if (targ < 0)
         {
             targ = sizeX - targ;
         }
         
-        if (latt[i][y].getSpecies() == spec && latt[(targ) % sizeX][y].getSpecies() == spec)
+        if (specLat[i][y] == spec && specLat[targ % sizeX][y] == spec)
         {
             sum += 1.0;
         }
@@ -223,11 +226,11 @@ double LatticeMLRPS::autoCorrelator(int spec, int y, int r, int mode)
 
     if ( mode == 1 )
     {
-        output = (sum / sizeX) - (density1[spec][y]*density1[spec][y]);
+        output = (sum * recipSizeX) - (density1[spec][y]*density1[spec][y]);
     }
     else 
     {
-        output = (sum / sizeX);
+        output = (sum * recipSizeX);
     }
 
     return output;
@@ -378,7 +381,9 @@ void LatticeMLRPS::RPSReaction(int x, int y)
     if (rand < swapProb && neighSpec != currSpec) //Pair Swapping
     {
         neighbor.setSpecies(currSpec);
+        specLat[X][Y] = currSpec; //set neighbor species to currSpec on int array;
         curr.setSpecies(neighSpec);
+        specLat[x][y] = neighSpec; //set current species to neighSpec on int array;
 
         if (Y != y)
         {
@@ -391,10 +396,14 @@ void LatticeMLRPS::RPSReaction(int x, int y)
     }
     else if (rand >= swapProb) //Predation
     {
-        if (neighbor.getSpecies() == (curr.getSpecies() + 1) % 3)
+        //if (neighbor.getSpecies() == (curr.getSpecies() + 1) % 3)
+        if (neighSpec == (currSpec + 1) % 3)
         {
-            decrementSpeciesCount(neighbor.getSpecies());
-            neighbor.setSpecies(curr.getSpecies());
+            //decrementSpeciesCount(neighbor.getSpecies());
+            decrementSpeciesCount(neighSpec);
+            //neighbor.setSpecies(curr.getSpecies());
+            neighbor.setSpecies(currSpec);
+            specLat[X][Y] = currSpec;
             updateBinnedReactionCount(0, neighSpec, Y);
             updateBinnedReactionCount(1, neighSpec, Y);
         }
@@ -737,7 +746,8 @@ void LatticeMLRPS::specAnalysisRun(int steps, int interval, int startRecord, int
     updateDensity();
     //do
 
-    double ** avgAC = new double*[sizeY];
+    double invTimesteps = 1.0 / (1.0 * timesteps);
+    double ** avgAC = new double*[256];
     double ** avgDen = new double*[4];
 
     for (int i = 0; i < 4; ++i) 
@@ -745,10 +755,10 @@ void LatticeMLRPS::specAnalysisRun(int steps, int interval, int startRecord, int
         avgDen[i] = new double[sizeY];
     }
 
-    for (int y = 0; y < sizeY; y++)
+    for (int y = 0; y < 256; y++)
     {
-        avgAC[y] = new double[300];
-        for (int r = 0; r < 300; r++)
+        avgAC[y] = new double[256];
+        for (int r = 0; r < 256; r++)
         {
             avgAC[y][r] = 0.0;
         }
@@ -758,27 +768,31 @@ void LatticeMLRPS::specAnalysisRun(int steps, int interval, int startRecord, int
     {
         if (monteCarloStep % interval == 0 && timestep == 0.0)
         {
+            float progress = (1.0 * monteCarloStep) / (steps - 1);
+            progressBar(progress);
+
             if (run == 0)
             {
-                float progress = (1.0 * monteCarloStep) / (steps - 1);
-                progressBar(progress);
                 dataOutput(0);
             }
 
             if (monteCarloStep >= startRecord)
             {
+                for (int y = 0; y < 256; y++)
+                {
+                    for (int r = 0; r < 256; r++)
+                    {
+                        avgAC[y][r] += (autoCorrelator(0, y, r, 1) * invTimesteps);
+                    }
+                }
                 for (int y = 0; y < sizeY; y++)
                 {
                     for (int i = 0; i < 3; ++i) 
                     {
-                        avgDen[i][y] = avgDen[i][y] + (density1[i][y] / (1.0 * timesteps));
+                        avgDen[i][y] += (density1[i][y] * invTimesteps);
                     }
                     double currDen = density0[0][y] + density1[1][y] + density1[2][y];
-                    avgDen[4][y] = avgDen[4][y] + (currDen/(1.0 * timesteps));
-                    for (int r = 0; r < 300; r++)
-                    {
-                        avgAC[y][r] = avgAC[y][r] + (autoCorrelator(0, y, r, 1) / (1.0 * timesteps));
-                    }
+                    avgDen[3][y] += (currDen * invTimesteps);
                 }
                 //if (run == 0)
                 //{
@@ -923,18 +937,18 @@ void LatticeMLRPS::specAnalysisRun(int steps, int interval, int startRecord, int
     fstream data(fileName.c_str(), ofstream::out | ofstream::app | ofstream::in);
 
     cout << "writing auto-correlation data" << endl;
-    for (int y = 0; y < sizeY; y++)
+    for (int y = 0; y < 256; y++)
     {
-        for (int r = 0; r < timesteps; r++)
+        for (int r = 0; r < 256; r++)
         {
             //data << temporalData[t];
             data << avgAC[y][r];
-            if (r < 299)
+            if (r < 255)
             {
                 data << ",";
             }
         }
-        if (y < sizeY - 1)
+        if (y < 255)
         {
             data << endl;
         }
@@ -942,7 +956,7 @@ void LatticeMLRPS::specAnalysisRun(int steps, int interval, int startRecord, int
 
     data.close();
 
-    for (int y = 0; y < sizeY; y++)
+    for (int y = 0; y < 256; y++)
     {
         delete[] avgAC[y];
     }
@@ -958,16 +972,16 @@ void LatticeMLRPS::specAnalysisRun(int steps, int interval, int startRecord, int
     {
         for (int y = 0; y < sizeY; ++y) 
         {
-            data << avgDen[i][y];
+            data2 << avgDen[i][y];
 
             if (y < sizeY - 1) 
             {
-                data << ",";
+                data2 << ",";
             }
         }
         if (i < 3) 
         {
-            data << endl;
+            data2 << endl;
         }
     }
 

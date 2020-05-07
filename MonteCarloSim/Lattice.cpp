@@ -182,15 +182,18 @@ void Lattice::initializeLattice()
     boost::random::discrete_distribution<> pop(popDist);
 
     latt = new Cell*[sizeX];
+    specLat = new int*[sizeX];
 
     for (int x = 0; x < sizeX; x++)
     {
         latt[x] = new Cell[sizeY];
+        specLat[x] = new int[sizeY];
         for (int y = 0; y < sizeY; y++)
         {
             int spec;
             spec = pop(rng);
             latt[x][y].setSpecies(spec);
+            specLat[x][y] = spec;
             latt[x][y].setSwapRate(mobilityRate);
             latt[x][y].setDifRate(mobilityRate);
             incrementSpeciesCount(spec);
@@ -490,6 +493,9 @@ void Lattice::reaction(int x, int y)
         neighbor.setSpecies(currSpec);
         curr.setSpecies(neighSpec);
 
+        specLat[x][y] = neighSpec; // set current species on the int array
+        specLat[X][Y] = currSpec; //set neighbor species on the int array
+
         if (Y != y)
         {
             updateBinnedReactionCount(2, currSpec, y);
@@ -502,20 +508,26 @@ void Lattice::reaction(int x, int y)
     }
     else if (rand >= swapProb && rand < swapProb + predProb) //Predation
     {
-        if (neighbor.getSpecies() == (curr.getSpecies() + 1) % 3)
+        //if (neighbor.getSpecies() == (curr.getSpecies() + 1) % 3)
+        if (neighSpec == (currSpec + 1) % 3)
         {
-            decrementSpeciesCount(neighbor.getSpecies());
+            //decrementSpeciesCount(neighbor.getSpecies());
+            decrementSpeciesCount(neighSpec);
             neighbor.setSpecies(3);
+            specLat[X][Y] = 3; //set neighbor species to dead on int array
             updateBinnedReactionCount(0, neighSpec, Y);
             //timestep++;
         }
     }
     else if (rand >= swapProb + predProb) //Reproduction
     {
-        if (neighbor.getSpecies() == 3)
+        //if (neighbor.getSpecies() == 3)
+        if (neighSpec == 3)
         {
-            neighbor.setSpecies(curr.getSpecies());
-            incrementSpeciesCount(curr.getSpecies());
+            //neighbor.setSpecies(curr.getSpecies());
+            neighbor.setSpecies(currSpec);
+            specLat[X][Y] = currSpec;
+            incrementSpeciesCount(currSpec);
             updateBinnedReactionCount(1, currSpec, Y);
             //updateCurrent(curr.getSpecies(), boundary, direction);
             //timestep++;
