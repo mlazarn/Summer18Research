@@ -13,15 +13,20 @@ class Cell
         double predationRPS;
         double diffusionRPS;
 
-        enum Parameters{PRED, FERT, DIFF, PSWP, PRED_RPS, DIFF_RPS};
-
         int species;
 
     public:
+        /*
+         * Default constructor. Sets the species to 3 (dead cell) and 
+         * sets the parameters to reasonable defaults. The actual values don't
+         * matter though as each parameter will be set when initializing the 
+         * lattice later.
+         */
         Cell();
-        void set(int param, double value, int spec);
-        //note: n is the number of neighbors.
 
+        /*
+         * A set of accessors and mutators for all of the parameters.
+         */
         double getPredRate() const      {return predation;}
         void setPredRate(double rate)   {predation = rate;}
 

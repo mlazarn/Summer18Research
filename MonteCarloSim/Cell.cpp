@@ -13,22 +13,4 @@ Cell::Cell()
     species = 3;
 }
 
-void Cell::set(int param, double value, int spec)
-{
-    species = spec;
-
-    if (param >= 0 && param < 6 && value >= 0.0)
-    {
-        switch(param)
-        {
-            case PRED       : predation = value; break;
-            case FERT       : fertility = value; break;
-            case DIFF       : diffusion = value; break;
-            case PSWP       : pairSwap = value; break;
-            case PRED_RPS   : predationRPS = value; break;
-            case DIFF_RPS   : diffusionRPS = value; break;
-        }
-    }
-}
-
 void Cell::setSpecies(int newSpec) {species = newSpec;}

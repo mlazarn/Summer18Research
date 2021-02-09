@@ -3,10 +3,11 @@ import matplotlib.pyplot as plt
 import os
 import csv
 import argparse as ap
+from tqdm import tqdm
 
-def open_data(filename):
+def open_data(filename, max_r):
     csv_data = np.genfromtxt(filename, dtype=int, delimiter=',')
-    return csv_data
+    return csv_data[:,:max_r]
 
 def calc_densities(lattice):
     x_size, y_size = lattice.shape
@@ -47,19 +48,21 @@ def calc_corr_function(lattice, spec, r_min, r_max, sub_d_squared):
     
     return corr, r_range, densities
 
-def calc_averages(prefix, t_min, t_max, spec, r_min, r_max, sub_d_squared=True, calc_avg_den=True, print_densities=False):
+def calc_averages(prefix, t_min, t_max, spec, r_min, r_max, print_prog, sub_d_squared=True, calc_avg_den=True, print_densities=False):
     pbar = tqdm(total=t_max-t_min)
     fname = prefix + str(t_min) + ".csv"
-    lattice = open_data(fname)
+    lattice = open_data(fname, r_max)
     avg_corr, r_range, avg_den = calc_corr_function(lattice, spec, r_min, r_max, sub_d_squared)
-    pbar.update()
+    
+    if print_prog:
+        pbar.update()
     if (print_densities):
         density_filename = "density_{0}.tsv".format(t_min)
         np.savetxt(density_filename, avg_den, delimiter=',')
     for t in range(t_min + 1, t_max):
-        print(t)
+        #print(t)
         fname = prefix + str(t) + ".csv"
-        lattice = open_data(fname)
+        lattice = open_data(fname, r_max)
         corr_t, r_range, den_t = calc_corr_function(lattice, spec, r_min, r_max, sub_d_squared)
         
         if (calc_avg_den):
@@ -69,7 +72,8 @@ def calc_averages(prefix, t_min, t_max, spec, r_min, r_max, sub_d_squared=True, 
             np.savetxt(density_filename, den_t, delimiter=',')
         
         avg_corr = avg_corr + corr_t
-        pbar.update()
+        if print_prog:
+            pbar.update()
     
     avg_corr = avg_corr / ((t_max - t_min) * 1.0)
     
@@ -94,7 +98,7 @@ def find_roots(data, margin=1.0e-6, starting_idx=0, limit_idx=0):
             return i
     raise RuntimeError("could not find a root within specified margin")
 
-def calc_cor_lens(corr_function, max_r, write_output=False):
+def calc_corr_lens(corr_function, max_r, write_output=False):
     correlation_lengths = np.zeros(max_r)
     for i in range(max_r):
         correlation_lengths[i] = find_roots(corr_avg.T[i,:])
@@ -109,12 +113,14 @@ parser.add_argument('prefix')
 parser.add_argument('start', type=int)
 parser.add_argument('stop', type=int)
 
+parser.add_argument('--prog', '-p', action='store_true')
+
 args = parser.parse_args()
 
 os.chdir(args.path)
 
-corr_avg, r_range, den_avg = calc_averages(args.prefix, args.start, args.stop, 0, 0, 300)
-calc_corr_lens(corr_avg, 300, write_output=True)
+corr_avg, r_range, den_avg = calc_averages(args.prefix, args.start, args.stop, 0, 0, 256, args.prog)
+calc_corr_lens(corr_avg, 256, write_output=True)
 np.savetxt("correlation_function.tsv", corr_avg, delimiter=',')
 np.savetxt("average_density.tsv", den_avg, delimiter=',')
  

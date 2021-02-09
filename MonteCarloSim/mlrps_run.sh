@@ -1,4 +1,4 @@
-base="data/dataRun_130420_0"
+base="data/dataRun_070520_0"
 rate_prefix="rate_"
 dir_suffix="run_"
 prefix="latt_"
@@ -22,9 +22,10 @@ RPSMobility="0.1"
 #rps_mobility="2.5"
 mobilities=('0.1' '2.5' '5.0' '10.0')
 #RPSMobilities=('0.01' '0.1' '1.0' '2.5' '5.0' '10.0' '100' '1000') 
-RPSMobilities=('0.1' '2.5' '5.0' '10.0' '25.0' '50.0' '100.0') 
+#               0     1     2     3      4      5      6      7      8      9      10
+RPSMobilities=('0.1' '2.5' '5.0' '10.0' '20.0' '21.0' '22.0' '23.0' '24.0' '25.0' '30.0') 
 steps="4024"
-interval="1"
+interval="4"
 #interval="10"
 start_t="3000"
 subdiv="16"
@@ -41,32 +42,136 @@ outputR="specDataR.png"
 normOut="normSpecData.png"
 hwhmOut="HalfWidthHalfMax.png"
 
-for k in {3..6}; do
+for k in {0..10}; do
     targ="${base}/${rate_prefix}${k}"
-    for n in {0..16}; do
+    for n in {0..9}; do
     #for n in {0..0}; do
-        n0=$( expr 2 \* $n )
-        n1=$( expr 2 \* $n + 1 )
-        #n2=$( expr 3 \* $n + 2 )
+        n0=$( expr 5 \* $n )
+        n1=$( expr 5 \* $n + 1 )
+        n2=$( expr 5 \* $n + 2 )
+        n3=$( expr 5 \* $n + 3 )
+        n4=$( expr 5 \* $n + 4)
+        #n5=$( expr 5 \* $n + 5 )
+        #n6=$( expr 16 \* $n + 6 )
+        #n7=$( expr 16 \* $n + 7 )
+        ##n8=$( expr 16 \* $n + 8 )
+        #n9=$( expr 16 \* $n + 9 )
+        #n10=$( expr 16 \* $n + 10 )
+        #n11=$( expr 16 \* $n + 11 )
+        #n12=$( expr 16 \* $n + 12 )
+        #n13=$( expr 16 \* $n + 13 )
+        #n14=$( expr 16 \* $n + 14 )
+        #n15=$( expr 16 \* $n + 15 )
 
-        #target="$targ/${dir_suffix}${n}"
+        #target="$targ/${dir_suffix}0"
+        #rm -r -f -v $target
+        
         target0="$targ/${dir_suffix}${n0}"
         target1="$targ/${dir_suffix}${n1}"
+        target2="$targ/${dir_suffix}${n2}"
+        target3="$targ/${dir_suffix}${n3}"
+        target4="$targ/${dir_suffix}${n4}"
+        #target5="$targ/${dir_suffix}${n5}"
+        #target6="$targ/${dir_suffix}${n6}"
+        #target7="$targ/${dir_suffix}${n7}"
+        #target8="$targ/${dir_suffix}${n8}"
+        #target9="$targ/${dir_suffix}${n9}"
+        #target10="$targ/${dir_suffix}${n10}"
+        #target11="$targ/${dir_suffix}${n11}"
+        #target12="$targ/${dir_suffix}${n12}"
+        #target13="$targ/${dir_suffix}${n13}"
+        #target14="$targ/${dir_suffix}${n14}"
+        #target15="$targ/${dir_suffix}${n15}"
+
+        #for i in {0..15};do
+            #direc="$targ/${dir_suffix}$( expr 16 \* $n + $i )"
+            #cd $direc
+            #pwd
+            #ls | grep tsv
+            #mkdir safe
+            
+            #mv average_density.tsv safe/average_density.tsv
+            #mv correlation_function safe/correlation_function
+            #mv correlation_length safe/correlation_length
+
+            #ls safe
+
+            #rm -f -v latt_*.csv
+            #ls
+            #cd ~/L/Summer18Research/MonteCarloSim
+        #done
+
         #target2="$targ/${dir_suffix}${n2}"
         #rm $target/animation.mp4
         #mkdir -p -v $target
-        #mkdir -p -v $target0
-        #mkdir -p -v $target1
-        #mkdir -p -v $target2
+        mkdir -p -v $target0
+        mkdir -p -v $target1
+        mkdir -p -v $target2
+        mkdir -p -v $target3
+        mkdir -p -v $target4
         #                  targ     o t xSize  ySize  mob       rps_mob              intDist  bin_w     steps  interval  start_t  run
         #                  1        2 3 4      5      6         7                    8        9         10     11        12       13
-        #./LatticeMLRPSTest $target0 0 1 $xSize $ySize $mobility ${RPSMobilities[$k]} $intDist $binWidth $steps $interval $start_t $n0 &
-        #./LatticeMLRPSTest $target1 0 1 $xSize $ySize $mobility ${RPSMobilities[$k]} $intDist $binWidth $steps $interval $start_t $n1 &
-        #./LatticeMLRPSTest $target2 0 1 $xSize $ySize $mobility ${RPSMobilities[$k]} $intDist $binWidth $steps $interval $start_t $n2 &
-        #wait
+        #./LatticeMLRPSTest $target 0 1 $xSize $ySize $mobility ${RPSMobilities[$k]} $intDist $binWidth $steps $interval $start_t $n &
+        ./LatticeMLRPSTest $target0 0 1 $xSize $ySize $mobility ${RPSMobilities[$k]} $intDist $binWidth $steps $interval $start_t $n0 &
+        ./LatticeMLRPSTest $target1 0 1 $xSize $ySize $mobility ${RPSMobilities[$k]} $intDist $binWidth $steps $interval $start_t $n1 &
+        ./LatticeMLRPSTest $target2 0 1 $xSize $ySize $mobility ${RPSMobilities[$k]} $intDist $binWidth $steps $interval $start_t $n2 &
+        ./LatticeMLRPSTest $target3 0 1 $xSize $ySize $mobility ${RPSMobilities[$k]} $intDist $binWidth $steps $interval $start_t $n3 &
+        ./LatticeMLRPSTest $target4 0 1 $xSize $ySize $mobility ${RPSMobilities[$k]} $intDist $binWidth $steps $interval $start_t $n4 &
+        wait
 
         #python3 videoConverter.py ${target0} $prefix $start_t $interval $steps -v $vlines -o animation.mp4 -a $author -f $fps --dpi $dpi
-        python3 correlationcalc.py ${target0} $prefix $start_t $steps 
+
+        #cd $target
+        #pwd
+        #for t in {3257..3513}; do
+            #ed -s "latt_${t}.csv" <<< $'-510,$d\nwq'
+            #ed -s "latt_${t}.csv" <<< $'$s/.\{1023\}$//\nwq'
+        #done
+        #cd ~/Research/Summer18Research/MonteCarloSim
+
+        #cd $target1
+        #pwd
+        #for t in {3000..3256}; do
+            #ed -s "latt_${t}.csv" <<< $'-510,$d\nwq'
+            #ed -s "latt_${t}.csv" <<< $'$s/.\{1023\}$//\nwq'
+        #done
+        #cd ~/L/Summer18Research/MonteCarloSim
+
+        #cd $target2
+        #pwd
+        #for t in {3000..3256}; do
+            #ed -s "latt_${t}.csv" <<< $'-510,$d\nwq'
+            #ed -s "latt_${t}.csv" <<< $'$s/.\{1023\}$//\nwq'
+        #done
+        #cd ~/L/Summer18Research/MonteCarloSim
+
+
+        #cd $target3
+        #pwd
+        #for t in {3000..3256}; do
+            #ed -s "latt_${t}.csv" <<< $'-510,$d\nwq'
+            #ed -s "latt_${t}.csv" <<< $'$s/.\{1023\}$//\nwq'
+        #done
+        #cd ~/L/Summer18Research/MonteCarloSim
+
+        #echo $target0
+        #python3 correlationcalc.py ${target0} $prefix $start_t $steps -p &
+        #python3 correlationcalc.py ${target1} $prefix $start_t $steps &
+        #python3 correlationcalc.py ${target2} $prefix $start_t $steps &
+        #python3 correlationcalc.py ${target3} $prefix $start_t $steps &
+        #python3 correlationcalc.py ${target4} $prefix $start_t $steps &
+        #python3 correlationcalc.py ${target5} $prefix $start_t $steps &
+        #python3 correlationcalc.py ${target6} $prefix $start_t $steps &
+        #python3 correlationcalc.py ${target7} $prefix $start_t $steps &
+        #python3 correlationcalc.py ${target8} $prefix $start_t $steps &
+        #python3 correlationcalc.py ${target9} $prefix $start_t $steps &
+        #python3 correlationcalc.py ${target10} $prefix $start_t $steps &
+        #python3 correlationcalc.py ${target11} $prefix $start_t $steps &
+        #python3 correlationcalc.py ${target12} $prefix $start_t $steps &
+        #python3 correlationcalc.py ${target13} $prefix $start_t $steps &
+        #python3 correlationcalc.py ${target14} $prefix $start_t $steps &
+        #python3 correlationcalc.py ${target15} $prefix $start_t $steps &
+        #wait
 
         #rm $target/density_net_newer.mp4
 
@@ -91,7 +196,12 @@ for k in {3..6}; do
         #binned diffusion count net
         #python3 densityCalculator.py a $target 'binned_diffusion_net.mp4' p r 0 $binLim -c -1 -p binned_diffusion_counts_ -l $binNetDiffCountLim -v $vlines -s $start_t -i $interval -S $steps -a $author -f $fps --binned -g
     done
-    #python3 videoConverter.py "$targ/${dir_suffix}0" $prefix $start_t $interval $steps -v $vlines -o animation.mp4 -a $author -f $fps --dpi $dpi
+    #cd $targ
+    #pwd
+    python3 videoConverter.py "${targ}/${dir_suffix}0" $prefix $start_t $interval $steps -v $vlines -o animation.mp4 -a $author -f $fps --dpi $dpi
+    tar -zcvf $targ.tar.gz $targ/*/*.tsv $targ/*/*.mp4 $targ/*/*/*.txt
+    #tar -zcvf $targ.tar.gz $targ/*/*.tsv 
+    #cd ~/Research/Summer18Research/MonteCarloSim
     #python corrLen.py $targ $dir_suffix autoCorr_3995.csv avg_auto_corr.csv 200
 
     #python3 fourierAnalysis.py $targ temporalData.csv $outputA $dir_suffix 256 50 s ${pad[0]} -w -d "outputA.csv" --max_freq 100 --max_pos 288 --dpi $dpi -A #-a 10.0 -w
@@ -107,7 +217,8 @@ for k in {3..6}; do
     #python3 videoConverter.py ${targ}/${dir_suffix}0 $prefix $start_t $interval $steps -o animation.mp4 -a $author -f $fps --dpi $dpi
 done
 
-#tar -zcvf $base.tar.gz $base/*/*
+#cd $base
+#tar -zcvf $base.tar.gz **/*.mp4
 
 #base_dir="data/multi_test/type/"
 #base="/density_runx"

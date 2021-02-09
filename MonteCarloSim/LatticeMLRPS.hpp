@@ -24,6 +24,7 @@ class LatticeMLRPS : public Lattice
         int interfaceDistance;
         int orientation;
         double mobilityRateRPS;
+        double recipSizeX;
         int topology; // Indicates the topology of the RPS Patch.
                       // 0 indicates a square patch on the face of the torus.
                       //   The edge of which is interfaceDistance away from the

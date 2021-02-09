@@ -20,6 +20,7 @@ class Lattice
         int sizeX;
         int sizeY;
         Cell ** latt;
+        int ** specLat;
 
         // May-Leonard mobility rate. This gets passed to the cell initiatiors.
         double mobilityRate;
