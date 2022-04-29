@@ -3,6 +3,8 @@
 This repository is here to store and manage my work on the
 research I performed at Virginia Tech under the supervision of
 Dr. Shannon Serrao and Professer Uwe Täuber (funded by the Army Research Office).
+This research began as part of the 2018 ARO Undergraduate Research Apprenticeship
+Program (URAP). 
 
 ## Monte Carlo Simulation.
 This directory will contain code for a Monte Carlo simulation of the May-Leonard
